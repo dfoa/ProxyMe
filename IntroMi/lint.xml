@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="NewApi">
+        <ignore path="src/com/example/android/BluetoothChat/BluetoothChat.java" />
+        <ignore path="src/com/example/android/BluetoothChat/DeviceListActivity.java" />
+    </issue>
+</lint>

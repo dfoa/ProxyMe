@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerVertical="true"
+        android:layout_margin="5dp"
+        android:background="#444"
+        android:padding="3dp" />
+
+    <TextView
+        android:id="@+id/tvPhone"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvName"
+        android:layout_toLeftOf="@+id/imageView1"
+        android:layout_toRightOf="@+id/image"
+        android:ellipsize="end"
+        android:maxLines="3"
+        android:text="desc"
+        android:textColor="@android:color/black"
+        android:textSize="13dip" />
+
+    <ProgressBar
+        android:id="@+id/pbar"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/image"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="30dp" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="3dp"
+        android:src="@drawable/app_icon" />
+
+    <TextView
+        android:id="@+id/tv1Site"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/image"
+        android:layout_alignLeft="@+id/tvPhone"
+        android:layout_alignParentRight="true"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/image"
+        android:maxLines="1"
+        android:text="title"
+        android:textColor="@android:color/black"
+        android:textSize="15dip"
+        android:textStyle="bold" />
+
+</RelativeLayout>

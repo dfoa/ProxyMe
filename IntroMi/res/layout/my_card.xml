@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="right|top"
+    android:layout_marginLeft="@dimen/Maargins_left"
+    android:divider="#00ff00"
+    android:dividerPadding="22dip"
+    android:fadingEdge="horizontal"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/Maargins_left"
+    android:paddingRight="@dimen/Maargins_left"
+    android:showDividers="middle" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextView01"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="22dp"
+        android:divider="?android:category"
+        android:text="@string/full_name"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/nameEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:divider="?android:dividerHorizontal"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textStyle="italic" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/phoneEditText"
+        android:layout_marginTop="37dp"
+        android:layout_toLeftOf="@+id/emailEditText"
+        android:text="@string/email"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/TextView02"
+        android:layout_alignBottom="@+id/TextView02"
+        android:layout_alignParentRight="true"
+        android:ems="10"
+        android:inputType="textEmailAddress" />
+
+    <TextView
+        android:id="@+id/TextView03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextView02"
+        android:layout_below="@+id/emailEditText"
+        android:layout_marginTop="44dp"
+        android:text="@string/linkedin_site"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/siteEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/TextView03"
+        android:layout_alignBottom="@+id/TextView03"
+        android:layout_alignParentRight="true"
+        android:ellipsize="middle"
+        android:ems="10" />
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextView02"
+        android:layout_below="@+id/nameEditText"
+        android:layout_marginTop="40dp"
+        android:text="@string/phone"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/phoneEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/TextView01"
+        android:layout_alignLeft="@+id/nameEditText"
+        android:ems="10"
+        android:inputType="phone" />
+
+    <ProgressBar
+        android:id="@+id/deataSentProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/saveButton" />
+
+    <Button
+        android:id="@+id/saveButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="273dp"
+        android:layout_height="49dp"
+        android:layout_alignLeft="@+id/TextView03"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/save_details" />
+
+    <Button
+        android:id="@+id/btImagepPick"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/TextView03"
+        android:layout_below="@+id/siteEditText"
+        android:layout_marginTop="56dp"
+        android:onClick="pickImage"
+        android:text="@string/choose_photo" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/saveButton"
+        android:layout_marginRight="19dp"
+        android:layout_marginTop="17dp" >
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/imgViewPhoto"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/siteEditText"
+        android:layout_marginTop="21dp"
+        android:layout_weight="1"
+        android:maxHeight="40dp"
+        android:maxWidth="40dp"
+        android:scaleType="centerCrop" />
+
+</RelativeLayout>
