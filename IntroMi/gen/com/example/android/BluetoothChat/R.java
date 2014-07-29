@@ -17,6 +17,10 @@ public final class R {
     }
     public static final class dimen {
         public static final int Maargins_left=0x7f050000;
+        /**  Default screen margins, per the Android Design guidelines. 
+         */
+        public static final int activity_horizontal_margin=0x7f050001;
+        public static final int activity_vertical_margin=0x7f050002;
     }
     public static final class drawable {
         public static final int app_icon=0x7f020000;
@@ -33,39 +37,46 @@ public final class R {
         public static final int p2=0x7f02000b;
     }
     public static final class id {
+        public static final int LinearLayout2=0x7f080018;
         public static final int RelativeLayout1=0x7f08000c;
         public static final int TextView01=0x7f08000d;
         public static final int TextView02=0x7f08000f;
         public static final int TextView03=0x7f080012;
         public static final int btImagepPick=0x7f080016;
         public static final int deataSentProgressBar=0x7f080014;
-        public static final int discoverable=0x7f08001d;
-        public static final int edit=0x7f080020;
+        public static final int discoverable=0x7f080024;
+        public static final int edit=0x7f080026;
         public static final int emailEditText=0x7f080011;
-        public static final int image=0x7f080018;
+        public static final int image=0x7f08001f;
         public static final int imageView1=0x7f080000;
         public static final int imgViewPhoto=0x7f080017;
         public static final int itemDescription=0x7f080008;
         public static final int listV_main=0x7f08000b;
-        public static final int my_card=0x7f08001e;
+        public static final int my_card=0x7f080025;
         public static final int name=0x7f080007;
         public static final int nameEditText=0x7f08000e;
         public static final int new_devices=0x7f080005;
-        public static final int pbar=0x7f08001b;
+        public static final int pbar=0x7f080022;
         public static final int phoneEditText=0x7f080010;
         public static final int photo=0x7f080006;
         public static final int price=0x7f080009;
         public static final int saveButton=0x7f080015;
-        public static final int save_contacts=0x7f08001f;
-        public static final int secure_connect_scan=0x7f08001c;
+        public static final int save_contacts=0x7f080027;
+        public static final int secure_connect_scan=0x7f080023;
         public static final int siteEditText=0x7f080013;
         public static final int textView1=0x7f080001;
+        public static final int textView6=0x7f08001e;
+        public static final int textViewEmail_Present=0x7f08001d;
+        public static final int textViewMobilePresent=0x7f08001c;
+        public static final int textViewNamePresent=0x7f08001a;
+        public static final int textVmobile=0x7f08001b;
+        public static final int textVname=0x7f080019;
         public static final int title_left_text=0x7f080003;
         public static final int title_right_text=0x7f080004;
         public static final int tv1Site=0x7f08000a;
         public static final int tvEmail=0x7f080002;
-        public static final int tvName=0x7f08001a;
-        public static final int tvPhone=0x7f080019;
+        public static final int tvName=0x7f080021;
+        public static final int tvPhone=0x7f080020;
     }
     public static final class layout {
         public static final int base_list_view=0x7f030000;
@@ -77,7 +88,8 @@ public final class R {
         public static final int main=0x7f030006;
         public static final int message=0x7f030007;
         public static final int my_card=0x7f030008;
-        public static final int row=0x7f030009;
+        public static final int my_cards_view=0x7f030009;
+        public static final int row=0x7f03000a;
     }
     public static final class menu {
         public static final int main=0x7f070000;
@@ -91,6 +103,7 @@ public final class R {
         public static final int button_scan=0x7f06000d;
         public static final int choose_photo=0x7f060018;
         public static final int discoverable=0x7f060010;
+        public static final int edit_card=0x7f06001c;
         public static final int email=0x7f060014;
         /**   User information 
          */

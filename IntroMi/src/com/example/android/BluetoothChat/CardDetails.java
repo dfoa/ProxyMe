@@ -1,7 +1,9 @@
 package com.example.android.BluetoothChat;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -153,7 +156,19 @@ public class CardDetails extends Activity {
 		@Override
 		protected Double doInBackground(String... params) {
 			// TODO Auto-generated method stub
-    	postData(params[0],params[1],params[2],params[3],params[4],params[5]);
+//create new profile card
+		if 	(createCard(params[0],params[1],params[2],params[3],params[4],params[5])){
+	
+			System.out.println("card was created");
+//			Toast.makeText(getApplicationContext(), "card details saved sucessfully", Toast.LENGTH_LONG).show();
+			
+		}
+			
+            
+             
+            
+            
+	//		postData(params[0],params[1],params[2],params[3],params[4],params[5]);
 		for (int i = 1; i<100;i++)
 		{
 			
@@ -183,25 +198,6 @@ public class CardDetails extends Activity {
 		public void postData(String mac ,String name_value,String phone_value,String email_value,String site_value,String  pickPath) {
 			// Create a new HttpClient and Post Header
 			
-			String ba1 = null;;
-			if (pickPath!=null)
-			{
-			Bitmap bitmapOrg = BitmapFactory.decodeFile(pickPath);
-            ByteArrayOutputStream bao = new ByteArrayOutputStream();
-            //Resize the image
-            double width = bitmapOrg.getWidth();
-            double height = bitmapOrg.getHeight();
-            double ratio = 400/width;
-            int newheight = (int)(ratio*height);
-            bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 400, newheight, true);
-            System.out.println("———-width" + width);
-            System.out.println("———-height" + height);
-            bitmapOrg.compress(Bitmap.CompressFormat.PNG, 95, bao);
-            byte[] ba = bao.toByteArray();
-            ba1 = Base64.encodeToString(ba, 0);
-		
-			}
-			
              
            
              
@@ -215,7 +211,7 @@ public class CardDetails extends Activity {
 	        nameValuePairs.add(new BasicNameValuePair("phone",phone_value ));
 	        nameValuePairs.add(new BasicNameValuePair("email",email_value ));
 	        nameValuePairs.add(new BasicNameValuePair("site",site_value ));
-	        nameValuePairs.add(new BasicNameValuePair("pic",ba1));
+//	        nameValuePairs.add(new BasicNameValuePair("pic",ba1));
 			
 			
  
@@ -272,8 +268,85 @@ public class CardDetails extends Activity {
            imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
           img = picturePath;
        }
-    
+ 
     
    } 
+ 
+ private  boolean createCard(String mac ,String name,String mobilePhone,String emailAddress,String siteAddress,String  location){
+	 
+//Create object and fill with data
+	 Profile p = new Profile();  
+     p.macHw = mac;
+     p.name =  name;
+     p.MobilePhoneNum = mobilePhone;
+     p.email = emailAddress;
+     p.site = siteAddress;
+     p.picture = getPhoto(location);
+     
+	 
+     if (saveCard(p)){
+    	
+    	 return true; 
+     }
   
+    else {
+    	return false;
+    
+    }
+ }
+ 
+ public  boolean saveCard(Profile p){
+	 
+	 String filename = "card.bin";
+
+	    // save the object to file
+	    FileOutputStream fos = null;
+	    ObjectOutputStream out = null;
+	    try {
+	//	      Toast.makeText(this, "going to open file and write...." , Toast.LENGTH_SHORT).show();
+	      fos = openFileOutput(filename,Context.MODE_PRIVATE);
+//	      Toast.makeText(this, "opened file...." , Toast.LENGTH_SHORT).show();
+   out = new ObjectOutputStream(fos);
+	      out.writeObject(p);
+        
+	      out.close();
+	    } catch (Exception ex) {
+	      ex.printStackTrace();
+	      Toast.makeText(this, "Cant open file and write" , Toast.LENGTH_SHORT).show();
+	    }
+	 
+	 
+	 
+	 return true;
+ }
+ 
+ public String getPhoto(String location){
+	 
+	 String ba1 = null;;
+		if (location!=null)
+		{
+		Bitmap bitmapOrg = BitmapFactory.decodeFile(location);
+     ByteArrayOutputStream bao = new ByteArrayOutputStream();
+     //Resize the image
+     double width = bitmapOrg.getWidth();
+     double height = bitmapOrg.getHeight();
+     double ratio = 400/width;
+     int newheight = (int)(ratio*height);
+     bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 400, newheight, true);
+     System.out.println("———-width" + width);
+     System.out.println("———-height" + height);
+     bitmapOrg.compress(Bitmap.CompressFormat.PNG, 95, bao);
+     byte[] ba = bao.toByteArray();
+     ba1 = Base64.encodeToString(ba, 0);
+       	return ba1;
+		}
+		else {
+			return null;
+		}
+		
+ 
+ }
+ 
+ 
+ 
 }

@@ -22,7 +22,8 @@
         android:layout_marginTop="22dp"
         android:divider="?android:category"
         android:text="@string/full_name"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall" 
+        style="?android:attr/listSeparatorTextViewStyle"/>
 
     <EditText
         android:id="@+id/nameEditText"
@@ -46,7 +47,8 @@
         android:layout_marginTop="37dp"
         android:layout_toLeftOf="@+id/emailEditText"
         android:text="@string/email"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        style="?android:attr/listSeparatorTextViewStyle" />
 
     <EditText
         android:id="@+id/emailEditText"

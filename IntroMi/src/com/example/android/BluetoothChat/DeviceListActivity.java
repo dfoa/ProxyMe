@@ -378,6 +378,13 @@ public class DeviceListActivity extends Activity {
              //open card details
                cardActions();
                return true;
+               
+            case R.id.edit:
+               	
+                //open card details
+                  editCard();
+                  return true;
+               
                 
             default:
                 return super.onOptionsItemSelected(item);          
@@ -444,11 +451,24 @@ public class DeviceListActivity extends Activity {
     private void cardActions() {
         if(D) Log.d(TAG, "card actions");
         
-       Intent  intent_card = new Intent(this, CardDetails.class);
+//       Intent  intent_card = new Intent(this, CardDetails.class);
+        Intent  intent_card = new Intent(this, MyCards.class); 
         startActivity(intent_card);
      
         
     }
+    
+   private void  editCard() {
+	 
+       if(D) Log.d(TAG, "edit card");
+       
+     Intent  intent_card = new Intent(this, CardDetails.class);
+//      Intent  intent_card = new Intent(this, MyCards.class); 
+      startActivity(intent_card);
+	   
+   }
+    
+    
     
     public void  retrievCardDetails(String mac) throws IOException {
         
