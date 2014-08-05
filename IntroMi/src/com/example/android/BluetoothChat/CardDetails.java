@@ -1,8 +1,14 @@
 package com.example.android.BluetoothChat;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -33,6 +39,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract.CommonDataKinds.Photo;
 import android.provider.MediaStore;
 import android.provider.SyncStateContract.Constants;
 import android.util.Base64;
@@ -40,13 +47,16 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView.BufferType;
 import android.widget.Toast;
+
 
 public class CardDetails extends Activity {
     // Debugging
@@ -55,7 +65,22 @@ public class CardDetails extends Activity {
     private ProgressBar pb;
     private static int RESULT_LOAD_IMAGE = 1;
     private String img;
+    private String filename = "card.bin";
+    private EditText name;
+    private EditText mobile;
+    private EditText email;
+    private EditText site;
+    private String name_value ;
+    private String phone_value;
+    private String  email_value;
+    private String site_value; 
+    private String  image_value;
+    private ImageView imageView;
+    private  Profile p;
 
+    
+   
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,31 +89,54 @@ public class CardDetails extends Activity {
         
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.my_card);
-     
-        final EditText name = (EditText) findViewById(R.id.nameEditText);
-        final EditText phone = (EditText) findViewById(R.id.phoneEditText);
-        final EditText email = (EditText)findViewById(R.id.emailEditText);
-        final EditText site= (EditText)findViewById(R.id.siteEditText);
+       
+        name = (EditText) findViewById(R.id.nameEditText);
+        mobile = (EditText) findViewById(R.id.phoneEditText);
+        email = (EditText)findViewById(R.id.emailEditText);
+        site= (EditText)findViewById(R.id.siteEditText);
+        imageView = (ImageView) findViewById(R.id.imgViewPhoto);
         Button btPickImage = (Button) findViewById(R.id.btImagepPick);
         Button saveRecords = (Button) findViewById(R.id.saveButton);
         
+
+        
+        
         pb = (ProgressBar)findViewById(R.id.deataSentProgressBar);	
         pb.setVisibility(View.GONE);
+        
+      
+       
+  //check if card already exist , just load the details 
+        System.out.println("checking if file exist");
+        File file = getBaseContext().getFileStreamPath(filename);
+        if(file.exists()) {
+   	    	//read the card and show  details
+   	     if(D) Log.e(TAG, "+++ Load card details");
+   	     
+   
+      
+   	     
+   	     
+   	     
+   	  System.out.println("loading card");
+   	     loadCard();
+   	     
+   	     
+        }  	        
+   	 
 
         saveRecords.setOnClickListener(new OnClickListener()
         {
           public void onClick(View v)
           {
-  
+        	  System.out.println("button save card was pressed");
      
-
-      
-        
-                /* This code get the values from edittexts  */
-           String name_value = name.getText().toString();
-           String phone_value = phone.getText().toString();
-           String  email_value = email.getText().toString();
-           String site_value = site.getText().toString();
+              /* This code get the values from edittexts  */
+              name_value  = name.getText().toString();
+              phone_value = mobile.getText().toString();
+              email_value = email.getText().toString();
+              site_value  = site.getText().toString();
+              
            
            System.out.println("Thisis the data " + name_value +phone_value + email_value +site_value);
  //          BluetoothAdapter bluetoothDefaultAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -96,6 +144,15 @@ public class CardDetails extends Activity {
           String mac = BluetoothAdapter.getDefaultAdapter().getAddress();
            System.out.println("This is the mac address:" + mac);
  //          }
+ //check if card already exist ,if yes  show the information , if no, create new card
+           
+           //check if card exist 
+          
+
+   	    
+   	       
+
+          
            
            
            if (!isNetworkAvailable())
@@ -104,17 +161,21 @@ public class CardDetails extends Activity {
           	finish();
            }
            else {
+        	   
+          
+                	  
          
         //	   pb.setVisibility(View.VISIBLE);
-        	   new MyAsyncTask().execute(mac,name_value,phone_value,email_value,site_value, img);		
+        	   new MyAsyncTask().execute(mac,name_value,phone_value,email_value,site_value, img);
+        	   //upload  profile to server
+        	   new UploadProfileAsyncTask().execute(p.macHw,p.name,p.MobilePhoneNum,p.email,p.site,p.picture);
                finish();
            }
         	
    
           }
         });
-        
-     
+           
         
         btPickImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,8 +188,8 @@ public class CardDetails extends Activity {
        
   
     
-        }
-        
+  //   }
+   }
         
     
     
@@ -164,21 +225,6 @@ public class CardDetails extends Activity {
 			
 		}
 			
-            
-             
-            
-            
-	//		postData(params[0],params[1],params[2],params[3],params[4],params[5]);
-		for (int i = 1; i<100;i++)
-		{
-			
-			
-			publishProgress(i);
-		
-			
-		}
-			
-			
 			return null;
 		}
  
@@ -195,46 +241,7 @@ public class CardDetails extends Activity {
 		//	pb.setProgress(progress[0]);
 		}
  
-		public void postData(String mac ,String name_value,String phone_value,String email_value,String site_value,String  pickPath) {
-			// Create a new HttpClient and Post Header
-			
-             
-           
-             
-			HttpClient httpclient = new DefaultHttpClient();
-	//		HttpPost httppost = new HttpPost("http://192.168.50.5/cgi-bin/register.cgi");
-			HttpPost httppost = new HttpPost("http://dfoa.ssh22.net/cgi-bin/register.cgi");
-			
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-	    	nameValuePairs.add(new BasicNameValuePair("mac",mac));
-	        nameValuePairs.add(new BasicNameValuePair("name",name_value));
-	        nameValuePairs.add(new BasicNameValuePair("phone",phone_value ));
-	        nameValuePairs.add(new BasicNameValuePair("email",email_value ));
-	        nameValuePairs.add(new BasicNameValuePair("site",site_value ));
-//	        nameValuePairs.add(new BasicNameValuePair("pic",ba1));
-			
-			
- 
-			try {
-				// Add your data
-	//			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			//	nameValuePairs.add(new BasicNameValuePair("myHttpData", ));
-				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
- 
-				// Execute HTTP Post Request
-				HttpResponse response = httpclient.execute(httppost);
-				
-				
-				
-				
-				
-                
-			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-			}
-		}
+
  
 	}
     
@@ -265,9 +272,11 @@ public class CardDetails extends Activity {
            cursor.close();
             
            ImageView imageView = (ImageView) findViewById(R.id.imgViewPhoto);
-           imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+           Bitmap b = decodeSampledBitmapFromPath(picturePath,100,100);
+           imageView.setImageBitmap(b);
           img = picturePath;
        }
+       
  
     
    } 
@@ -281,11 +290,13 @@ public class CardDetails extends Activity {
      p.MobilePhoneNum = mobilePhone;
      p.email = emailAddress;
      p.site = siteAddress;
-     p.picture = getPhoto(location);
-     
+     p.picture=location;
+    
+    
+    //   p.picture = getPhoto(location); //change to image  
 	 
      if (saveCard(p)){
-    	
+  //now save  profile to web
     	 return true; 
      }
   
@@ -297,7 +308,7 @@ public class CardDetails extends Activity {
  
  public  boolean saveCard(Profile p){
 	 
-	 String filename = "card.bin";
+
 
 	    // save the object to file
 	    FileOutputStream fos = null;
@@ -347,6 +358,239 @@ public class CardDetails extends Activity {
  
  }
  
+ private  void  loadCard()
+ {
+ 	final String filename = "card.bin";
+ 	  p = new Profile(); 
+      FileInputStream fis = null;
+ 	 ObjectInputStream in = null; 
+ 		    try {
+ 		      fis = openFileInput(filename);
+ 		      in = new ObjectInputStream(fis);
+ 		      p = (Profile) in.readObject();
+ 		      in.close();
+ 		    } catch (Exception ex) {
+ 		      ex.printStackTrace();
+ 		      Toast.makeText(this, "cant open file to read" , Toast.LENGTH_SHORT).show();
+ 		    }
+ 		    System.out.println("test");
+ 		  
+ 		     name.setText(p.name, BufferType.EDITABLE);;
+ 		     mobile.setText(p.MobilePhoneNum);
+ 		     email.setText(p.email);
+ 		     site.setText(p.site);
+ 
+ 		    Bitmap b = decodeSampledBitmapFromPath(p.picture,100,100);
+ 		    imageView.setImageBitmap(b);
+ 		    img = p.picture;
+ 	//	     WebView.setImageBitmap(setImg(p.picture));
+ 		    
+ 		   
+ 		   
+ 		    System.out.println(p.email + p.name + p.MobilePhoneNum);
+ 		  }
+	  
+ public Bitmap setImg(String img) {
+		//decode from base_64 to real PNG format
+             Bitmap bm;
+				
+				byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
+				Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
+			//	im.setImageBitmap(decodedByte);
+				bm = decodedByte;
+				return bm;
+				
+			    
+			    	
+ 		
+	}
+ public static Bitmap decodeSampledBitmapFromPath(String path, int reqWidth,
+         int reqHeight) {
+
+     final BitmapFactory.Options options = new BitmapFactory.Options();
+     options.inJustDecodeBounds = true;
+     BitmapFactory.decodeFile(path, options);
+
+     options.inSampleSize = calculateInSampleSize(options, reqWidth,
+             reqHeight);
+
+     // Decode bitmap with inSampleSize set
+     options.inJustDecodeBounds = false;
+     Bitmap bmp = BitmapFactory.decodeFile(path, options);
+     return bmp;
+     }
+
+ public static int calculateInSampleSize(BitmapFactory.Options options,
+         int reqWidth, int reqHeight) {
+
+     final int height = options.outHeight;
+     final int width = options.outWidth;
+     int inSampleSize = 1;
+
+     if (height > reqHeight || width > reqWidth) {
+         if (width > height) {
+             inSampleSize = Math.round((float) height / (float) reqHeight);
+         } else {
+             inSampleSize = Math.round((float) width / (float) reqWidth);
+          }
+      }
+      return inSampleSize;
+     }
  
  
-}
+ private class UploadProfileAsyncTask extends AsyncTask<String, Integer, Double>{
+ 	 
+		@Override
+		protected Double doInBackground(String... params) {
+			// TODO Auto-generated method stub
+
+			postData(params[0],params[1],params[2],params[3],params[4],params[5]);
+	
+			
+			
+			return null;
+		}
+
+		protected void onPostExecute(Double result){
+//			pb.setVisibility(View.GONE);
+			
+			
+//			Toast.makeText(getApplicationContext(), "card details saved sucessfully", Toast.LENGTH_LONG).show();
+		}
+		protected void onProgressUpdate(Integer... progress){
+			
+			super.onProgressUpdate(progress);
+			//pb.setVisibility(View.VISIBLE);
+		//	pb.setProgress(progress[0]);
+		}
+
+		public void postData(String mac ,String name_value,String phone_value,String email_value,String site_value,String  pickPath) {
+			// Create a new HttpClient and Post Header
+			
+          
+        
+          
+			HttpClient httpclient = new DefaultHttpClient();
+	//		HttpPost httppost = new HttpPost("http://192.168.50.5/cgi-bin/register.cgi");
+			HttpPost httppost = new HttpPost("http://dfoa.ssh22.net/cgi-bin/register.cgi");
+			
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+	    	nameValuePairs.add(new BasicNameValuePair("mac",mac));
+	        nameValuePairs.add(new BasicNameValuePair("name",name_value));
+	        nameValuePairs.add(new BasicNameValuePair("phone",phone_value ));
+	        nameValuePairs.add(new BasicNameValuePair("email",email_value ));
+	        nameValuePairs.add(new BasicNameValuePair("site",site_value ));
+	        nameValuePairs.add(new BasicNameValuePair("pic",pickPath));
+			
+			
+
+			try {
+				// Add your data
+	//			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			//	nameValuePairs.add(new BasicNameValuePair("myHttpData", ));
+				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+				// Execute HTTP Post Request
+				HttpResponse response = httpclient.execute(httppost);
+				
+				
+				
+				
+				
+             
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+			}
+		}
+
+	}
+ private class ImageUploader extends AsyncTask<Void, Void, String> {
+
+		@Override
+		protected String doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			String result = "";
+
+			// Client-side HTTP transport library
+			HttpClient httpClient = new DefaultHttpClient();
+
+			// using POST method
+			HttpPost httpPostRequest = new HttpPost("http://dfoa.ssh22.net/photo");
+			try {
+
+				// creating a file body consisting of the file that we want to
+				// send to the server
+				File bin = new File(p.picture);
+
+				/**
+				 * An HTTP entity is the majority of an HTTP request or
+				 * response, consisting of some of the headers and the body, if
+				 * present. It seems to be the entire request or response
+				 * without the request or status line (although only certain
+				 * header fields are considered part of the entity).
+				 * 
+				 * */
+//				MultipartEntityBuilder multiPartEntityBuilder = MultipartEntityBuilder.create();
+//				multiPartEntityBuilder.addPart("images[1]", bin);
+//				httpPostRequest.setEntity(multiPartEntityBuilder.build());
+
+				// Execute POST request to the given URL
+				HttpResponse httpResponse = null;
+				httpResponse = httpClient.execute(httpPostRequest);
+
+				// receive response as inputStream
+				InputStream inputStream = null;
+				inputStream = httpResponse.getEntity().getContent();
+
+				if (inputStream != null)
+					result = convertInputStreamToString(inputStream);
+				else
+					result = "Did not work!";
+				return result;
+			} catch (Exception e) {
+
+				return null;
+			}
+
+			// return result;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+//			uploadStatus.setText("Uploading image to server");
+			System.out.println("Uploading image to server");
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+		//	uploadStatus.setText(result);
+			System.out.println("result");
+		}
+
+	}
+
+	private static String convertInputStreamToString(InputStream inputStream)
+			throws IOException {
+		BufferedReader bufferedReader = new BufferedReader(
+				new InputStreamReader(inputStream));
+		String line = "";
+		String result = "";
+		while ((line = bufferedReader.readLine()) != null)
+			result += line;
+
+		inputStream.close();
+		return result;
+
+	}
+
+	  
+  }
+ 
+ 
+
