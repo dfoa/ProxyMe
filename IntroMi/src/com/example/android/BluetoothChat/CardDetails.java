@@ -34,6 +34,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -77,6 +78,7 @@ public class CardDetails extends Activity {
     private String  image_value;
     private ImageView imageView;
     private  Profile p;
+    private  boolean editProfile = false;
 
     
    
@@ -112,12 +114,12 @@ public class CardDetails extends Activity {
         if(file.exists()) {
    	    	//read the card and show  details
    	     if(D) Log.e(TAG, "+++ Load card details");
-   	     
+   	      
    
       
    	     
    	     
-   	     
+   	  editProfile = true;   
    	  System.out.println("loading card");
    	     loadCard();
    	     
@@ -133,9 +135,11 @@ public class CardDetails extends Activity {
      
               /* This code get the values from edittexts  */
               name_value  = name.getText().toString();
+              System.out.println("this is the name" + name_value);
               phone_value = mobile.getText().toString();
               email_value = email.getText().toString();
               site_value  = site.getText().toString();
+             
               
            
            System.out.println("Thisis the data " + name_value +phone_value + email_value +site_value);
@@ -162,11 +166,12 @@ public class CardDetails extends Activity {
            }
            else {
         	   
-          
-                	  
+        
          
-        //	   pb.setVisibility(View.VISIBLE);
-        	   new MyAsyncTask().execute(mac,name_value,phone_value,email_value,site_value, img);
+        	   pb.setVisibility(View.VISIBLE);
+        	   
+        	
+        	   new MyAsyncTask().execute(mac,name_value,phone_value,email_value,site_value,img);
         	   //upload  profile to server
         	   new UploadProfileAsyncTask().execute(p.macHw,p.name,p.MobilePhoneNum,p.email,p.site,p.picture);
                finish();
@@ -274,7 +279,10 @@ public class CardDetails extends Activity {
            ImageView imageView = (ImageView) findViewById(R.id.imgViewPhoto);
            Bitmap b = decodeSampledBitmapFromPath(picturePath,100,100);
            imageView.setImageBitmap(b);
-          img = picturePath;
+           img = picturePath;
+
+          
+          
        }
        
  
@@ -290,11 +298,17 @@ public class CardDetails extends Activity {
      p.MobilePhoneNum = mobilePhone;
      p.email = emailAddress;
      p.site = siteAddress;
-     p.picture=location;
-    
-    
-    //   p.picture = getPhoto(location); //change to image  
+ //    p.picture=location;
+     if (editProfile){
+    	 Bitmap bm=((BitmapDrawable)imageView.getDrawable()).getBitmap() ; //change to image if profile in edit mode  
+    	 p.picture =  getPhotoStringFromBitmap(bm);
+     }
 	 
+  
+     
+     else {
+    	 p.picture = getPhoto(location);
+     }
      if (saveCard(p)){
   //now save  profile to web
     	 return true; 
@@ -342,8 +356,35 @@ public class CardDetails extends Activity {
      double width = bitmapOrg.getWidth();
      double height = bitmapOrg.getHeight();
      double ratio = 400/width;
-     int newheight = (int)(ratio*height);
-     bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 400, newheight, true);
+//     int newheight = (int)(ratio*height);
+//     bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 400, newheight, true);
+     System.out.println("———-width" + width);
+     System.out.println("———-height" + height);
+     bitmapOrg.compress(Bitmap.CompressFormat.PNG, 95, bao);
+     byte[] ba = bao.toByteArray();
+     ba1 = Base64.encodeToString(ba, 0);
+       	return ba1;
+		}
+		else {
+			return null;
+		}
+		
+ 
+ }
+ 
+public String getPhotoStringFromBitmap(Bitmap bm){
+	 
+	 String ba1 = null;;
+		if (bm!=null)
+		{
+		Bitmap bitmapOrg = bm;
+     ByteArrayOutputStream bao = new ByteArrayOutputStream();
+     //Resize the image
+     double width = bitmapOrg.getWidth();
+     double height = bitmapOrg.getHeight();
+     double ratio = 400/width;
+//     int newheight = (int)(ratio*height);
+//     bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 400, newheight, true);
      System.out.println("———-width" + width);
      System.out.println("———-height" + height);
      bitmapOrg.compress(Bitmap.CompressFormat.PNG, 95, bao);
@@ -379,10 +420,13 @@ public class CardDetails extends Activity {
  		     mobile.setText(p.MobilePhoneNum);
  		     email.setText(p.email);
  		     site.setText(p.site);
- 
- 		    Bitmap b = decodeSampledBitmapFromPath(p.picture,100,100);
- 		    imageView.setImageBitmap(b);
- 		    img = p.picture;
+ //		     decode p.picture from BASE_64 to bitmap 
+             
+ 		    //Bitmap b = decodeSampledBitmapFromPath(p.picture,100,100);
+ 		    
+ 		      Bitmap b = setImg(p.picture);
+ 		     imageView.setImageBitmap(b);
+ 	//	    img = p.picture;
  	//	     WebView.setImageBitmap(setImg(p.picture));
  		    
  		   
@@ -469,7 +513,7 @@ public class CardDetails extends Activity {
 			
           
         
-          
+            if(D) Log.i(TAG, "in posdate send to server");
 			HttpClient httpclient = new DefaultHttpClient();
 	//		HttpPost httppost = new HttpPost("http://192.168.50.5/cgi-bin/register.cgi");
 			HttpPost httppost = new HttpPost("http://dfoa.ssh22.net/cgi-bin/register.cgi");
@@ -506,74 +550,7 @@ public class CardDetails extends Activity {
 		}
 
 	}
- private class ImageUploader extends AsyncTask<Void, Void, String> {
 
-		@Override
-		protected String doInBackground(Void... params) {
-			// TODO Auto-generated method stub
-			String result = "";
-
-			// Client-side HTTP transport library
-			HttpClient httpClient = new DefaultHttpClient();
-
-			// using POST method
-			HttpPost httpPostRequest = new HttpPost("http://dfoa.ssh22.net/photo");
-			try {
-
-				// creating a file body consisting of the file that we want to
-				// send to the server
-				File bin = new File(p.picture);
-
-				/**
-				 * An HTTP entity is the majority of an HTTP request or
-				 * response, consisting of some of the headers and the body, if
-				 * present. It seems to be the entire request or response
-				 * without the request or status line (although only certain
-				 * header fields are considered part of the entity).
-				 * 
-				 * */
-//				MultipartEntityBuilder multiPartEntityBuilder = MultipartEntityBuilder.create();
-//				multiPartEntityBuilder.addPart("images[1]", bin);
-//				httpPostRequest.setEntity(multiPartEntityBuilder.build());
-
-				// Execute POST request to the given URL
-				HttpResponse httpResponse = null;
-				httpResponse = httpClient.execute(httpPostRequest);
-
-				// receive response as inputStream
-				InputStream inputStream = null;
-				inputStream = httpResponse.getEntity().getContent();
-
-				if (inputStream != null)
-					result = convertInputStreamToString(inputStream);
-				else
-					result = "Did not work!";
-				return result;
-			} catch (Exception e) {
-
-				return null;
-			}
-
-			// return result;
-		}
-
-		@Override
-		protected void onPreExecute() {
-			// TODO Auto-generated method stub
-			super.onPreExecute();
-//			uploadStatus.setText("Uploading image to server");
-			System.out.println("Uploading image to server");
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			// TODO Auto-generated method stub
-			super.onPostExecute(result);
-		//	uploadStatus.setText(result);
-			System.out.println("result");
-		}
-
-	}
 
 	private static String convertInputStreamToString(InputStream inputStream)
 			throws IOException {

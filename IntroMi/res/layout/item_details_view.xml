@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	  android:background="@drawable/list_bg" >
-	  
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="beforeDescendants"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp" >
+
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@color/Blue_LavenderBlush"
+	    android:descendantFocusability="afterDescendants"
+	    android:orientation="vertical"
+	    android:paddingBottom="15dp"
+	    android:paddingLeft="15dp"
+	    android:paddingRight="15dp"
+	    android:paddingTop="15dp" >
 
     <ImageView
         android:id="@+id/photo"
@@ -20,8 +31,6 @@
         android:id="@+id/name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/photo"
-        android:layout_toRightOf="@+id/photo"
         android:maxLines="1"
         android:text="title"
         android:textColor="@android:color/black"
@@ -61,7 +70,8 @@
         android:textColor="@android:color/black"
         android:textSize="13dip" />
 
-</RelativeLayout>
+	</LinearLayout>
+</FrameLayout>
 
 
 

@@ -49,6 +49,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -111,7 +112,7 @@ public class DeviceListActivity extends Activity {
  //      requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
  //       getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.main);
-    
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build(); StrictMode.setThreadPolicy(policy);
        getOverflowMenu();
        
        
@@ -161,6 +162,8 @@ public class DeviceListActivity extends Activity {
         // Register for broadcasts when discovery has finished
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         this.registerReceiver(mReceiver, filter);
+        
+        
 
         // Get the local Bluetooth adapter
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -567,7 +570,7 @@ public class DeviceListActivity extends Activity {
 			if (card!=null) {
 			  String arr[] = card.split("&");
 			
-			 
+			  String mac = arr[0].toString().replace("mac=" , "");
 			  String name = arr[1].toString().replace("name=" , " ");
 			  String phone = arr[2].toString().replace("phone=" , " ");
 			  String email = arr[3].toString().replace("email=" , " ");
@@ -579,7 +582,7 @@ public class DeviceListActivity extends Activity {
 			  
 ///////////////////////////////////////////////////
 		        
-			  GetSearchResults(name,phone,email,site,pic);
+			  GetSearchResults(mac,name,phone,email,site,pic);
 
 
 
@@ -661,10 +664,13 @@ public class DeviceListActivity extends Activity {
         }
     }
     
-    private void GetSearchResults(String name,String phone,String email,String site,String pic){
+    private void GetSearchResults(String mac,String name,String phone,String email,String site,String pic ){
       
     	//update global variables
     	DisplayName = name;
+    	String img = pic;
+    	String macHw = mac.toString();
+    	String url  = "http://dfoa.ssh22.net/photo/photo/" + macHw + ".png";
     	emailID = email;
     	MobileNumber = phone;
     	ItemDetails item_details = new ItemDetails();
@@ -672,7 +678,7 @@ public class DeviceListActivity extends Activity {
     	item_details.setItemDescription(phone);
     	item_details.setPrice(email);
     	item_details.setSite(site);
-    	item_details.setImg(pic);
+    	item_details.setImg(img);
     	results.add(item_details);
         
     	lv1.setAdapter(lAdapter);

@@ -3,6 +3,8 @@ package com.example.android.BluetoothChat;
 
 import java.util.ArrayList;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -63,19 +65,20 @@ public class ItemListBaseAdapter extends BaseAdapter {
 		holder.txt_itemName.setText(itemDetailsrrayList.get(position).getName());
 		holder.txt_itemDescription.setText(itemDetailsrrayList.get(position).getItemDescription());
 		holder.txt_itemPrice.setText(itemDetailsrrayList.get(position).getPrice());
-	holder.txt_site.setText(itemDetailsrrayList.get(position).getSite());
-	holder.itemImage.setImageBitmap(itemDetailsrrayList.get(position).getImg());
-//		imageLoader.DisplayImage("http://192.168.1.28:8082/ANDROID/images/BEVE.jpeg", holder.itemImage);
+	    holder.txt_site.setText(itemDetailsrrayList.get(position).getSite());
+        holder.itemImage.setImageBitmap(itemDetailsrrayList.get(position).getImg());
+	
 
 		return convertView;
 	}
 
 	static class ViewHolder {
+	
 		TextView txt_itemName;
 		TextView txt_itemDescription;
 		TextView txt_itemPrice;
 		TextView txt_site;
 	    ImageView itemImage;
-//		Bitmap bm;
+		Bitmap bm;
 	}
 }
