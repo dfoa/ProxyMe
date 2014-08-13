@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:descendantFocusability="beforeDescendants"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp" >
-
-	<LinearLayout
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:background="@color/Blue_LavenderBlush"
-	    android:descendantFocusability="afterDescendants"
-	    android:orientation="vertical"
-	    android:paddingBottom="15dp"
-	    android:paddingLeft="15dp"
-	    android:paddingRight="15dp"
-	    android:paddingTop="15dp" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
     <ImageView
         android:id="@+id/photo"
@@ -28,20 +16,11 @@
         android:padding="3dp" />
 
     <TextView
-        android:id="@+id/name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:text="title"
-        android:textColor="@android:color/black"
-        android:textStyle="bold" />
-
-    <TextView
         android:id="@+id/itemDescription"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/name"
         android:layout_below="@+id/name"
-        android:layout_toRightOf="@+id/photo"
         android:ellipsize="end"
         android:maxLines="3"
         android:text="desc"
@@ -49,12 +28,23 @@
         android:textSize="13dip" />
 
     <TextView
+        android:id="@+id/name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/photo"
+        android:layout_toRightOf="@+id/photo"
+        android:maxLines="1"
+        android:text="title"
+        android:textColor="@android:color/black"
+        android:textStyle="bold" />
+
+    <TextView
         android:id="@+id/price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/itemDescription"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/itemDescription"
+        android:layout_toRightOf="@+id/photo"
         android:text="date"
         android:textColor="@android:color/black"
         android:textSize="13dip" />
@@ -63,25 +53,11 @@
         android:id="@+id/tv1Site"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/price"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/price"
-        android:layout_toRightOf="@+id/photo"
         android:text="date"
         android:textColor="@android:color/black"
         android:textSize="13dip" />
 
-	</LinearLayout>
-</FrameLayout>
-
-
-
-
-
-
-
-
-
-
-
-
-
+</RelativeLayout>

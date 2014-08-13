@@ -12,8 +12,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
-
+import com.google.code.linkedinapi.client.LinkedInApiClient;
+import com.google.code.linkedinapi.client.LinkedInApiClientFactory;
+import com.google.code.linkedinapi.client.enumeration.ProfileField;
+import com.google.code.linkedinapi.client.oauth.LinkedInAccessToken;
+import com.google.code.linkedinapi.client.oauth.LinkedInOAuthService;
+import com.google.code.linkedinapi.client.oauth.LinkedInOAuthServiceFactory;
+import com.google.code.linkedinapi.client.oauth.LinkedInRequestToken;
+import com.google.code.linkedinapi.schema.Person;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -52,6 +60,7 @@ import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -75,10 +84,16 @@ public class CardDetails extends Activity {
     private String phone_value;
     private String  email_value;
     private String site_value; 
-    private String  image_value;
     private ImageView imageView;
     private  Profile p;
     private  boolean editProfile = false;
+//Linkedin
+    
+    private LinkedInOAuthService oAuthService;
+    private LinkedInApiClientFactory factory;
+    private LinkedInRequestToken liToken;
+    private LinkedInApiClient client;
+
 
     
    
@@ -99,7 +114,7 @@ public class CardDetails extends Activity {
         imageView = (ImageView) findViewById(R.id.imgViewPhoto);
         Button btPickImage = (Button) findViewById(R.id.btImagepPick);
         Button saveRecords = (Button) findViewById(R.id.saveButton);
-        
+        ImageButton imageButton = (ImageButton)findViewById(R.id.imageView1);
 
         
         
@@ -124,7 +139,48 @@ public class CardDetails extends Activity {
    	     loadCard();
    	     
    	     
-        }  	        
+        }  
+        
+        imageButton.setOnClickListener(new OnClickListener()
+        {
+          public void onClick(View v)
+          {
+        	  System.out.println("Image button linkedin  was pressed");
+     
+              /* This code get the values from edittexts  */
+              name_value  = name.getText().toString();
+              System.out.println("this is the name" + name_value);
+              phone_value = mobile.getText().toString();
+              email_value = email.getText().toString();
+              site_value  = site.getText().toString();
+             
+           
+           if (!isNetworkAvailable())
+           {
+           	   Toast.makeText(getApplicationContext(), "No network connection", Toast.LENGTH_SHORT).show();
+          	finish();
+           }
+           else {
+        	   
+        
+         
+  //      	   pb.setVisibility(View.VISIBLE);
+        	   
+        //	   GoToLD(); 
+        	
+        	   oAuthService = LinkedInOAuthServiceFactory.getInstance().createLinkedInOAuthService(Constants.CONSUMER_KEY,Constants.CONSUMER_SECRET);
+        	   factory = LinkedInApiClientFactory.newInstance(Constants.CONSUMER_KEY, Constants.CONSUMER_SECRET);
+        	           liToken = oAuthService.getOAuthRequestToken(Constants.OAUTH_CALLBACK_URL);
+        	           Intent i = new Intent(Intent.ACTION_VIEW,Uri.parse(liToken.getAuthorizationUrl()));
+        	           startActivity(i);
+   
+              // finish();
+           }
+        	
+   
+          }
+        });
+        
    	 
 
         saveRecords.setOnClickListener(new OnClickListener()
@@ -144,7 +200,7 @@ public class CardDetails extends Activity {
            
            System.out.println("Thisis the data " + name_value +phone_value + email_value +site_value);
  //          BluetoothAdapter bluetoothDefaultAdapter = BluetoothAdapter.getDefaultAdapter();
-  //         if ((bluetoothDefaultAdapter != null) && (bluetoothDefaultAdapter.isEnabled())){
+  //         if ((bluetoothDefaultAdapter != null) &&+ (bluetoothDefaultAdapter.isEnabled())){
           String mac = BluetoothAdapter.getDefaultAdapter().getAddress();
            System.out.println("This is the mac address:" + mac);
  //          }
@@ -171,9 +227,14 @@ public class CardDetails extends Activity {
         	   pb.setVisibility(View.VISIBLE);
         	   
         	
-        	   new MyAsyncTask().execute(mac,name_value,phone_value,email_value,site_value,img);
+ //       	   new MyAsyncTask().execute(mac,name_value,phone_value,email_value,site_value,img);
+               if (createCard(mac,name_value,phone_value,email_value,site_value,img))
+            	   Toast.makeText(getApplicationContext(), "Card details saved sucessfully", Toast.LENGTH_LONG).show();
+               else
+            	   Toast.makeText(getApplicationContext(), "Problem saving card", Toast.LENGTH_LONG).show();  
         	   //upload  profile to server
-        	   new UploadProfileAsyncTask().execute(p.macHw,p.name,p.MobilePhoneNum,p.email,p.site,p.picture);
+               Profile profile = loadCard();
+        	   new UploadProfileAsyncTask().execute(profile.macHw,profile.name,profile.MobilePhoneNum,profile.email,profile.site,profile.picture);
                finish();
            }
         	
@@ -216,7 +277,7 @@ public class CardDetails extends Activity {
     }    
     
     
-    
+ /*   
     private class MyAsyncTask extends AsyncTask<String, Integer, Double>{
     	 
 		@Override
@@ -249,6 +310,7 @@ public class CardDetails extends Activity {
 
  
 	}
+	*/
     
    public void pickImage(View v)
    {
@@ -380,13 +442,13 @@ public String getPhotoStringFromBitmap(Bitmap bm){
 		Bitmap bitmapOrg = bm;
      ByteArrayOutputStream bao = new ByteArrayOutputStream();
      //Resize the image
-     double width = bitmapOrg.getWidth();
-     double height = bitmapOrg.getHeight();
-     double ratio = 400/width;
-//     int newheight = (int)(ratio*height);
-//     bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 400, newheight, true);
-     System.out.println("———-width" + width);
-     System.out.println("———-height" + height);
+  //   double width = bitmapOrg.getWidth();
+  //   double height = bitmapOrg.getHeight();
+  //   double ratio = 400/width;
+  //   int newheight = (int)(ratio*height);
+  //   bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 400, newheight, true);
+  //   System.out.println("———-width" + width);
+  //   System.out.println("———-height" + height);
      bitmapOrg.compress(Bitmap.CompressFormat.PNG, 95, bao);
      byte[] ba = bao.toByteArray();
      ba1 = Base64.encodeToString(ba, 0);
@@ -399,7 +461,7 @@ public String getPhotoStringFromBitmap(Bitmap bm){
  
  }
  
- private  void  loadCard()
+ private  Profile  loadCard()
  {
  	final String filename = "card.bin";
  	  p = new Profile(); 
@@ -416,23 +478,25 @@ public String getPhotoStringFromBitmap(Bitmap bm){
  		    }
  		    System.out.println("test");
  		  
- 		     name.setText(p.name, BufferType.EDITABLE);;
+ 		     name.setText(p.name);
  		     mobile.setText(p.MobilePhoneNum);
  		     email.setText(p.email);
  		     site.setText(p.site);
  //		     decode p.picture from BASE_64 to bitmap 
              
  		    //Bitmap b = decodeSampledBitmapFromPath(p.picture,100,100);
- 		    
+ 		    if ( p.picture != null) {
+   		
  		      Bitmap b = setImg(p.picture);
  		     imageView.setImageBitmap(b);
  	//	    img = p.picture;
  	//	     WebView.setImageBitmap(setImg(p.picture));
+ 		    }
+ 		   
  		    
- 		   
- 		   
  		    System.out.println(p.email + p.name + p.MobilePhoneNum);
- 		  }
+            return(p);		  
+   }
 	  
  public Bitmap setImg(String img) {
 		//decode from base_64 to real PNG format
@@ -551,23 +615,50 @@ public String getPhotoStringFromBitmap(Bitmap bm){
 
 	}
 
+private void GoToLD() { 
+ oAuthService = LinkedInOAuthServiceFactory.getInstance().createLinkedInOAuthService(Constants.CONSUMER_KEY,Constants.CONSUMER_SECRET);
+ factory = LinkedInApiClientFactory.newInstance(Constants.CONSUMER_KEY, Constants.CONSUMER_SECRET);
+         liToken = oAuthService.getOAuthRequestToken(Constants.OAUTH_CALLBACK_URL);
+         Intent i = new Intent(Intent.ACTION_VIEW,Uri.parse(liToken.getAuthorizationUrl()));
+         startActivity(i);
+}
+ 
+ public class Constants {
 
-	private static String convertInputStreamToString(InputStream inputStream)
-			throws IOException {
-		BufferedReader bufferedReader = new BufferedReader(
-				new InputStreamReader(inputStream));
-		String line = "";
-		String result = "";
-		while ((line = bufferedReader.readLine()) != null)
-			result += line;
+     public static final String CONSUMER_KEY = "776b50zwhoried"; // your KEY
+     public static final String CONSUMER_SECRET = "Cq8tW1l0B16KwaV2"; // your SECRET
+     public static final String OAUTH_CALLBACK_SCHEME = "x-oauthflow-linkedin";
+         public static final String OAUTH_CALLBACK_HOST = "litestcalback";
+         public static final String OAUTH_CALLBACK_URL =
+                 OAUTH_CALLBACK_SCHEME + "://" + OAUTH_CALLBACK_HOST;
+     }	  
+ 
+ @Override
+ protected void onNewIntent(Intent intent) {
+         super.onNewIntent(intent);
 
-		inputStream.close();
-		return result;
+         String verifier = intent.getData().getQueryParameter("oauth_verifier");
 
-	}
+         LinkedInAccessToken accessToken = oAuthService.getOAuthAccessToken(liToken, verifier);
+                 client = factory.createLinkedInApiClient(accessToken);
+         // Now you can access login person profile details...
 
-	  
+         Person profile = client.getProfileForCurrentUser(EnumSet.of(ProfileField.ID, ProfileField.FIRST_NAME,   ProfileField.LAST_NAME, ProfileField.HEADLINE,
+                         ProfileField.SUMMARY,ProfileField.PICTURE_URL,ProfileField.PHONE_NUMBERS));
+ System.out.println("going tp print ptofile");
+         System.out.println("First Name -" +  profile.getFirstName());
+         System.out.println("Last Name  - "+ profile.getLastName());
+         System.out.println("Head Line  -" + profile.getHeadline());
+         System.out.println("Industry -" + profile.getIndustry());
+         System.out.println("Telephone -" + profile.getPhoneNumbers());
+         System.out.println("summery  -" + profile.getSummary());
+         System.out.println("summery  -" + profile.getPictureUrl());
+
+       }
+
+ 
   }
  
+
  
 

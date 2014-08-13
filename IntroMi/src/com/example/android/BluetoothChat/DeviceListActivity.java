@@ -1,27 +1,10 @@
-/*
- * Copyright (C) 2009 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package com.example.android.BluetoothChat;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -33,8 +16,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -44,11 +25,15 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.StrictMode;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -70,12 +55,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-/**
- * This Activity appears as a dialog. It lists any paired devices and
- * devices detected in the area after discovery. When a device is chosen
- * by the user, the MAC address of the device is sent back to the parent
- * Activity in the result Intent.
- */
+
 public class DeviceListActivity extends Activity {
     // Debugging
     private static final String TAG = "DeviceListActivity";
@@ -96,12 +76,14 @@ public class DeviceListActivity extends Activity {
     private ListView lv1;
 	private String DisplayName ;
 	private String MobileNumber;
-	private String HomeNumber = "1111";
-	private String WorkNumber = "2222";
+	private String HomeNumber = "";
+	private String WorkNumber = "";
 	private String emailID ;
-	private String company = "bad";
-	private String jobTitle = "abcd";
+	private String company = "";
+	private String jobTitle = "";
+
     
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,23 +91,14 @@ public class DeviceListActivity extends Activity {
         
         setUpActionBar();
         // Setup the window
- //      requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+//       requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
  //       getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-        setContentView(R.layout.main);
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build(); StrictMode.setThreadPolicy(policy);
-       getOverflowMenu();
+       setContentView(R.layout.main);
+ //       StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build(); StrictMode.setThreadPolicy(policy);
+      getOverflowMenu();
        
        
-       
-       // Get local Bluetooth adapter
-       mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-       // If the adapter is null, then Bluetooth is not supported
-       if (mBluetoothAdapter == null) {
-           Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
-           finish();
-           return;
-       }
+ 
         // Set result CANCELED in case the user backs out
         setResult(Activity.RESULT_CANCELED);
 
@@ -143,7 +116,7 @@ public class DeviceListActivity extends Activity {
         results = new ArrayList<ItemDetails>();
      	lv1 = (ListView) findViewById(R.id.listV_main); 
         
-        registerForContextMenu(lv1);
+ //       registerForContextMenu(lv1);
      	lAdapter = new ItemListBaseAdapter(this,results);
 	   
         mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
@@ -162,6 +135,7 @@ public class DeviceListActivity extends Activity {
         // Register for broadcasts when discovery has finished
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         this.registerReceiver(mReceiver, filter);
+       ;
         
         
 
@@ -169,7 +143,7 @@ public class DeviceListActivity extends Activity {
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Get a set of currently paired devices
-        Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
+ //       Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
         
 
 
@@ -178,20 +152,20 @@ public class DeviceListActivity extends Activity {
         
         
         // If there are paired devices, add each one to the ArrayAdapter
-        if (pairedDevices.size() > 0) {
+//        if (pairedDevices.size() > 0) {
 //            findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
-            for (BluetoothDevice device : pairedDevices) {
+//            for (BluetoothDevice device : pairedDevices) {
 //                mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-              System.out.println("These are paired devices\n" + device.getName() + "\n" + device.getAddress());
+//              System.out.println("These are paired devices\n" + device.getName() + "\n" + device.getAddress());
         }
-        } else {
+//        } else {
       //      String noDevices = getResources().getText(R.string.none_paired).toString();
        //     mPairedDevicesArrayAdapter.add(noDevices);
-             System.out.println("No paired devices");
+//             System.out.println("No paired devices");
   
-        }
+ //       }
     
-    }
+//    }
 
     @Override
     public void onStart() {
@@ -200,21 +174,22 @@ public class DeviceListActivity extends Activity {
 
         // If BT is not on, request that it be enabled.
  //        setupChat() will then be called during onActivityResult
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+//        if (!mBluetoothAdapter.isEnabled()) {
+//            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         // Otherwise, setup the chat session
         }
-    }
+ //   }
     
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
         // Make sure we're not doing discovery anymore
-        if (mBtAdapter != null) {
-            mBtAdapter.cancelDiscovery();
-        }
+//        if (mBtAdapter != null) {
+//            mBtAdapter.cancelDiscovery();
+//            Thread.interrupted();
+//        }
 
         // Unregister broadcast listeners
         this.unregisterReceiver(mReceiver);
@@ -223,24 +198,7 @@ public class DeviceListActivity extends Activity {
     /**
      * Start device discover with the BluetoothAdapter
      */
-    private void doDiscovery() {
-        if (D) Log.d(TAG, "doDiscovery()");
-
-        // Indicate scanning in the title
-        setProgressBarIndeterminateVisibility(true);
-        setTitle(R.string.scanning);
-
-        // Turn on sub-title for new devices
- //       findViewById(R.id.title_new_devices).setVisibility(View.VISIBLE);
-
-        // If we're already discovering, stop it
-        if (mBtAdapter.isDiscovering()) {
-            mBtAdapter.cancelDiscovery();
-        }
-
-        // Request discover from BluetoothAdapter
-        mBtAdapter.startDiscovery();
-    }
+   
 /*
     // The on-click listener for all devices in the ListViews
     private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
@@ -282,7 +240,7 @@ public class DeviceListActivity extends Activity {
                 	 if (holdMacs.contains(device.getAddress()))
           					 {
           				 
-          				System.out.println("The device is already in the list");		 
+          				System.out.println("The device" + device.getAddress() +"is already in the list");		 
           			 found = true;
             			      
          				 }
@@ -295,7 +253,7 @@ public class DeviceListActivity extends Activity {
             		
             		if (mNewDevicesArrayAdapter.getItem(pos).contains(device.getAddress()))
                 				 {
-              			 System.out.println("The device is already in the list");
+              			 System.out.println("The device" + device.getAddress() +"is already in the list");
               			 found = true;
                 			      
              				 }
@@ -323,6 +281,10 @@ public class DeviceListActivity extends Activity {
             // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 setProgressBarIndeterminateVisibility(false);
+                showToast("finish discovery...");
+                System.out.println("finish discovery");
+                
+             
            setTitle("Below cards were found");
                 if (mNewDevicesArrayAdapter.getCount() == 0) {
                     String noDevices = getResources().getText(R.string.none_found).toString();
@@ -363,26 +325,39 @@ public class DeviceListActivity extends Activity {
                    }
             	else {
                 showToast("Searching cards");
-                doDiscovery();
-            	
+ //               new Thread(new Runnable() { 
+ //                   public void run(){
+
+                    	 
+
+
+ //                   }
+ //           }).start();
+
+           
                
-            	}
+                startService(new Intent(this, DiscoveryService.class));
+            	         	
            
             	 return true;
-                
+              
+            	}
             case R.id.discoverable:
             	 showToast("Discoverable");
                 // Ensure this device is discoverable by others
-                ensureDiscoverable();
-                return true;
+ //               ensureDiscoverable();
+               return true;
                 
-            case R.id.my_card:
+            case R.id.settings:
            	
              //open card details
-               cardActions();
+            	//call Settings intent
+            	   Intent  settings = new Intent(this, Settings.class); 
+                   startActivity(settings);
+                
                return true;
                
-            case R.id.edit:
+            case R.id.my_card:
                	
                 //open card details
                   editCard();
@@ -417,7 +392,7 @@ public class DeviceListActivity extends Activity {
      }
  
     // so that we know something was triggered
-    public void showToast(String msg){
+    public  void showToast(String msg){
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
     //////
@@ -502,7 +477,7 @@ public class DeviceListActivity extends Activity {
 			 if(entity != null)
 			 {
 			  String responseBody = EntityUtils.toString(entity);
-			  System.out.println("This is cards details " + responseBody);
+//			  System.out.println("This is cards details " + responseBody);
 		       show_card_results(responseBody);	             
 			        }
 			        break;
@@ -548,7 +523,7 @@ public class DeviceListActivity extends Activity {
     {
     	card = result;
 
-     	 System.out.println("This is the card I am going to  bring information for" + card);
+     //	 System.out.println("This is the card I am going to  bring information for" + card);
      	mNewDevicesArrayAdapter.add(result);
     }
     
@@ -566,7 +541,7 @@ public class DeviceListActivity extends Activity {
 //			pb.setVisibility(View.GONE);
 	//		Toast.makeText(getApplicationContext(), "command sent", Toast.LENGTH_LONG).show();
 			
-			 System.out.println("This is the card I am going to  bring information for" + card);
+		 System.out.println("This is the card I am going to  bring information for" + card);
 			if (card!=null) {
 			  String arr[] = card.split("&");
 			
@@ -661,6 +636,7 @@ public class DeviceListActivity extends Activity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             ActionBar actionBar = getActionBar();
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.BLUE));
         }
     }
     
@@ -844,7 +820,11 @@ public class DeviceListActivity extends Activity {
 	 
 	  contact.create(getApplicationContext());
   }
-    
+  
+ 
+   
+ 
+	
 }
     
 

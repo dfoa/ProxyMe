@@ -28,8 +28,8 @@
           android:title="@string/my_card"
           android:showAsAction="never"/>
         
-    <item android:id="@+id/edit"
-          android:title="@string/edit_card"
+    <item android:id="@+id/settings"
+          android:title="@string/settings"
           android:showAsAction="never"/>  
     
 </menu>
