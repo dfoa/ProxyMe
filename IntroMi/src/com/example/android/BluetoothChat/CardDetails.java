@@ -47,7 +47,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.ContactsContract.CommonDataKinds.Photo;
 import android.provider.MediaStore;
 import android.provider.SyncStateContract.Constants;
@@ -120,7 +122,15 @@ public class CardDetails extends Activity {
         
         pb = (ProgressBar)findViewById(R.id.deataSentProgressBar);	
         pb.setVisibility(View.GONE);
+     
+
+        if( Build.VERSION.SDK_INT >= 9){
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        }
+
         
+   	  
       
        
   //check if card already exist , just load the details 
@@ -166,15 +176,11 @@ public class CardDetails extends Activity {
          
   //      	   pb.setVisibility(View.VISIBLE);
         	   
-        //	   GoToLD(); 
+        	   GoToLD(); 
         	
-        	   oAuthService = LinkedInOAuthServiceFactory.getInstance().createLinkedInOAuthService(Constants.CONSUMER_KEY,Constants.CONSUMER_SECRET);
-        	   factory = LinkedInApiClientFactory.newInstance(Constants.CONSUMER_KEY, Constants.CONSUMER_SECRET);
-        	           liToken = oAuthService.getOAuthRequestToken(Constants.OAUTH_CALLBACK_URL);
-        	           Intent i = new Intent(Intent.ACTION_VIEW,Uri.parse(liToken.getAuthorizationUrl()));
-        	           startActivity(i);
+      
    
-              // finish();
+            //   finish();
            }
         	
    
@@ -622,11 +628,34 @@ private void GoToLD() {
          Intent i = new Intent(Intent.ACTION_VIEW,Uri.parse(liToken.getAuthorizationUrl()));
          startActivity(i);
 }
- 
+/*
+Application Details
+
+    Company:
+
+    IntroMi1
+    Application Name:
+
+    IntroMi1
+    API Key:
+
+    77sfpn66k6o3ot
+    Secret Key:
+
+    nJTkiyLEiZZoKLLq
+    OAuth User Token:
+
+    5ab04794-eefb-4155-9456-d7515a4b8f4c
+    OAuth User Secret:
+
+    a0f26ec6-9a1e-4be1-bd9d-265b50d51947
+
+
+ */
  public class Constants {
 
-     public static final String CONSUMER_KEY = "776b50zwhoried"; // your KEY
-     public static final String CONSUMER_SECRET = "Cq8tW1l0B16KwaV2"; // your SECRET
+     public static final String CONSUMER_KEY = "77sfpn66k6o3ot"; // your KEY
+     public static final String CONSUMER_SECRET = "nJTkiyLEiZZoKLLq"; // your SECRET
      public static final String OAUTH_CALLBACK_SCHEME = "x-oauthflow-linkedin";
          public static final String OAUTH_CALLBACK_HOST = "litestcalback";
          public static final String OAUTH_CALLBACK_URL =
