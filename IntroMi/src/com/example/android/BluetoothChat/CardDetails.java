@@ -86,6 +86,7 @@ public class CardDetails extends Activity {
     private String phone_value;
     private String  email_value;
     private String site_value; 
+    private static String  SERVER_PHOTO_PATH = "http://dfoa.ssh22.net/photo/";
     private ImageView imageView;
     private  Profile p;
     private  boolean editProfile = false;
@@ -240,7 +241,8 @@ public class CardDetails extends Activity {
             	   Toast.makeText(getApplicationContext(), "Problem saving card", Toast.LENGTH_LONG).show();  
         	   //upload  profile to server
                Profile profile = loadCard();
-        	   new UploadProfileAsyncTask().execute(profile.macHw,profile.name,profile.MobilePhoneNum,profile.email,profile.site,profile.picture);
+               profile.setPhotoLink(SERVER_PHOTO_PATH + profile.getMacHw() + ".png");
+        	   new UploadProfileAsyncTask().execute(profile.getMacHw(),profile.getName(),profile.getMobilePhoneNum(),profile.getEmail(),profile.getSite(),profile.getPicture(),profile.getPhotoLink());
                finish();
            }
         	
@@ -361,21 +363,21 @@ public class CardDetails extends Activity {
 	 
 //Create object and fill with data
 	 Profile p = new Profile();  
-     p.macHw = mac;
-     p.name =  name;
-     p.MobilePhoneNum = mobilePhone;
-     p.email = emailAddress;
-     p.site = siteAddress;
+     p.setMacHw(mac);
+     p.setName(name);
+     p.setMobilePhoneNum(mobilePhone);
+     p.setEmail(emailAddress);
+     p.setSite(siteAddress);
  //    p.picture=location;
      if (editProfile){
     	 Bitmap bm=((BitmapDrawable)imageView.getDrawable()).getBitmap() ; //change to image if profile in edit mode  
-    	 p.picture =  getPhotoStringFromBitmap(bm);
+    	 p.setPicture(getPhotoStringFromBitmap(bm));
      }
 	 
   
      
      else {
-    	 p.picture = getPhoto(location);
+    	 p.setPicture(getPhoto(location));
      }
      if (saveCard(p)){
   //now save  profile to web
@@ -484,23 +486,23 @@ public String getPhotoStringFromBitmap(Bitmap bm){
  		    }
  		    System.out.println("test");
  		  
- 		     name.setText(p.name);
- 		     mobile.setText(p.MobilePhoneNum);
- 		     email.setText(p.email);
- 		     site.setText(p.site);
+ 		     name.setText(p.getName());
+ 		     mobile.setText(p.getMobilePhoneNum());
+ 		     email.setText(p.getEmail());
+ 		     site.setText(p.getSite());
  //		     decode p.picture from BASE_64 to bitmap 
              
  		    //Bitmap b = decodeSampledBitmapFromPath(p.picture,100,100);
- 		    if ( p.picture != null) {
+ 		    if ( p.getPicture() != null) {
    		
- 		      Bitmap b = setImg(p.picture);
+ 		      Bitmap b = setImg(p.getPicture());
  		     imageView.setImageBitmap(b);
  	//	    img = p.picture;
  	//	     WebView.setImageBitmap(setImg(p.picture));
  		    }
  		   
  		    
- 		    System.out.println(p.email + p.name + p.MobilePhoneNum);
+ 		    System.out.println(p.getEmail() + p.getName() + p.getMobilePhoneNum());
             return(p);		  
    }
 	  
@@ -558,7 +560,7 @@ public String getPhotoStringFromBitmap(Bitmap bm){
 		protected Double doInBackground(String... params) {
 			// TODO Auto-generated method stub
 
-			postData(params[0],params[1],params[2],params[3],params[4],params[5]);
+			postData(params[0],params[1],params[2],params[3],params[4],params[5],params[6]);
 	
 			
 			
@@ -578,7 +580,7 @@ public String getPhotoStringFromBitmap(Bitmap bm){
 		//	pb.setProgress(progress[0]);
 		}
 
-		public void postData(String mac ,String name_value,String phone_value,String email_value,String site_value,String  pickPath) {
+		public void postData(String mac ,String name_value,String phone_value,String email_value,String site_value,String  pickPath,String link_photo_value) {
 			// Create a new HttpClient and Post Header
 			
           
@@ -594,6 +596,7 @@ public String getPhotoStringFromBitmap(Bitmap bm){
 	        nameValuePairs.add(new BasicNameValuePair("phone",phone_value ));
 	        nameValuePairs.add(new BasicNameValuePair("email",email_value ));
 	        nameValuePairs.add(new BasicNameValuePair("site",site_value ));
+	        nameValuePairs.add(new BasicNameValuePair("link",link_photo_value ));
 	        nameValuePairs.add(new BasicNameValuePair("pic",pickPath));
 			
 			

@@ -1,84 +1,127 @@
 package com.example.android.BluetoothChat;
 
+import java.util.List;
 
-import java.util.ArrayList;
-
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.ImageLoadingListener;
 
 
+
+import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class ItemListBaseAdapter extends BaseAdapter {
-	private static ArrayList<ItemDetails> itemDetailsrrayList;
-	
-	private Integer[] imgid = {
-		    
-			R.drawable.app_icon,
-			R.drawable.p2,
-			R.drawable.bb5,
-			R.drawable.bb6,
-			R.drawable.d1
-			};
-	
-	private LayoutInflater l_Inflater;
+public class ItemListBaseAdapter extends ArrayAdapter<Profile> {
 
-	public ItemListBaseAdapter(Context context, ArrayList<ItemDetails> results) {
-		itemDetailsrrayList = results;
-		l_Inflater = LayoutInflater.from(context);
+	private Activity activity;
+	private List<Profile> items;
+	private Profile objBean;
+	private int row;
+	private DisplayImageOptions options;
+	ImageLoader imageLoader;
+
+	public ItemListBaseAdapter(Activity act, int resource, List<Profile> arrayList) {
+		super(act, resource, arrayList);
+		this.activity = act;
+		this.row = resource;
+		this.items = arrayList;
+
+		options = new DisplayImageOptions.Builder()
+				.showStubImage(R.drawable.profile)
+				.showImageForEmptyUrl(R.drawable.profile).cacheInMemory()
+				.cacheOnDisc().build();
+		imageLoader = ImageLoader.getInstance();
+
 	}
 
-	public int getCount() {
-		return itemDetailsrrayList.size();
-	}
-
-	public Object getItem(int position) {
-		return itemDetailsrrayList.get(position);
-	}
-
-	public long getItemId(int position) {
-		return position;
-	}
-
-	public View getView(int position, View convertView, ViewGroup parent) {
+	@Override
+	public View getView(final int position, View convertView, ViewGroup parent) {
+		View view = convertView;
 		ViewHolder holder;
-		if (convertView == null) {
-			convertView = l_Inflater.inflate(R.layout.item_details_view, null);
+		if (view == null) {
+			LayoutInflater inflater = (LayoutInflater) activity
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			view = inflater.inflate(row, null);
+
 			holder = new ViewHolder();
-			holder.txt_itemName = (TextView) convertView.findViewById(R.id.name);
-			holder.txt_itemDescription = (TextView) convertView.findViewById(R.id.itemDescription);
-			holder.txt_itemPrice = (TextView) convertView.findViewById(R.id.price);
-		holder.txt_site = (TextView) convertView.findViewById(R.id.tv1Site);
-			holder.itemImage = (ImageView) convertView.findViewById(R.id.photo);
-
-			convertView.setTag(holder);
+			view.setTag(holder);
 		} else {
-			holder = (ViewHolder) convertView.getTag();
+			holder = (ViewHolder) view.getTag();
 		}
-		
-		holder.txt_itemName.setText(itemDetailsrrayList.get(position).getName());
-		holder.txt_itemDescription.setText(itemDetailsrrayList.get(position).getItemDescription());
-		holder.txt_itemPrice.setText(itemDetailsrrayList.get(position).getPrice());
-	    holder.txt_site.setText(itemDetailsrrayList.get(position).getSite());
-        holder.itemImage.setImageBitmap(itemDetailsrrayList.get(position).getImg());
-	
 
-		return convertView;
+		if ((items == null) || ((position + 1) > items.size()))
+			return view;
+
+		objBean = items.get(position);
+
+		holder.tvTitle = (TextView) view.findViewById(R.id.tvtitle);
+		holder.tvDesc = (TextView) view.findViewById(R.id.tvdesc);
+		holder.tvDate = (TextView) view.findViewById(R.id.tvdate);
+		holder.imgView = (ImageView) view.findViewById(R.id.image);
+		holder.pbar = (ProgressBar) view.findViewById(R.id.pbar);
+
+		if (holder.tvTitle != null && null != objBean.getName()
+				&& objBean.getName().trim().length() > 0) {
+			holder.tvTitle.setText(Html.fromHtml(objBean.getName()));
+		}
+		if (holder.tvDesc != null && null != objBean.getEmail()
+				&& objBean.getEmail().trim().length() > 0) {
+			holder.tvDesc.setText(Html.fromHtml(objBean.getEmail()));
+		}
+		if (holder.tvDate != null && null != objBean.getMobilePhoneNum()
+				&& objBean.getMobilePhoneNum().trim().length() > 0) {
+			holder.tvDate.setText(Html.fromHtml(objBean.getMobilePhoneNum()));
+		}
+		if (holder.imgView != null) {
+			if (null != objBean.getPhotoLink()
+					&& objBean.getPhotoLink().trim().length() > 0) {
+				final ProgressBar pbar = holder.pbar;
+
+				imageLoader.init(ImageLoaderConfiguration
+						.createDefault(activity));
+				imageLoader.displayImage(objBean.getPhotoLink(), holder.imgView,
+						options, new ImageLoadingListener() {
+							@Override
+							public void onLoadingComplete() {
+								pbar.setVisibility(View.INVISIBLE);
+
+							}
+
+							@Override
+							public void onLoadingFailed() {
+								pbar.setVisibility(View.INVISIBLE);
+							}
+
+							@Override
+							public void onLoadingStarted() {
+								pbar.setVisibility(View.VISIBLE);
+
+							}
+						});
+
+			} else {
+				holder.imgView.setImageResource(R.drawable.profile);
+			}
+		}
+
+		return view;
 	}
 
-	static class ViewHolder {
-	
-		TextView txt_itemName;
-		TextView txt_itemDescription;
-		TextView txt_itemPrice;
-		TextView txt_site;
-	    ImageView itemImage;
-		Bitmap bm;
+	public class ViewHolder {
+
+		public TextView tvTitle, tvDesc, tvDate;
+		private ImageView imgView;
+		private ProgressBar pbar;
+
 	}
+
 }

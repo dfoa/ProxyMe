@@ -70,15 +70,15 @@ public class MyCards extends Activity {
     		    }
     		    System.out.println("test");
     		    
-    		     name.setText(p.name);
-    		     mobile.setText(p.MobilePhoneNum);
-    		     email.setText(p.email); 
-    		     if ( p.picture != null)
-    		     photo.setImageBitmap(setImg(p.picture));
+    		     name.setText(p.getName());
+    		     mobile.setText(p.getMobilePhoneNum());
+    		     email.setText(p.getEmail()); 
+    		     if ( p.getPicture() != null)
+    		     photo.setImageBitmap(setImg(p.getPicture()));
     		    
     		   
     		  
-    		    System.out.println(p.email + p.name + p.MobilePhoneNum + p.picture);
+    		    System.out.println(p.getEmail() + p.getName() + p.getMobilePhoneNum() + p.getPicture());
     		  }
     		
 	public Bitmap setImg(String img) {

@@ -247,12 +247,14 @@ public final class R {
         public static final int bb6=0x7f020005;
         public static final int d1=0x7f020006;
         public static final int ic_action_star=0x7f020007;
-        public static final int list_bg=0x7f020008;
-        public static final int login_with_linkedin=0x7f020009;
-        public static final int login_with_linkedin_=0x7f02000a;
-        public static final int no_image=0x7f02000b;
-        public static final int p1=0x7f02000c;
-        public static final int p2=0x7f02000d;
+        public static final int imgright=0x7f020008;
+        public static final int list_bg=0x7f020009;
+        public static final int login_with_linkedin=0x7f02000a;
+        public static final int login_with_linkedin_=0x7f02000b;
+        public static final int no_image=0x7f02000c;
+        public static final int p1=0x7f02000d;
+        public static final int p2=0x7f02000e;
+        public static final int profile=0x7f02000f;
     }
     public static final class id {
         public static final int LinearLayout2=0x7f0a001a;
@@ -262,8 +264,8 @@ public final class R {
         public static final int TextView03=0x7f0a000e;
         public static final int btImagepPick=0x7f0a0015;
         public static final int deataSentProgressBar=0x7f0a0019;
-        public static final int discoverable=0x7f0a0026;
-        public static final int edit=0x7f0a002a;
+        public static final int discoverable=0x7f0a0027;
+        public static final int edit=0x7f0a002b;
         public static final int emailEditText=0x7f0a0010;
         public static final int image=0x7f0a0021;
         public static final int imageView1=0x7f0a0018;
@@ -272,18 +274,18 @@ public final class R {
         public static final int imgViewPhoto=0x7f0a0016;
         public static final int itemDescription=0x7f0a0009;
         public static final int listV_main=0x7f0a000d;
-        public static final int my_card=0x7f0a0027;
+        public static final int my_card=0x7f0a0028;
         public static final int name=0x7f0a000a;
         public static final int nameEditText=0x7f0a0012;
         public static final int new_devices=0x7f0a0005;
-        public static final int pbar=0x7f0a0024;
+        public static final int pbar=0x7f0a0025;
         public static final int phoneEditText=0x7f0a0013;
         public static final int photo=0x7f0a0008;
         public static final int price=0x7f0a000b;
         public static final int saveButton=0x7f0a0017;
-        public static final int save_contacts=0x7f0a0029;
-        public static final int secure_connect_scan=0x7f0a0025;
-        public static final int settings=0x7f0a0028;
+        public static final int save_contacts=0x7f0a002a;
+        public static final int secure_connect_scan=0x7f0a0026;
+        public static final int settings=0x7f0a0029;
         public static final int siteEditText=0x7f0a0014;
         public static final int tVScanInterval=0x7f0a0001;
         public static final int textViewEmail_Present=0x7f0a001f;
@@ -296,8 +298,9 @@ public final class R {
         public static final int title_right_text=0x7f0a0004;
         public static final int tv1Site=0x7f0a000c;
         public static final int tvEmail=0x7f0a0002;
-        public static final int tvName=0x7f0a0023;
-        public static final int tvPhone=0x7f0a0022;
+        public static final int tvdate=0x7f0a0023;
+        public static final int tvdesc=0x7f0a0024;
+        public static final int tvtitle=0x7f0a0022;
     }
     public static final class layout {
         public static final int base_list_view=0x7f030000;

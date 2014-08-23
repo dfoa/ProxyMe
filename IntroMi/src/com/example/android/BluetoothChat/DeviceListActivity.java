@@ -16,8 +16,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+
+
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -25,6 +28,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.CursorJoiner.Result;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
@@ -56,7 +60,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 
-public class DeviceListActivity extends Activity {
+public class DeviceListActivity extends Activity  implements OnItemClickListener  {
     // Debugging
     private static final String TAG = "DeviceListActivity";
     private static final boolean D = true;
@@ -81,7 +85,11 @@ public class DeviceListActivity extends Activity {
 	private String emailID ;
 	private String company = "";
 	private String jobTitle = "";
+	private static final String CARD_PATH = "http://dfoa.ssh22.net/";
+	private static String  SERVER_PHOTO_PATH = "dfoa.ssh22.net/photo/";
 
+	List<Profile> arrayOfList;
+	Profile pe;
     
 
     @Override
@@ -115,13 +123,16 @@ public class DeviceListActivity extends Activity {
         // one for newly discovered devices
         results = new ArrayList<ItemDetails>();
      	lv1 = (ListView) findViewById(R.id.listV_main); 
-        
+ //       results1 = new List<Profile>();
  //       registerForContextMenu(lv1);
-     	lAdapter = new ItemListBaseAdapter(this,results);
+ //    	lAdapter = new ItemListBaseAdapter(this,results);
 	   
         mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
         mNewDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
-  
+        lAdapter = new ItemListBaseAdapter(this,
+    			R.layout.row, arrayOfList);
+        
+      
       
         // Find and set up the ListView for newly discovered devices
  //       ListView newDevicesListView = (ListView) findViewById(R.id.new_devices);
@@ -267,8 +278,20 @@ public class DeviceListActivity extends Activity {
             	holdMacs = holdMacs+device.getAddress()+ "=";	
             	//	 mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             		System.out.println("found device and going to look for information Asynctask with " + device.getAddress());
-            		new MyAsyncTask().execute(device.getAddress());
-            
+           // 		new MyAsyncTask().execute(device.getAddress());
+            		if (Utils.isNetworkAvailable(DeviceListActivity.this)) {
+            	
+            			
+           		new MyTask().execute(device.getAddress());
+            		} else {
+            			showToast("No Network Connection!!!");
+            		}
+
+            	}
+
+          
+          
+            		
             		
             		
             	
@@ -277,12 +300,17 @@ public class DeviceListActivity extends Activity {
             	
             	   
             	
-                }
+                
             // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 setProgressBarIndeterminateVisibility(false);
                 showToast("finish discovery...");
                 System.out.println("finish discovery");
+//             	new Handler().postDelayed(new Runnable() {
+//                    public void run() {
+//                    	 startService(new Intent());
+//                    }
+//                }, 20);
                 
              
            setTitle("Below cards were found");
@@ -325,18 +353,18 @@ public class DeviceListActivity extends Activity {
                    }
             	else {
                 showToast("Searching cards");
- //               new Thread(new Runnable() { 
- //                   public void run(){
+//             new Thread(new Runnable() { 
+//                  public void run(){
 
-                    	 
+                	  startService(new Intent(this, DiscoveryService.class));	 
 
 
- //                   }
- //           }).start();
+  //                  }
+//           }).start();
 
            
-               
-                startService(new Intent(this, DiscoveryService.class));
+              
+                
             	         	
            
             	 return true;
@@ -820,9 +848,86 @@ public class DeviceListActivity extends Activity {
 	 
 	  contact.create(getApplicationContext());
   }
+@Override
+public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+	// TODO Auto-generated method stub
+	
+}
   
- 
-   
+	
+
+class MyTask extends AsyncTask<String, Void, List<Profile>> {
+
+	ProgressDialog pDialog;
+
+	@Override
+	protected void onPreExecute() {
+		super.onPreExecute();
+
+		pDialog = new ProgressDialog(DeviceListActivity.this);
+		pDialog.setMessage("Loading...");
+		pDialog.show();
+
+	}
+
+	@Override
+	protected  List<Profile> doInBackground(String... params) {
+		
+		final String fullUrl = CARD_PATH +params[0] + ".profile"; 
+		 	arrayOfList = new ProfileParser().getData(fullUrl);
+		
+		return arrayOfList;
+	}
+
+	@Override
+	protected void onPostExecute(List<Profile> result) {
+		super.onPostExecute(result);
+        
+		if (null != pDialog && pDialog.isShowing()) {
+			pDialog.dismiss();
+		}
+        
+	if (null == result|| result.size() == 0) {
+		showToast("No data found from web!!!");
+			DeviceListActivity.this.finish();
+		} else {
+
+			// check data...
+			
+//			  for (int i = 0; i < arrayOfList.size(); i++) { Profile item =
+//			  arrayOfList.get(i); System.out.println(item.getMacHw());
+//			  System.out.println(item.getName());
+//			  System.out.println(item.getEmail());
+//			  System.out.println(item.getMobilePhoneNum());
+//			  System.out.println(item.getPhotoLink()); }
+			
+
+			setAdapterToListview(result);
+		//lv1.setAdapter(lAdapter);
+	   // 	lAdapter.notifyDataSetChanged();
+
+		}
+
+	}
+}
+public void setAdapterToListview(List<Profile>result) {
+	
+
+//	ItemDetails item_details = new ItemDetails();
+//	item_details.setName(p.);
+//	item_details.setItemDescription(phone);
+//	item_details.setPrice(email);
+//	item_details.setSite(site);
+//	item_details.setImg(img);
+//	results.add()
+	
+  //  lAdapter.add(result.);
+	lv1.setAdapter(lAdapter);
+	lAdapter.notifyDataSetChanged();	
+	
+
+	
+}
  
 	
 }
