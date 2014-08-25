@@ -1,28 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/RelativeLayout1"
+    android:id="@id/tvMission"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="right|top"
-    android:layout_marginLeft="@dimen/Maargins_left"
-    android:divider="#00ff00"
-    android:dividerPadding="22dip"
-    android:fadingEdge="horizontal"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/Maargins_left"
-    android:paddingRight="@dimen/Maargins_left"
-    android:showDividers="middle" >
-
-    <TextView
-        android:id="@+id/TextView03"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/TextView02"
-        android:layout_below="@+id/emailEditText"
-        android:layout_marginTop="44dp"
-        android:text="@string/linkedin_site"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+    android:layout_height="wrap_content" >
 
     <TextView
         android:id="@+id/TextView01"
@@ -79,7 +59,7 @@
         android:inputType="phone" />
 
     <TextView
-        android:id="@+id/tVScanInterval"
+        android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/phoneEditText"
@@ -88,16 +68,6 @@
         android:text="@string/full_name"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textSize="14sp" />
-
-    <EditText
-        android:id="@+id/siteEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/TextView03"
-        android:layout_alignLeft="@+id/emailEditText"
-        android:ellipsize="middle"
-        android:ems="10"
-        android:inputType="textWebEmailAddress" />
 
     <Button
         android:id="@+id/btImagepPick"
@@ -108,21 +78,6 @@
         android:layout_centerVertical="true"
         android:onClick="pickImage"
         android:text="@string/choose_photo" />
-
-    <ImageView
-        android:id="@+id/imgViewPhoto"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentStart="false"
-        android:layout_alignRight="@+id/siteEditText"
-        android:layout_below="@+id/siteEditText"
-        android:layout_marginRight="33dp"
-        android:layout_marginTop="47dp"
-        android:layout_weight="1"
-        android:maxHeight="100dp"
-        android:maxWidth="100dp"
-        android:scaleType="fitCenter" />
 
     <Button
         android:id="@+id/saveButton"
@@ -146,13 +101,88 @@
         android:cropToPadding="false"
         android:src="@drawable/login_with_linkedin" />
 
+    <TextView
+        android:id="@+id/tvHeadLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/TextView03"
+        android:layout_marginTop="50dp"
+        android:text="@string/head_line"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/edHeadLine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/siteEditText"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/tvHeadLine"
+        android:ellipsize="middle"
+        android:ems="10"
+        android:inputType="textWebEmailAddress" />
+
+    <TextView
+        android:id="@+id/tvMission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btImagepPick"
+        android:layout_below="@+id/edHeadLine"
+        android:layout_marginTop="21dp"
+        android:text="@string/mission" />
+
+    <EditText
+        android:id="@+id/etMission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tvMission"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+
+    <ImageView
+        android:id="@+id/imgViewPhoto"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignTop="@+id/btImagepPick"
+        android:layout_marginTop="26dp"
+        android:layout_weight="1"
+        android:maxHeight="100dp"
+        android:maxWidth="100dp"
+        android:scaleType="centerCrop" />
+
     <ProgressBar
         android:id="@+id/deataSentProgressBar"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/edHeadLine"
+        android:layout_toLeftOf="@+id/etMission" />
+
+    <EditText
+        android:id="@+id/siteEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/imageView1"
-        android:layout_marginBottom="8dp"
-        android:layout_toLeftOf="@+id/siteEditText" />
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="37dp"
+        android:ellipsize="middle"
+        android:ems="10"
+        android:inputType="textWebEmailAddress" />
+
+    <TextView
+        android:id="@+id/TextView03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/btImagepPick"
+        android:layout_marginTop="58dp"
+        android:text="@string/linkedin_site"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

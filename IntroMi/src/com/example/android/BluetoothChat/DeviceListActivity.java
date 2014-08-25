@@ -2,9 +2,17 @@
 
 package com.example.android.BluetoothChat;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -18,9 +26,9 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 
+
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -28,7 +36,7 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.CursorJoiner.Result;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
@@ -39,7 +47,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StrictMode;
+import android.preference.PreferenceActivity.Header;
 import android.provider.ContactsContract;
+import android.util.Base64;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -60,14 +70,13 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 
-public class DeviceListActivity extends Activity  implements OnItemClickListener  {
+public class DeviceListActivity extends Activity  {
     // Debugging
     private static final String TAG = "DeviceListActivity";
     private static final boolean D = true;
     public boolean found = false;
     // Return Intent extra
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
-    private BluetoothAdapter mBluetoothAdapter = null;
     private static final int REQUEST_ENABLE_BT = 3;
     // Member fields
     private BluetoothAdapter mBtAdapter;
@@ -85,11 +94,7 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
 	private String emailID ;
 	private String company = "";
 	private String jobTitle = "";
-	private static final String CARD_PATH = "http://dfoa.ssh22.net/";
-	private static String  SERVER_PHOTO_PATH = "dfoa.ssh22.net/photo/";
 
-	List<Profile> arrayOfList;
-	Profile pe;
     
 
     @Override
@@ -102,8 +107,9 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
 //       requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
  //       getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
        setContentView(R.layout.main);
- //       StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build(); StrictMode.setThreadPolicy(policy);
-      getOverflowMenu();
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build(); StrictMode.setThreadPolicy(policy);
+        
+        getOverflowMenu();
        
        
  
@@ -118,21 +124,55 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
  //              v.setVisibility(View.GONE);
  //           }
  //       });
+        
+        
+        
+      
 
         // Initialize array adapters. One for already paired devices and
         // one for newly discovered devices
         results = new ArrayList<ItemDetails>();
      	lv1 = (ListView) findViewById(R.id.listV_main); 
- //       results1 = new List<Profile>();
+     	
+     	
+     	  lv1.setOnItemClickListener(new OnItemClickListener() {
+
+  	        public void onItemClick(AdapterView<?> arg0, View arg1, int pos,
+  	                long arg3) {
+  	      	ItemDetails  item= results.get(pos);
+  			Intent intent = new Intent(DeviceListActivity.this, DetailActivity.class);
+  			intent.putExtra("url", item.getName());
+  			intent.putExtra("title", item.getPrice());
+  			intent.putExtra("desc", item.getItemDescription());
+  			intent.putExtra("head_line",item.getPrfessionalHeadLine());
+  			intent.putExtra("site",item.getSite());
+  			intent.putExtra("mission",item.getmission());
+			intent.putExtra("photo", getPhotoStringFromBitmap(item.getImg()));
+			intent.putExtra("name",item.getName());
+			
+  			
+  			
+  			startActivity(intent);
+  	             Toast.makeText(getApplicationContext(),"clicked",Toast.LENGTH_SHORT).show();
+/*
+ * 
+ *     	item_details.setName(name);
+    	item_details.setItemDescription(phone);
+    	item_details.setPrice(email);
+    	item_details.setSite(site);
+    	item_details.setImg(img);
+    	results.add(item_details);
+ */
+
+  	        }
+  	    });
+        
  //       registerForContextMenu(lv1);
- //    	lAdapter = new ItemListBaseAdapter(this,results);
+     	lAdapter = new ItemListBaseAdapter(this,results);
 	   
         mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
         mNewDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
-        lAdapter = new ItemListBaseAdapter(this,
-    			R.layout.row, arrayOfList);
-        
-      
+  
       
         // Find and set up the ListView for newly discovered devices
  //       ListView newDevicesListView = (ListView) findViewById(R.id.new_devices);
@@ -146,7 +186,7 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
         // Register for broadcasts when discovery has finished
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         this.registerReceiver(mReceiver, filter);
-       ;
+       
         
         
 
@@ -184,13 +224,13 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
         if(D) Log.e(TAG, "++ ON START ++");
 
         // If BT is not on, request that it be enabled.
- //        setupChat() will then be called during onActivityResult
-//        if (!mBluetoothAdapter.isEnabled()) {
-//            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+ 
+       if (!mBtAdapter .isEnabled()) {
+           Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+           startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         // Otherwise, setup the chat session
         }
- //   }
+    }
     
     @Override
     protected void onDestroy() {
@@ -278,20 +318,8 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
             	holdMacs = holdMacs+device.getAddress()+ "=";	
             	//	 mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             		System.out.println("found device and going to look for information Asynctask with " + device.getAddress());
-           // 		new MyAsyncTask().execute(device.getAddress());
-            		if (Utils.isNetworkAvailable(DeviceListActivity.this)) {
-            	
-            			
-           		new MyTask().execute(device.getAddress());
-            		} else {
-            			showToast("No Network Connection!!!");
-            		}
-
-            	}
-
-          
-          
-            		
+            		new MyAsyncTask().execute(device.getAddress());
+            
             		
             		
             	
@@ -300,17 +328,12 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
             	
             	   
             	
-                
+                }
             // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 setProgressBarIndeterminateVisibility(false);
                 showToast("finish discovery...");
                 System.out.println("finish discovery");
-//             	new Handler().postDelayed(new Runnable() {
-//                    public void run() {
-//                    	 startService(new Intent());
-//                    }
-//                }, 20);
                 
              
            setTitle("Below cards were found");
@@ -353,18 +376,18 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
                    }
             	else {
                 showToast("Searching cards");
-//             new Thread(new Runnable() { 
-//                  public void run(){
+ //               new Thread(new Runnable() { 
+ //                   public void run(){
 
-                	  startService(new Intent(this, DiscoveryService.class));	 
+                    	 
 
 
-  //                  }
-//           }).start();
+ //                   }
+ //           }).start();
 
            
-              
-                
+               
+                startService(new Intent(this, DiscoveryService.class));
             	         	
            
             	 return true;
@@ -373,7 +396,7 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
             case R.id.discoverable:
             	 showToast("Discoverable");
                 // Ensure this device is discoverable by others
- //               ensureDiscoverable();
+                ensureDiscoverable();
                return true;
                 
             case R.id.settings:
@@ -446,10 +469,10 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
     
     private void ensureDiscoverable() {
         if(D) Log.d(TAG, "ensure discoverable");
-        if (mBluetoothAdapter.getScanMode() !=
+        if (mBtAdapter.getScanMode() !=
             BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,0);
             startActivity(discoverableIntent);
         }
     }
@@ -569,23 +592,25 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
 //			pb.setVisibility(View.GONE);
 	//		Toast.makeText(getApplicationContext(), "command sent", Toast.LENGTH_LONG).show();
 			
-		 System.out.println("This is the card I am going to  bring information for" + card);
+	//	 System.out.println("This is the card I am going to  bring information for" + card);
 			if (card!=null) {
 			  String arr[] = card.split("&");
 			
-			  String mac = arr[0].toString().replace("mac=" , "");
-			  String name = arr[1].toString().replace("name=" , " ");
-			  String phone = arr[2].toString().replace("phone=" , " ");
-			  String email = arr[3].toString().replace("email=" , " ");
-			  String site = arr[4].toString().replace ("site=" , " ");
-			  String pic = arr[5].toString().replace ("pic=" , " ");
+			  String mac =      arr[0].toString().replace("mac=" , ""        );
+			  String name =     arr[1].toString().replace("name=" , " "      );
+			  String phone =    arr[2].toString().replace("phone=" , " "     );
+			  String email =    arr[3].toString().replace("email=" , " "     );
+			  String site =     arr[4].toString().replace ("site=" , " "     );
+			  String head_line =arr[5].toString().replace ("head_line=" , " ");
+			  String mission =  arr[6].toString().replace ("mission=" , " "  );
+			  String pic =      arr[7].toString().replace ("pic=" , " "      );
 			  
 			   
-			  card = name + "\n" + phone +  "\n" +email + "\n"  +site;
+			  card = name + "\n" + phone +  "\n" +email + "\n"  + site +"\n" + head_line +"\n" + mission + "\n";
 			  
 ///////////////////////////////////////////////////
 		        
-			  GetSearchResults(mac,name,phone,email,site,pic);
+			  GetSearchResults(mac,name,phone,email,site,head_line,mission,pic);
 
 
 
@@ -609,14 +634,14 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
 			
 		//	HttpPost httppost = new HttpPost("http://192.168.50.5/cgi-bin/get_card.cgi");
 			HttpPost httppost = new HttpPost("http://dfoa.ssh22.net/cgi-bin/get_card.cgi");
-	//	  httppost.addHeader("Accept-Encoding", "gzip");
+//		  httppost.addHeader("Accept-Encoding", "gzip");
  
 			try {
 				// Add your data
 				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 				nameValuePairs.add(new BasicNameValuePair("mac", mac));
 				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
- 
+				httppost.addHeader("Accept-Encoding", "gzip");
 				// Execute HTTP Post Request
 				HttpResponse response = httpclient.execute(httppost);
 
@@ -624,11 +649,20 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
 				switch(responseCode)
 				{
 				    case 200:
-				        HttpEntity entity = response.getEntity();
-				 if(entity != null)
+				       
+				   	HttpEntity entity = response.getEntity();
+
+				        InputStream instream = entity.getContent();
+				        org.apache.http.Header contentEncoding = response.getFirstHeader("Content-Encoding");
+				        if (contentEncoding != null && contentEncoding.getValue().equalsIgnoreCase("gzip")) {
+				            instream = new GZIPInputStream(instream);
+				        }
+				        
+				        if(entity != null)
 				 {
 			     
-				  card = EntityUtils.toString(entity);
+				       	card = convertStreamToString(instream);
+				//  card = EntityUtils.toString(entity);
 				  
 
 			
@@ -668,7 +702,7 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
         }
     }
     
-    private void GetSearchResults(String mac,String name,String phone,String email,String site,String pic ){
+    private void GetSearchResults(String mac,String name,String phone,String email,String site,String head_line, String mission , String pic ){
       
     	//update global variables
     	DisplayName = name;
@@ -683,6 +717,8 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
     	item_details.setPrice(email);
     	item_details.setSite(site);
     	item_details.setImg(img);
+    	item_details.setProfessionlaHeadLine(head_line);
+    	item_details.setMission(mission);
     	results.add(item_details);
         
     	lv1.setAdapter(lAdapter);
@@ -699,7 +735,8 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
 	        
 	     
     }
-    
+
+    /*
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
           super.onCreateContextMenu(menu, v, menuInfo);
@@ -708,138 +745,9 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
               inflater.inflate(R.menu.menu_list, menu);
           }
     }
+    */
     
-    
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-          AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-          switch(item.getItemId()) {
-             case R.id.save_contacts:
-             // add stuff here
-            //	saveToContacts();
-   ////
-       
-       
 
-                 ArrayList<ContentProviderOperation> ops = 
-                     new ArrayList<ContentProviderOperation>();
-
-                 ops.add(ContentProviderOperation.newInsert(
-                     ContactsContract.RawContacts.CONTENT_URI)
-                     .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
-                     .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
-                     .build()
-                 );
-
-                 //------------------------------------------------------ Names
-                 if(DisplayName != null)
-                 {           
-                     ops.add(ContentProviderOperation.newInsert(
-                         ContactsContract.Data.CONTENT_URI)              
-                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                         .withValue(ContactsContract.Data.MIMETYPE,
-                             ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-                         .withValue(
-                             ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,     
-                             DisplayName).build()
-                     );
-                 } 
-
-                 //------------------------------------------------------ Mobile Number                      
-                 if(MobileNumber != null)
-                 {
-                     ops.add(ContentProviderOperation.
-                         newInsert(ContactsContract.Data.CONTENT_URI)
-                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                         .withValue(ContactsContract.Data.MIMETYPE,
-                         ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-                         .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, MobileNumber)
-                         .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, 
-                         ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
-                         .build()
-                     );
-                 }
-
-                                     //------------------------------------------------------ Home Numbers
-                                     if(HomeNumber != null)
-                                     {
-                                         ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                                                 .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                                                 .withValue(ContactsContract.Data.MIMETYPE,
-                                                         ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-                                                 .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, HomeNumber)
-                                                 .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, 
-                                                         ContactsContract.CommonDataKinds.Phone.TYPE_HOME)
-                                                 .build());
-                                     }
-
-                                     //------------------------------------------------------ Work Numbers
-                                     if(WorkNumber != null)
-                                     {
-                                         ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                                                 .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                                                 .withValue(ContactsContract.Data.MIMETYPE,
-                                                         ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-                                                 .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, WorkNumber)
-                                                 .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, 
-                                                         ContactsContract.CommonDataKinds.Phone.TYPE_WORK)
-                                                 .build());
-                                     }
-
-                                     //------------------------------------------------------ Email
-                                     if(emailID != null)
-                                     {
-                                          ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                                                     .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                                                     .withValue(ContactsContract.Data.MIMETYPE,
-                                                             ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
-                                                     .withValue(ContactsContract.CommonDataKinds.Email.DATA, emailID)
-                                                     .withValue(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_WORK)
-                                                     .build());
-                                     }
-
-                                     //------------------------------------------------------ Organization
-                                     if(!company.equals("") && !jobTitle.equals(""))
-                                     {
-                                         ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                                                 .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                                                 .withValue(ContactsContract.Data.MIMETYPE,
-                                                         ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)
-                                                 .withValue(ContactsContract.CommonDataKinds.Organization.COMPANY, company)
-                                                 .withValue(ContactsContract.CommonDataKinds.Organization.TYPE, ContactsContract.CommonDataKinds.Organization.TYPE_WORK)
-                                                 .withValue(ContactsContract.CommonDataKinds.Organization.TITLE, jobTitle)
-                                                 .withValue(ContactsContract.CommonDataKinds.Organization.TYPE, ContactsContract.CommonDataKinds.Organization.TYPE_WORK)
-                                                 .build());
-                                     }
-
-                                     // Asking the Contact provider to create a new contact                  
-                                     try 
-                                     {
-                                         getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
-                                         
-                                         Toast.makeText(this, "Card was saved", Toast.LENGTH_LONG).show();  
-                                     } 
-                                     catch (Exception e) 
-                                     {               
-                                         e.printStackTrace();
-                                         Toast.makeText(getApplicationContext(), "Exception: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                     }
-
-            	 
-            	 
-            	 
-            	 
-  /////
-            	 
-            	 
-            	 return true;
-              case R.id.edit:
-                // edit stuff here
-                    return true;
-              default:
-                    return super.onContextItemSelected(item);
-          }
-    }
  
   private void   saveToContacts ()
   {
@@ -848,88 +756,59 @@ public class DeviceListActivity extends Activity  implements OnItemClickListener
 	 
 	  contact.create(getApplicationContext());
   }
-@Override
-public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-	// TODO Auto-generated method stub
-	
-}
   
-	
-
-class MyTask extends AsyncTask<String, Void, List<Profile>> {
-
-	ProgressDialog pDialog;
-
-	@Override
-	protected void onPreExecute() {
-		super.onPreExecute();
-
-		pDialog = new ProgressDialog(DeviceListActivity.this);
-		pDialog.setMessage("Loading...");
-		pDialog.show();
-
-	}
-
-	@Override
-	protected  List<Profile> doInBackground(String... params) {
-		
-		final String fullUrl = CARD_PATH +params[0] + ".profile"; 
-		 	arrayOfList = new ProfileParser().getData(fullUrl);
-		
-		return arrayOfList;
-	}
-
-	@Override
-	protected void onPostExecute(List<Profile> result) {
-		super.onPostExecute(result);
-        
-		if (null != pDialog && pDialog.isShowing()) {
-			pDialog.dismiss();
-		}
-        
-	if (null == result|| result.size() == 0) {
-		showToast("No data found from web!!!");
-			DeviceListActivity.this.finish();
-		} else {
-
-			// check data...
-			
-//			  for (int i = 0; i < arrayOfList.size(); i++) { Profile item =
-//			  arrayOfList.get(i); System.out.println(item.getMacHw());
-//			  System.out.println(item.getName());
-//			  System.out.println(item.getEmail());
-//			  System.out.println(item.getMobilePhoneNum());
-//			  System.out.println(item.getPhotoLink()); }
-			
-
-			setAdapterToListview(result);
-		//lv1.setAdapter(lAdapter);
-	   // 	lAdapter.notifyDataSetChanged();
-
-		}
-
-	}
-}
-public void setAdapterToListview(List<Profile>result) {
-	
-
-//	ItemDetails item_details = new ItemDetails();
-//	item_details.setName(p.);
-//	item_details.setItemDescription(phone);
-//	item_details.setPrice(email);
-//	item_details.setSite(site);
-//	item_details.setImg(img);
-//	results.add()
-	
-  //  lAdapter.add(result.);
-	lv1.setAdapter(lAdapter);
-	lAdapter.notifyDataSetChanged();	
-	
-
-	
-}
  
+   
+  private static String convertStreamToString(InputStream is) {
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+	    StringBuilder sb = new StringBuilder();
+	    String line = null;
+	    try {
+	      while ((line = reader.readLine()) != null) {
+	        sb.append(line + "\n");
+	      }
+	    } catch (IOException e) {
+	      e.printStackTrace();
+	    } finally {
+	      try {
+	        is.close();
+	      } catch (IOException e) {
+	        e.printStackTrace();
+	      }
+	    }
+	    return sb.toString();
+	  }
+ 
+  public String getPhotoStringFromBitmap(Bitmap bm){
+		 
+		 String ba1 = null;;
+			if (bm!=null)
+			{
+			Bitmap bitmapOrg = bm;
+	     ByteArrayOutputStream bao = new ByteArrayOutputStream();
+	     //Resize the image
+	  //   double width = bitmapOrg.getWidth();
+	  //   double height = bitmapOrg.getHeight();
+	  //   double ratio = 400/width;
+	  //   int newheight = (int)(ratio*height);
+	  //   bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 400, newheight, true);
+	  //   System.out.println("———-width" + width);
+	  //   System.out.println("———-height" + height);
+	     bitmapOrg.compress(Bitmap.CompressFormat.PNG, 95, bao);
+	     byte[] ba = bao.toByteArray();
+	     ba1 = Base64.encodeToString(ba, 0);
+	       	return ba1;
+			}
+			else {
+				return null;
+			}
+			
+	 
+	 }
+
 	
+	
+
 }
     
 

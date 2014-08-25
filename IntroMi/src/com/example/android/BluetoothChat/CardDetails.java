@@ -86,10 +86,13 @@ public class CardDetails extends Activity {
     private String phone_value;
     private String  email_value;
     private String site_value; 
-    private static String  SERVER_PHOTO_PATH = "http://dfoa.ssh22.net/photo/";
     private ImageView imageView;
+    private EditText professional_head_line;
+    private EditText mission;
     private  Profile p;
     private  boolean editProfile = false;
+    private String mission_value;
+    private String head_line_value;
 //Linkedin
     
     private LinkedInOAuthService oAuthService;
@@ -115,6 +118,8 @@ public class CardDetails extends Activity {
         email = (EditText)findViewById(R.id.emailEditText);
         site= (EditText)findViewById(R.id.siteEditText);
         imageView = (ImageView) findViewById(R.id.imgViewPhoto);
+        mission = (EditText)findViewById(R.id.etMission);
+        professional_head_line = (EditText)findViewById(R.id.edHeadLine);
         Button btPickImage = (Button) findViewById(R.id.btImagepPick);
         Button saveRecords = (Button) findViewById(R.id.saveButton);
         ImageButton imageButton = (ImageButton)findViewById(R.id.imageView1);
@@ -156,7 +161,7 @@ public class CardDetails extends Activity {
         {
           public void onClick(View v)
           {
-        	  System.out.println("Image button linkedin  was pressed");
+        	  if (D) Log.v(TAG, "Image button linkedin  was pressed");
      
               /* This code get the values from edittexts  */
               name_value  = name.getText().toString();
@@ -164,7 +169,8 @@ public class CardDetails extends Activity {
               phone_value = mobile.getText().toString();
               email_value = email.getText().toString();
               site_value  = site.getText().toString();
-             
+              mission_value = mission.getText().toString();
+              head_line_value = professional_head_line.getText().toString();
            
            if (!isNetworkAvailable())
            {
@@ -202,14 +208,16 @@ public class CardDetails extends Activity {
               phone_value = mobile.getText().toString();
               email_value = email.getText().toString();
               site_value  = site.getText().toString();
+              mission_value = mission.getText().toString();
+              head_line_value = professional_head_line.getText().toString();
              
               
            
-           System.out.println("Thisis the data " + name_value +phone_value + email_value +site_value);
+           if (D) Log.v(TAG,"Thisis the data " + name_value +phone_value + email_value +site_value + mission_value + head_line_value);
  //          BluetoothAdapter bluetoothDefaultAdapter = BluetoothAdapter.getDefaultAdapter();
   //         if ((bluetoothDefaultAdapter != null) &&+ (bluetoothDefaultAdapter.isEnabled())){
           String mac = BluetoothAdapter.getDefaultAdapter().getAddress();
-           System.out.println("This is the mac address:" + mac);
+           if (D) Log.v(TAG,"This is the mac address:" + mac);
  //          }
  //check if card already exist ,if yes  show the information , if no, create new card
            
@@ -235,14 +243,13 @@ public class CardDetails extends Activity {
         	   
         	
  //       	   new MyAsyncTask().execute(mac,name_value,phone_value,email_value,site_value,img);
-               if (createCard(mac,name_value,phone_value,email_value,site_value,img))
+               if (createCard(mac,name_value,phone_value,email_value,site_value,img,head_line_value,mission_value))
             	   Toast.makeText(getApplicationContext(), "Card details saved sucessfully", Toast.LENGTH_LONG).show();
                else
             	   Toast.makeText(getApplicationContext(), "Problem saving card", Toast.LENGTH_LONG).show();  
         	   //upload  profile to server
                Profile profile = loadCard();
-               profile.setPhotoLink(SERVER_PHOTO_PATH + profile.getMacHw() + ".png");
-        	   new UploadProfileAsyncTask().execute(profile.getMacHw(),profile.getName(),profile.getMobilePhoneNum(),profile.getEmail(),profile.getSite(),profile.getPicture(),profile.getPhotoLink());
+       	   new UploadProfileAsyncTask().execute(profile.macHw,profile.name,profile.MobilePhoneNum,profile.email,profile.site,profile.professionalHeadLine,profile.mission,profile.picture);
                finish();
            }
         	
@@ -359,25 +366,30 @@ public class CardDetails extends Activity {
     
    } 
  
- private  boolean createCard(String mac ,String name,String mobilePhone,String emailAddress,String siteAddress,String  location){
+ private  boolean createCard(String mac ,String name,String mobilePhone,String emailAddress,String siteAddress,String  location,String headLine,String mission){
 	 
 //Create object and fill with data
 	 Profile p = new Profile();  
-     p.setMacHw(mac);
-     p.setName(name);
-     p.setMobilePhoneNum(mobilePhone);
-     p.setEmail(emailAddress);
-     p.setSite(siteAddress);
+     p.macHw = mac;
+     p.name =  name;
+     p.MobilePhoneNum = mobilePhone;
+     p.email = emailAddress;
+     p.site = siteAddress;
+     p.mission = mission;
+     p.professionalHeadLine = headLine;
  //    p.picture=location;
-     if (editProfile){
+     if (editProfile ){
+    	 if (imageView.getDrawable() != null){
     	 Bitmap bm=((BitmapDrawable)imageView.getDrawable()).getBitmap() ; //change to image if profile in edit mode  
-    	 p.setPicture(getPhotoStringFromBitmap(bm));
-     }
+    
+    	 p.picture =  getPhotoStringFromBitmap(bm);
+    	 }
+    	 }
 	 
   
      
      else {
-    	 p.setPicture(getPhoto(location));
+    	 p.picture = getPhoto(location);
      }
      if (saveCard(p)){
   //now save  profile to web
@@ -486,23 +498,26 @@ public String getPhotoStringFromBitmap(Bitmap bm){
  		    }
  		    System.out.println("test");
  		  
- 		     name.setText(p.getName());
- 		     mobile.setText(p.getMobilePhoneNum());
- 		     email.setText(p.getEmail());
- 		     site.setText(p.getSite());
+ 		     name.setText(p.name);
+ 		     mobile.setText(p.MobilePhoneNum);
+ 		     email.setText(p.email);
+ 		     site.setText(p.site);
+ 		     mission.setText(p.mission);
+ 		     professional_head_line.setText(p.professionalHeadLine);
+ 		     
  //		     decode p.picture from BASE_64 to bitmap 
              
  		    //Bitmap b = decodeSampledBitmapFromPath(p.picture,100,100);
- 		    if ( p.getPicture() != null) {
+ 		    if ( p.picture != null) {
    		
- 		      Bitmap b = setImg(p.getPicture());
+ 		      Bitmap b = setImg(p.picture);
  		     imageView.setImageBitmap(b);
  	//	    img = p.picture;
  	//	     WebView.setImageBitmap(setImg(p.picture));
  		    }
  		   
  		    
- 		    System.out.println(p.getEmail() + p.getName() + p.getMobilePhoneNum());
+ 		    System.out.println(p.email + p.name + p.MobilePhoneNum + p.professionalHeadLine + p.mission);
             return(p);		  
    }
 	  
@@ -560,7 +575,7 @@ public String getPhotoStringFromBitmap(Bitmap bm){
 		protected Double doInBackground(String... params) {
 			// TODO Auto-generated method stub
 
-			postData(params[0],params[1],params[2],params[3],params[4],params[5],params[6]);
+			postData(params[0],params[1],params[2],params[3],params[4],params[5],params[6],params[7]);
 	
 			
 			
@@ -580,12 +595,12 @@ public String getPhotoStringFromBitmap(Bitmap bm){
 		//	pb.setProgress(progress[0]);
 		}
 
-		public void postData(String mac ,String name_value,String phone_value,String email_value,String site_value,String  pickPath,String link_photo_value) {
+		public void postData(String mac ,String name_value,String phone_value,String email_value,String site_value,String  pickPath,String head_line, String mission ) {
 			// Create a new HttpClient and Post Header
 			
           
         
-            if(D) Log.i(TAG, "in posdate send to server");
+            if(D) Log.i(TAG, "in post data  send to server");
 			HttpClient httpclient = new DefaultHttpClient();
 	//		HttpPost httppost = new HttpPost("http://192.168.50.5/cgi-bin/register.cgi");
 			HttpPost httppost = new HttpPost("http://dfoa.ssh22.net/cgi-bin/register.cgi");
@@ -596,7 +611,8 @@ public String getPhotoStringFromBitmap(Bitmap bm){
 	        nameValuePairs.add(new BasicNameValuePair("phone",phone_value ));
 	        nameValuePairs.add(new BasicNameValuePair("email",email_value ));
 	        nameValuePairs.add(new BasicNameValuePair("site",site_value ));
-	        nameValuePairs.add(new BasicNameValuePair("link",link_photo_value ));
+	        nameValuePairs.add(new BasicNameValuePair("head_line",head_line_value ));
+	        nameValuePairs.add(new BasicNameValuePair("mission",mission_value));
 	        nameValuePairs.add(new BasicNameValuePair("pic",pickPath));
 			
 			

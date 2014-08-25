@@ -36,6 +36,21 @@ import android.widget.ImageView;
 
 public class ItemDetails {
 	
+	
+	public String getPrfessionalHeadLine() {
+		return professionlHeadLine;
+	}
+	public void setProfessionlaHeadLine(String  professionlHeadLine) {
+		this.professionlHeadLine = professionlHeadLine;
+	}	
+	
+	public String getmission() {
+		return mission;
+	}
+	public void setMission(String  mission) {
+		this.mission = mission;
+	}	
+	
 	public String getName() {
 		return name;
 	}
@@ -66,6 +81,7 @@ public class ItemDetails {
 		
 		return bm;
 	}
+
 	
 	public void setImg(String img) {
 
@@ -104,6 +120,8 @@ public class ItemDetails {
 	private String price;
 	private String site;
 	 DownloadManager mDManager;
+	private String mission;
+    private String professionlHeadLine;
 
 	
 	 

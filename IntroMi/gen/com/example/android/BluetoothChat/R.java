@@ -257,50 +257,51 @@ public final class R {
         public static final int profile=0x7f02000f;
     }
     public static final class id {
-        public static final int LinearLayout2=0x7f0a001a;
-        public static final int RelativeLayout1=0x7f0a0007;
-        public static final int TextView01=0x7f0a0011;
-        public static final int TextView02=0x7f0a000f;
-        public static final int TextView03=0x7f0a000e;
-        public static final int btImagepPick=0x7f0a0015;
-        public static final int deataSentProgressBar=0x7f0a0019;
-        public static final int discoverable=0x7f0a0027;
-        public static final int edit=0x7f0a002b;
-        public static final int emailEditText=0x7f0a0010;
-        public static final int image=0x7f0a0021;
-        public static final int imageView1=0x7f0a0018;
+        public static final int LinearLayout2=0x7f0a001e;
+        public static final int TextView01=0x7f0a0010;
+        public static final int TextView02=0x7f0a0012;
+        public static final int TextView03=0x7f0a0017;
+        public static final int btImagepPick=0x7f0a0016;
+        public static final int deataSentProgressBar=0x7f0a001d;
+        public static final int discoverable=0x7f0a0028;
+        public static final int edHeadLine=0x7f0a001a;
+        public static final int edit=0x7f0a002c;
+        public static final int emailEditText=0x7f0a0014;
+        public static final int etMission=0x7f0a001c;
+        public static final int image=0x7f0a0025;
+        public static final int imageView1=0x7f0a0019;
         public static final int imageViewPhotoPresent=0x7f0a0000;
-        public static final int imageVinitPage=0x7f0a0006;
-        public static final int imgViewPhoto=0x7f0a0016;
-        public static final int itemDescription=0x7f0a0009;
-        public static final int listV_main=0x7f0a000d;
-        public static final int my_card=0x7f0a0028;
-        public static final int name=0x7f0a000a;
-        public static final int nameEditText=0x7f0a0012;
+        public static final int imageVinitPage=0x7f0a000c;
+        public static final int imgViewPhoto=0x7f0a0006;
+        public static final int listV_main=0x7f0a000f;
+        public static final int my_card=0x7f0a0029;
+        public static final int name=0x7f0a000e;
+        public static final int nameEditText=0x7f0a0011;
         public static final int new_devices=0x7f0a0005;
-        public static final int pbar=0x7f0a0025;
+        public static final int pbar=0x7f0a0026;
         public static final int phoneEditText=0x7f0a0013;
-        public static final int photo=0x7f0a0008;
-        public static final int price=0x7f0a000b;
-        public static final int saveButton=0x7f0a0017;
-        public static final int save_contacts=0x7f0a002a;
-        public static final int secure_connect_scan=0x7f0a0026;
-        public static final int settings=0x7f0a0029;
-        public static final int siteEditText=0x7f0a0014;
+        public static final int photo=0x7f0a000d;
+        public static final int saveButton=0x7f0a0018;
+        public static final int save_contacts=0x7f0a002b;
+        public static final int secure_connect_scan=0x7f0a0027;
+        public static final int settings=0x7f0a002a;
+        public static final int siteEditText=0x7f0a001b;
         public static final int tVScanInterval=0x7f0a0001;
-        public static final int textViewEmail_Present=0x7f0a001f;
-        public static final int textViewEmailPresent=0x7f0a0020;
-        public static final int textViewMobilePresent=0x7f0a001e;
-        public static final int textViewNamePresent=0x7f0a001c;
-        public static final int textVmobile=0x7f0a001d;
-        public static final int textVname=0x7f0a001b;
+        public static final int textView1=0x7f0a0015;
+        public static final int textViewEmail_Present=0x7f0a0023;
+        public static final int textViewEmailPresent=0x7f0a0024;
+        public static final int textViewMobilePresent=0x7f0a0022;
+        public static final int textViewNamePresent=0x7f0a0020;
+        public static final int textVmobile=0x7f0a0021;
+        public static final int textVname=0x7f0a001f;
         public static final int title_left_text=0x7f0a0003;
         public static final int title_right_text=0x7f0a0004;
-        public static final int tv1Site=0x7f0a000c;
+        public static final int tv1Site=0x7f0a000b;
         public static final int tvEmail=0x7f0a0002;
-        public static final int tvdate=0x7f0a0023;
-        public static final int tvdesc=0x7f0a0024;
-        public static final int tvtitle=0x7f0a0022;
+        public static final int tvHeadLine=0x7f0a0008;
+        public static final int tvMission=0x7f0a0009;
+        public static final int tvName=0x7f0a0007;
+        public static final int tvPhone=0x7f0a000a;
     }
     public static final class layout {
         public static final int base_list_view=0x7f030000;
@@ -308,21 +309,22 @@ public final class R {
         public static final int device_list=0x7f030002;
         public static final int device_name=0x7f030003;
         public static final int dimens=0x7f030004;
-        public static final int init_page=0x7f030005;
-        public static final int item_details_view=0x7f030006;
-        public static final int main=0x7f030007;
-        public static final int message=0x7f030008;
-        public static final int my_card=0x7f030009;
-        public static final int my_cards_view=0x7f03000a;
-        public static final int row=0x7f03000b;
-        public static final int settings=0x7f03000c;
+        public static final int full_card_details=0x7f030005;
+        public static final int init_page=0x7f030006;
+        public static final int item_details_view=0x7f030007;
+        public static final int main=0x7f030008;
+        public static final int message=0x7f030009;
+        public static final int my_card=0x7f03000a;
+        public static final int my_cards_view=0x7f03000b;
+        public static final int row=0x7f03000c;
+        public static final int settings=0x7f03000d;
     }
     public static final class menu {
         public static final int main=0x7f090000;
         public static final int menu_list=0x7f090001;
     }
     public static final class string {
-        public static final int Save_as_IntroMi_card=0x7f07001b;
+        public static final int Save_as_IntroMi_card=0x7f07001d;
         public static final int about_me=0x7f070016;
         public static final int app_name=0x7f070000;
         public static final int bt_not_enabled_leaving=0x7f070003;
@@ -333,40 +335,42 @@ public final class R {
         /**   User information 
          */
         public static final int full_name=0x7f070012;
+        public static final int head_line=0x7f07001a;
         public static final int insecure_connect=0x7f07000f;
         public static final int linkedin_site=0x7f070015;
         public static final int lookin_for=0x7f070017;
+        public static final int mission=0x7f07001b;
         public static final int my_card=0x7f070011;
         public static final int none_found=0x7f07000a;
         public static final int none_paired=0x7f070009;
         public static final int not_connected=0x7f070002;
         public static final int phone=0x7f070013;
-        public static final int pref_default_display_name=0x7f070023;
-        public static final int pref_description_social_recommendations=0x7f070021;
+        public static final int pref_default_display_name=0x7f070025;
+        public static final int pref_description_social_recommendations=0x7f070023;
         /**  Example settings for Data & Sync 
          */
-        public static final int pref_header_data_sync=0x7f070025;
+        public static final int pref_header_data_sync=0x7f070027;
         /**  Strings related to Settings 
  Example General settings 
          */
-        public static final int pref_header_general=0x7f07001f;
+        public static final int pref_header_general=0x7f070021;
         /**  Example settings for Notifications 
          */
-        public static final int pref_header_notifications=0x7f070028;
-        public static final int pref_ringtone_silent=0x7f07002b;
-        public static final int pref_title_add_friends_to_messages=0x7f070024;
-        public static final int pref_title_display_name=0x7f070022;
-        public static final int pref_title_new_message_notifications=0x7f070029;
-        public static final int pref_title_ringtone=0x7f07002a;
-        public static final int pref_title_social_recommendations=0x7f070020;
-        public static final int pref_title_sync_frequency=0x7f070026;
-        public static final int pref_title_system_sync_settings=0x7f070027;
-        public static final int pref_title_vibrate=0x7f07002c;
+        public static final int pref_header_notifications=0x7f07002a;
+        public static final int pref_ringtone_silent=0x7f07002d;
+        public static final int pref_title_add_friends_to_messages=0x7f070026;
+        public static final int pref_title_display_name=0x7f070024;
+        public static final int pref_title_new_message_notifications=0x7f07002b;
+        public static final int pref_title_ringtone=0x7f07002c;
+        public static final int pref_title_social_recommendations=0x7f070022;
+        public static final int pref_title_sync_frequency=0x7f070028;
+        public static final int pref_title_system_sync_settings=0x7f070029;
+        public static final int pref_title_vibrate=0x7f07002e;
         public static final int save_details=0x7f070019;
         /**   List context menu 
          */
-        public static final int save_to_contacts=0x7f07001a;
-        public static final int scan_interval=0x7f07001d;
+        public static final int save_to_contacts=0x7f07001c;
+        public static final int scan_interval=0x7f07001f;
         /**   DeviceListActivity 
          */
         public static final int scanning=0x7f070007;
@@ -379,8 +383,8 @@ public final class R {
         public static final int send=0x7f070001;
         /**   Settings 
          */
-        public static final int settings=0x7f07001c;
-        public static final int title_activity_settings=0x7f07001e;
+        public static final int settings=0x7f07001e;
+        public static final int title_activity_settings=0x7f070020;
         public static final int title_connected_to=0x7f070005;
         public static final int title_connecting=0x7f070004;
         public static final int title_not_connected=0x7f070006;
