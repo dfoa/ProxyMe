@@ -1,188 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="fill_parent">
+   <GridLayout
     android:id="@id/tvMission"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent" >
-
-    <TextView
-        android:id="@+id/TextView01"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/nameEditText"
-        android:layout_marginTop="22dp"
-        android:text="@string/phone"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textSize="14sp" />
-
-    <EditText
-        android:id="@+id/nameEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/TextView02"
-        android:divider="?android:dividerHorizontal"
-        android:ems="10"
-        android:gravity="center_vertical|bottom|start"
-        android:inputType="textPersonName"
-        android:textStyle="italic" />
-
-    <TextView
-        android:id="@+id/TextView02"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/phoneEditText"
-        android:layout_marginTop="20dp"
-        android:text="@string/email"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <EditText
-        android:id="@+id/emailEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/phoneEditText"
-        android:layout_toRightOf="@+id/TextView02"
-        android:ems="10"
-        android:gravity="right|center_vertical|fill_vertical|center_horizontal|fill_horizontal"
-        android:inputType="textEmailAddress" />
-
-    <EditText
-        android:id="@+id/phoneEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/TextView01"
-        android:layout_alignLeft="@+id/emailEditText"
-        android:ems="10"
-        android:gravity="left"
-        android:inputType="phone" />
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/phoneEditText"
-        android:layout_alignParentLeft="true"
-        android:divider="?android:category"
-        android:text="@string/full_name"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textSize="14sp" />
-
-    <Button
-        android:id="@+id/btImagepPick"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/TextView03"
-        android:layout_centerVertical="true"
-        android:onClick="pickImage"
-        android:text="@string/choose_photo" />
-
-    <Button
-        android:id="@+id/saveButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="fill_parent"
-        android:layout_height="49dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="false"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="7dp"
-        android:layout_marginRight="5dp"
-        android:text="@string/save_details" />
-
-    <ImageButton
-        android:id="@+id/imageView1"
-        android:layout_width="550dp"
-        android:layout_height="50dp"
-        android:layout_above="@+id/saveButton"
-        android:layout_alignLeft="@+id/saveButton"
-        android:layout_marginBottom="30dp"
-        android:cropToPadding="false"
-        android:src="@drawable/login_with_linkedin" />
-
-    <TextView
-        android:id="@+id/tvHeadLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/TextView03"
-        android:layout_marginTop="50dp"
-        android:text="@string/head_line"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <EditText
-        android:id="@+id/edHeadLine"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/siteEditText"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/tvHeadLine"
-        android:ellipsize="middle"
-        android:ems="10"
-        android:inputType="textWebEmailAddress" />
-
-    <TextView
-        android:id="@+id/tvMission"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/btImagepPick"
-        android:layout_below="@+id/edHeadLine"
-        android:layout_marginTop="21dp"
-        android:text="@string/mission" />
-
-    <EditText
-        android:id="@+id/etMission"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/tvMission"
-        android:ems="10" >
-
-        <requestFocus />
-    </EditText>
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:columnCount="1"
+    android:overScrollMode="always" >
 
     <ImageView
         android:id="@+id/imgViewPhoto"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="false"
-        android:layout_alignTop="@+id/btImagepPick"
-        android:layout_marginTop="26dp"
-        android:layout_weight="1"
-        android:maxHeight="100dp"
-        android:maxWidth="100dp"
-        android:scaleType="centerCrop" />
-
-    <ProgressBar
-        android:id="@+id/deataSentProgressBar"
-        style="?android:attr/progressBarStyleLarge"
+        android:layout_column="0"      
+        android:scaleType="centerCrop"/>
+        
+       
+    <Button
+        android:id="@+id/btImagepPick"
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/edHeadLine"
-        android:layout_toLeftOf="@+id/etMission" />
+        android:onClick="pickImage"
+        android:text="@string/choose_photo" />
 
-    <EditText
-        android:id="@+id/siteEditText"
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/full_name"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="14sp" />
+
+          <EditText
+              android:id="@+id/nameEditText"
+              android:layout_width="355dp"
+              android:layout_height="wrap_content"
+              android:inputType="textPersonName" />
+          
+          <TextView
+              android:id="@+id/tvHeadLine"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="8dp"
+              android:text="@string/head_line"
+              android:textAppearance="?android:attr/textAppearanceSmall" />
+
+          <EditText
+              android:id="@+id/edHeadLine"
+              android:layout_width="597dp"
+              android:layout_height="wrap_content"
+              android:inputType="textWebEmailAddress" />
+
+          <TextView
+              android:id="@+id/tvMission"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="8dp"
+              android:text="@string/mission" />
+
+          <EditText
+              android:id="@+id/etMission"
+              android:layout_width="597dp"
+              android:layout_height="wrap_content"
+              />
+              <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/email"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+                <EditText
+        android:id="@+id/emailEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/imageView1"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="37dp"
-        android:ellipsize="middle"
         android:ems="10"
-        android:inputType="textWebEmailAddress" />
-
+        android:inputType="textEmailAddress" />
+              
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/phone"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="14sp" />
+    
+    <EditText
+        android:id="@+id/phoneEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="phone" />
     <TextView
         android:id="@+id/TextView03"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/btImagepPick"
-        android:layout_marginTop="58dp"
+        android:layout_marginTop="8dp"
         android:text="@string/linkedin_site"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+    
+    <EditText
+        android:id="@+id/siteEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textWebEmailAddress" />
+    <Button
+        android:id="@+id/saveButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="fill_parent"
+         android:layout_marginTop="50dp"
+        android:text="@string/save_details"
+           android:ems="50" />
+        <requestFocus />
 
-</RelativeLayout>
+        <ProgressBar
+            android:id="@+id/deataSentProgressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top"
+            />
+         <ImageButton
+            android:id="@+id/imageView1"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/login_with_linkedin" />
+  
+
+</GridLayout>
+</ScrollView>

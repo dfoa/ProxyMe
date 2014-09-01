@@ -5,7 +5,11 @@
  	android:layout_height="fill_parent">
 	
 	 <ListView 
-	 	android:layout_height="wrap_content"
+	 	android:layout_height="fill_parent"
 	 	android:layout_width="fill_parent" android:id="@+id/listV_main"
-	      android:cacheColorHint="#00000000" />
+	      android:cacheColorHint="#00000000"
+	          android:divider="#585858"
+              android:dividerHeight="2dp"/>
+
+
 </LinearLayout>

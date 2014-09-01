@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2009 The Android Open Source Project
+<!--
+     Copyright (C) 2009 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -15,17 +16,18 @@
 -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
     <string name="app_name">IntroMi</string>
 
-    <!--  IntroMe -->
+    <!-- IntroMe -->
     <string name="send">Send</string>
     <string name="not_connected">You are not connected to a device</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
-    <string name="title_connecting">connecting...</string>
+    <string name="title_connecting">connecting</string>
     <string name="title_connected_to">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
     <string name="title_not_connected">not connected</string>
 
-    <!--  DeviceListActivity -->
+    <!-- DeviceListActivity -->
     <string name="scanning">looking for cards</string>
     <string name="select_device">select a device to connect</string>
     <string name="none_paired">No devices have been paired</string>
@@ -39,10 +41,11 @@
     <string name="insecure_connect">Connect a device - Insecure</string>
     <string name="discoverable">Make discoverable</string>
     <string name="my_card">My card</string>
-    
-    
-    <!--  User information -->
-    
+    <string name="future_card">Future card</string>
+    <string name="saved_cards">Saved cards</string>
+
+    <!-- User information -->
+
     <string name="full_name">Full name</string>
     <string name="phone">Phone</string>
     <string name="email">Email address</string>
@@ -53,21 +56,18 @@
     <string name="save_details">Save</string>
     <string name="head_line">Professional head line</string>
     <string name="mission">Mission</string>
-    
-     <!--  List context menu -->
-    
+
+    <!-- List context menu -->
+
     <string name="save_to_contacts">Save to contacts</string>
     <string name="Save_as_IntroMi_card">Save IntroMi card</string>
-    
-    
-    
-    <!--  Settings -->
-     <string name="settings">Settings</string> 
-     <string name="scan_interval">Scan interval(Seconds)</string>
-     
-    
-       
-       
-       
-    
+
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="scan_interval">Scan interval(Seconds)</string>
+    <string name="title_activity_main">SavedCardsList</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_saved_cards_list">SavedCardsList</string>
+
 </resources>
