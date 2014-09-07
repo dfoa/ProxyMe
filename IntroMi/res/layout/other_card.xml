@@ -126,6 +126,10 @@
                 android:layout_marginBottom="20dp"
                 android:layout_marginLeft="40dp"
                 android:layout_marginTop="20dp"
+                android:adjustViewBounds="true"
+                android:maxHeight="80dp"
+                android:maxWidth="80dp"
+                android:scaleType="fitCenter"
                 android:src="@drawable/mail" />
 
             <TextView
@@ -162,6 +166,10 @@
                 android:layout_marginBottom="20dp"
                 android:layout_marginLeft="40dp"
                 android:layout_marginTop="20dp"
+                android:adjustViewBounds="true"
+                android:maxHeight="80dp"
+                android:maxWidth="80dp"
+                android:scaleType="fitCenter"
                 android:src="@drawable/phone" />
 
             <TextView
