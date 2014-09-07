@@ -26,6 +26,7 @@
     <string name="title_connecting">connecting</string>
     <string name="title_connected_to">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
     <string name="title_not_connected">not connected</string>
+    
 
     <!-- DeviceListActivity -->
     <string name="scanning">looking for cards</string>
@@ -56,6 +57,11 @@
     <string name="save_details">Save</string>
     <string name="head_line">Professional head line</string>
     <string name="mission">Mission</string>
+    <string name="photo_profile">photo</string>
+    <string name="seperator_line">seperator</string>
+    <string name="seperator_line1">seperator1</string>
+    <string name="left_bracket">left bracket</string>
+    <string name="right_bracket">right bracket</string>
 
     <!-- List context menu -->
 

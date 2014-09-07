@@ -23,6 +23,11 @@ import com.google.code.linkedinapi.client.oauth.LinkedInOAuthService;
 import com.google.code.linkedinapi.client.oauth.LinkedInOAuthServiceFactory;
 import com.google.code.linkedinapi.client.oauth.LinkedInRequestToken;
 import com.google.code.linkedinapi.schema.Person;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.ImageLoadingListener;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -105,6 +110,10 @@ public class CardDetails extends Activity {
     private LinkedInApiClientFactory factory;
     private LinkedInRequestToken liToken;
     private LinkedInApiClient client;
+	private DisplayImageOptions options;
+	private ImageLoader imageLoader;
+
+	private ProgressBar pbar;
 
 
     
@@ -121,7 +130,7 @@ public class CardDetails extends Activity {
      
        
 
-        
+        pbar = (ProgressBar) findViewById(R.id.pbar);
         name = (EditText) findViewById(R.id.nameEditText);
         mobile = (EditText) findViewById(R.id.phoneEditText);
         email = (EditText)findViewById(R.id.emailEditText);
@@ -717,11 +726,16 @@ Application Details
          System.out.println("Industry -" + profile.getIndustry());
          System.out.println("Telephone -" + profile.getPhoneNumbers());
          System.out.println("summery  -" + profile.getSummary());
-         System.out.println("summery  -" + profile.getPictureUrl());
+         System.out.println("picurl  -" + profile.getPictureUrl());
+         System.out.println("current status  -" + profile.getCurrentStatus());
+         loadImageFromURL(profile.getPictureUrl());
+         System.out.println("This is the path to profile   -" + profile.getPublicProfileUrl());
+         
+         
          
          name.setText(profile.getFirstName()+ " " + profile.getLastName());
          professional_head_line.setText(profile.getHeadline());
-     //    mobile.setText((CharSequence) profile.getPhoneNumbers());
+         site.setText(profile.getPublicProfileUrl());
          
  
          
@@ -738,6 +752,36 @@ Application Details
      Log.v(TAG, "onDestroy()");
      super.onDestroy();
  }
+ 
+	private void loadImageFromURL(String url) {
+		options = new DisplayImageOptions.Builder()
+				.showStubImage(R.drawable.profile)
+				.showImageForEmptyUrl(R.drawable.profile).cacheInMemory()
+				.cacheOnDisc().build();
+
+		imageLoader = ImageLoader.getInstance();
+		imageLoader.init(ImageLoaderConfiguration.createDefault(this));
+		imageLoader.displayImage(url, imageView, options,
+				new ImageLoadingListener() {
+					@Override
+					public void onLoadingComplete() {
+						pbar.setVisibility(View.INVISIBLE);
+
+					}
+
+					@Override
+					public void onLoadingFailed() {
+
+						pbar.setVisibility(View.INVISIBLE);
+					}
+
+					@Override
+					public void onLoadingStarted() {
+						pbar.setVisibility(View.VISIBLE);
+					}
+				});
+
+	}
    
   }
  

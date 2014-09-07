@@ -82,10 +82,17 @@ public class ItemDetails {
 		return bm;
 	}
 
+	 public String getmRssi() {
+		 
+			return mRssi;
+		}
+		public void setmRssi(String mRssi) {
+			this.mRssi = mRssi;
+		}
 	
 	public void setImg(String img) {
 
-
+    if (img !=null){
 	
 		
 	
@@ -104,6 +111,7 @@ public class ItemDetails {
 		Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
 		//im.setImageBitmap(decodedByte);
 		bm = decodedByte;
+    }
 	}
 		
 	
@@ -122,6 +130,7 @@ public class ItemDetails {
 	 DownloadManager mDManager;
 	private String mission;
     private String professionlHeadLine;
+    private String mRssi; 
 
 	
 	 
@@ -191,7 +200,8 @@ public class ItemDetails {
         } catch (FileNotFoundException e) {}
         return null;
     }
-    public class FileCache {
+   
+	public class FileCache {
 
         private File cacheDir;
 

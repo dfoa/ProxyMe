@@ -32,6 +32,15 @@ public void removeProfile(Profile profile)
  	
 }
 
+public Profile getProfile(int position)
+{
+ 
+	return profileArrayList.get(position);
+ 	
+}
+
+
+
 public boolean  profileLookup(Profile profile)
 {
 

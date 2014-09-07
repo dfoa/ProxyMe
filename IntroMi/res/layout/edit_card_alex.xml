@@ -10,7 +10,9 @@
         android:layout_width="fill_parent"
         android:layout_height="385dp"
         android:layout_marginTop="9dp"
-        android:orientation="vertical" >
+        android:orientation="vertical" 
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true" >
 
         <ImageView
             android:id="@+id/imageView1"
@@ -54,7 +56,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="8dp" >
+                android:layout_marginTop="8dp"
+                android:descendantFocusability="beforeDescendants"
+android:focusableInTouchMode="true"  >
 
                 <ImageView
                     android:id="@+id/imageView2"
@@ -98,7 +102,9 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/imageView1"
             android:orientation="vertical"
-            android:windowSoftInputMode="stateHidden" >
+            android:windowSoftInputMode="stateHidden"
+            android:descendantFocusability="beforeDescendants"
+android:focusableInTouchMode="true" > >
 
             <TextView
                 android:id="@+id/textView5"

@@ -172,6 +172,8 @@
  <color name="Turquoise">#40E0D0</color>
  <color name="Violet">#EE82EE</color>
 
+  
+   <color name="White">#FFFFFF</color>
  <color name="White_AntiqueWhite">#FAEBD7</color>
  <color name="White_Azure">#F0FFFF</color>
  <color name="White_Beige">#F5F5DC</color>
@@ -230,4 +232,5 @@
  <color name="Yellow_GoldenRod">#DAA520</color>
  <color name="Yellow_LightYellow">#FFFFE0</color>
  <color name="Yellow_PaleGoldenrod">#EEE8AA</color>
+ 
  </resources>

@@ -108,6 +108,7 @@ public class DeviceListActivity extends FragmentActivity{
 	Fragment fragmentTab2 = new FragmentTab2();
 	Fragment fragmentTab3 = new FragmentTab3();
 	int mStackLevel  = -1;
+	private short mRssi =0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,7 +226,7 @@ public class DeviceListActivity extends FragmentActivity{
         // Get a set of currently paired devices
  //       Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
         
-
+  
 
 
         
@@ -259,7 +260,7 @@ public class DeviceListActivity extends FragmentActivity{
            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         // Otherwise, setup the chat session
         }
-  //     mBtAdapter.setName("111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
+      mBtAdapter.setName("IntroMi");
     }
     
     @Override
@@ -313,18 +314,27 @@ public class DeviceListActivity extends FragmentActivity{
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
             	System.out.println("device found");
                 // Get the BluetoothDevice object from the Intent
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            	
+            	
+            	//IntroMi
+            	
+            	BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                 if (device.getName().equalsIgnoreCase("IntroMi")) {
+            	  mRssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
+                 
+                if (D) Log.v(TAG, "rssi:"+ mRssi);
                 // If it's already paired or already listed, skip it, because it's been listed already
      //           System.out.println("This is the device name" + device.getName());
      //           System.out.println("This is the length of the name :\n" +  device.getName().length());
     //            showToast("Device name is\n " + device.getName() +"length:\n" + device.getName().length());
-                
+               
                 if (device.getBondState() != BluetoothDevice.BOND_BONDED  ) {
                 	
                 	 if (holdMacs.contains(device.getAddress()))
           					 {
           				 
-          				System.out.println("The device" + device.getAddress() +"is already in the list");		 
+          				if (D) Log.v(TAG, "The device" + device.getAddress() +"is already in the list");		 
           			 found = true;
             			      
          				 }
@@ -337,7 +347,7 @@ public class DeviceListActivity extends FragmentActivity{
             		
             		if (mNewDevicesArrayAdapter.getItem(pos).contains(device.getAddress()))
                 				 {
-              			 System.out.println("The device" + device.getAddress() +"is already in the list");
+              			 if (D) Log.v(TAG,"The device" + device.getAddress() +"is already in the list");
               			 found = true;
                 			      
              				 }
@@ -350,7 +360,7 @@ public class DeviceListActivity extends FragmentActivity{
             		
             	holdMacs = holdMacs+device.getAddress()+ "=";	
             	//	 mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-            		System.out.println("found device and going to look for information Asynctask with " + device.getAddress());
+            		if (D) Log.v(TAG,"found device and going to look for information Asynctask with " + device.getAddress());
             		new MyAsyncTask().execute(device.getAddress());
             
             		
@@ -366,7 +376,7 @@ public class DeviceListActivity extends FragmentActivity{
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 setProgressBarIndeterminateVisibility(false);
                 showToast("finish discovery...");
-                System.out.println("finish discovery");
+                if (D) Log.v(TAG,"finish discovery");
                 
              
            setTitle("Below cards were found");
@@ -376,7 +386,8 @@ public class DeviceListActivity extends FragmentActivity{
                 }
             }
         }
-       
+            
+        }
     };
     
 
@@ -456,7 +467,7 @@ public class DeviceListActivity extends FragmentActivity{
                   
                 case R.id.saved_cards:
                     //open card details
-                	  Intent  g = new Intent(this, Cosmo.class); 
+                	  Intent  g = new Intent(this, SavedCardsList.class); 
                       startActivity(g);
                       return true;   
                   
@@ -785,6 +796,7 @@ public class DeviceListActivity extends FragmentActivity{
     	item_details.setImg(img);
     	item_details.setProfessionlaHeadLine(head_line);
     	item_details.setMission(mission);
+    	item_details.setmRssi(String.valueOf(mRssi));
     	results.add(item_details);
         
     	lv1.setAdapter(lAdapter);

@@ -90,12 +90,15 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentRight="true"
+            
             android:orientation="vertical" >
 
-     <CheckBox android:id="@+id/star" 
-    style="?android:attr/starStyle" 
+     <TextView android:id="@+id/rssi" 
+     
     android:layout_width="wrap_content" 
     android:layout_height="wrap_content" 
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    android:text="test"
     android:focusable="false"
     /> 
          

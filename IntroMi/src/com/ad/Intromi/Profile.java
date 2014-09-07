@@ -4,6 +4,8 @@ package com.ad.Intromi;
 import java.io.Serializable;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 
 public class Profile implements Serializable {
 
@@ -303,7 +305,10 @@ public void setOption2(String option2) {
 	this.option2 = option2;
 }
 
-
+public Bitmap getImg() {
+	
+	return bm;
+}
 
 
 
@@ -327,12 +332,40 @@ public void setOption2(String option2) {
 	private  String company;
 	private  String option1;
 	private  String option2;
+	private transient Bitmap bm;
 
 	
 	
 //example for transient
 //transient private Thread myThread;
   
-  
+	
+	
+
+	
+	
+	
+	public void setImg(String img) {
+
+
+		
+		
+		
+		
+		
+		
+		
+		
+		 //    ImageLoader	                    DisplayImage("http://192.168.1.28:8082/ANDROID/images/BEVE.jpeg", holder.itemImage);
+				
+				
+				//decode from base_64 to real PNG format
+
+				
+				byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
+				Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
+				//im.setImageBitmap(decodedByte);
+				bm = decodedByte;
+			}
 
 } 

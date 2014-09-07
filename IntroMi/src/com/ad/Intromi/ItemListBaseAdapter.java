@@ -64,10 +64,10 @@ private Context c;
 		ViewHolder holder;
 	
 		if (convertView == null) {
-			System.out.println("this is the position " +position);
-			if (position % 2 ==1)
-			convertView = l_Inflater.inflate(R.layout.item_details_view, null);
-			else
+//			System.out.println("this is the position " +position);
+//			if (position % 2 ==1)
+	//		convertView = l_Inflater.inflate(R.layout.item_details_view, null);
+//			else
 				convertView = l_Inflater.inflate(R.layout.item_details_view_left_pic, null);	
 			
 			
@@ -80,11 +80,12 @@ private Context c;
 		    holder.txt_head_line = (TextView) convertView.findViewById(R.id.tvHeadLine);
 		    holder.txt_mission = (TextView) convertView.findViewById(R.id.tvMission);
 			holder.itemImage = (ImageView) convertView.findViewById(R.id.photo);
-			holder.ch_check = (CheckBox) convertView.findViewById(R.id.star);
+//			holder.ch_check = (CheckBox) convertView.findViewById(R.id.star);
+			holder.txt_rssi = (TextView) convertView.findViewById(R.id.rssi);
 			
 			
 			  // add listener for email 
-	        holder.ch_check.setOnClickListener(new OnClickListener() {
+	 /*       holder.ch_check.setOnClickListener(new OnClickListener() {
 	 
 	            @Override
 	            public void onClick(View v) {
@@ -100,7 +101,7 @@ private Context c;
 	            }
 	             
 	        });
-
+*/
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -112,6 +113,7 @@ private Context c;
 //	    holder.txt_site.setText(itemDetailsrrayList.get(position).getSite());
 	    holder.txt_head_line.setText(itemDetailsrrayList.get(position).getPrfessionalHeadLine());
 	    holder.txt_mission.setText(itemDetailsrrayList.get(position).getmission());
+	    holder.txt_rssi.setText(itemDetailsrrayList.get(position).getmRssi());
 	    
         holder.itemImage.setImageBitmap(itemDetailsrrayList.get(position).getImg());
         
@@ -131,6 +133,8 @@ private Context c;
 		TextView txt_mission;
 		TextView txt_head_line;
 		CheckBox ch_check;
+		TextView  txt_rssi;
+		
 	}
 	
  	          

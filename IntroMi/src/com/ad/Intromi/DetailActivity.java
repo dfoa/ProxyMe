@@ -33,7 +33,7 @@ public class DetailActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.full_card_details);
+		setContentView(R.layout.other_card);
 
 //		pbar = (ProgressBar) findViewById(R.id.pbar);
 		tvMobilePhone = (TextView) findViewById(R.id.tvPhone);
@@ -43,7 +43,7 @@ public class DetailActivity extends Activity {
 		tvName = (TextView) findViewById(R.id.tvName);
 		
 	//	test  =  (TextView) findViewById(R.id.Tex);
-		imgView = (ImageView) findViewById(R.id.imgViewPhoto);
+		imgView = (ImageView) findViewById(R.id.photo);
 		
 		Bundle b = getIntent().getExtras();
 
