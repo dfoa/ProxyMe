@@ -18,15 +18,20 @@
           android:icon="@android:drawable/ic_menu_search"
           android:title="@string/secure_connect"
           android:showAsAction="ifRoom"/>
-
+        <item android:id="@+id/my_card"
+          android:title="@string/my_card"
+          android:showAsAction="never"/>
+        
+               <item android:id="@+id/saved_cards"
+          android:title="@string/saved_cards"
+          android:showAsAction="never"/>  
+<!--
     <item android:id="@+id/discoverable"
           android:icon="@android:drawable/ic_menu_mylocation"
           android:title="@string/discoverable"
           android:showAsAction="ifRoom" />
     
-    <item android:id="@+id/my_card"
-          android:title="@string/my_card"
-          android:showAsAction="never"/>
+
         
     <item android:id="@+id/settings"
           android:title="@string/settings"
@@ -35,10 +40,8 @@
        <item android:id="@+id/future_card"
           android:title="@string/future_card"
           android:showAsAction="never"/>   
-    
-           <item android:id="@+id/saved_cards"
-          android:title="@string/saved_cards"
-          android:showAsAction="never"/>   
+    -->
+     
     
          
     

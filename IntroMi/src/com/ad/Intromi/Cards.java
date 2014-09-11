@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 public class Cards {
 
-private static  String  TAG ="IntroMi/ItemListBasAdapter";	
+private static  String  TAG ="IntroMi/Cards";	
 private static String fileName = "cards.bin";
 private static boolean D = true; 
 public SavedCards mSaveCards ;
@@ -34,7 +34,7 @@ protected Context context;
    File file = context.getFileStreamPath(fileName);
     if(file.exists()) {
 	    	//read the card and show  details
-	   if(D) Log.v(TAG, "+++ Load saved cards");
+
        return true;
     }
   return false;
@@ -90,9 +90,7 @@ protected Context context;
 	 		   
 	 		    
 	 //		    System.out.println(p.email + p.name + p.MobilePhoneNum + p.professionalHeadLine);
-	 	 System.out.println(mSaveCards.profileArrayList.get(0).getName());
-	            	  
-	 
+	 	
  }
 		return(mSaveCards);	
 	  

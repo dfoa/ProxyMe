@@ -1,5 +1,6 @@
 package com.ad.Intromi;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -8,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,51 +21,37 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class SavedCardsList extends Activity {
 
-	    private ListView lv1;
+	    private static final String TAG = "IntroMi/SavedCardsList";
+
+		private static final boolean D = true;
+
+		private ListView listViewSavedCards;
 	
-	    private ArrayList<ItemDetails> results;
+	    private ArrayList<Profile> results;
+	    private SavedCards mSaveCards; 
 	  
-	    private ItemListBaseAdapter lAdapter;
+	    private CardsListBaseAdapter listAdapter;
 	    private Cards cards;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_saved_cards_list);
-		  results = new ArrayList<ItemDetails>();
-		lv1 = (ListView) findViewById(R.id.listViewSavedCards); 
-	
-		lAdapter = new ItemListBaseAdapter(this,results);
+		  results = new ArrayList<Profile>();
+	    	listViewSavedCards = (ListView) findViewById(R.id.listViewSavedCards); 
+	    	 mSaveCards = new SavedCards();
+		listAdapter = new CardsListBaseAdapter(this,results);
+		
 		 cards = new Cards(getBaseContext());
-		if (cards.loadCards()!=null)
+		 mSaveCards = cards.loadCards();
+		if (mSaveCards!=null)
 		{
-		 System.out.println("tttt" +cards.mSaveCards.profileArrayList.get(0).getName());
-		}
-	/*
-		lv1.setOnItemClickListener(new OnItemClickListener() {
-
-	        public void onItemClick(AdapterView<?> arg0, View arg1, int pos,
-	                long arg3) {
-	      	Profile  item= results.get(pos);
-			Intent intent = new Intent(SavedCardsList.this, DetailActivity.class);
-			intent.putExtra("url", item.getName());
-//			intent.putExtra("title", item.getPrice());
-//			intent.putExtra("desc", item.getItemDescription());
-			intent.putExtra("head_line",item.getProfessionalHeadLine());
-			intent.putExtra("site",item.getSite());
-			intent.putExtra("mission",item.getMission());
-//			intent.putExtra("photo", getPhotoStringFromBitmap(item.getImg()));
-			intent.putExtra("name",item.getName());
+//		 System.out.println("tttt" +cards.mSaveCards.profileArrayList.get(3).getName());
+		 
+		 
+		
+	
 			
-			
-			
-			startActivity(intent);
-	             Toast.makeText(getApplicationContext(),"clicked",Toast.LENGTH_SHORT).show();
 
-
-	        
-	        }    
-	    });
-	*/  
 		
 
 
@@ -74,11 +63,51 @@ public class SavedCardsList extends Activity {
     	item_details.setImg("");
     	item_details.setProfessionlaHeadLine("he");
     	item_details.setMission("mission");
-    	results.add(item_details);
+    	
+    	
+    	 for (int i =0  ;i<mSaveCards.profileArrayList.size();i++){
+	          if (D) Log.v(TAG,"this is the cards i have" + mSaveCards.profileArrayList.get(i).getName()); 	  
+	// 	 mSaveCards.profileArrayList.get(i).setName("dddddddd");
+	// 	 mSaveCards.profileArrayList.get(i).set("wqewew");
+	          mSaveCards.profileArrayList.get(i).setImg(mSaveCards.profileArrayList.get(i).getPicture()); 
+    	results.add(mSaveCards.profileArrayList.get(i));
         
-  	lv1.setAdapter(lAdapter);
-    	lAdapter.notifyDataSetChanged();
+  	listViewSavedCards.setAdapter(listAdapter);
+    	listAdapter.notifyDataSetChanged();
+    	 }
+		}
 		
+   	  listViewSavedCards.setOnItemClickListener(new OnItemClickListener() {
+
+	        public void onItemClick(AdapterView<?> arg0, View arg1, int pos,
+	                long arg3) {
+	      	Profile p = results.get(pos);
+			Intent intent = new Intent(SavedCardsList.this, DetailActivity.class);
+			intent.putExtra("url", p.getName());
+			intent.putExtra("title", p.getEmail());
+			intent.putExtra("desc", p.getMobilePhoneNum());
+			intent.putExtra("head_line",p.getProfessionalHeadLine());
+			intent.putExtra("site",p.getSite());
+			intent.putExtra("mission",p.getMission());
+			intent.putExtra("photo", getPhotoStringFromBitmap(p.getImg()));
+			intent.putExtra("name",p.getName());
+			
+			
+			
+			startActivity(intent);
+	           
+/*
+* 
+*     	item_details.setName(name);
+  	item_details.setItemDescription(phone);
+  	item_details.setPrice(email);
+  	item_details.setSite(site);
+  	item_details.setImg(img);
+  	results.add(item_details);
+*/
+
+	        }
+	    });
 		
 	}
 
@@ -102,6 +131,33 @@ public class SavedCardsList extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
     }
+	
+	  public String getPhotoStringFromBitmap(Bitmap bm){
+			 
+			 String ba1 = null;;
+				if (bm!=null)
+				{
+				Bitmap bitmapOrg = bm;
+		     ByteArrayOutputStream bao = new ByteArrayOutputStream();
+		     //Resize the image
+		  //   double width = bitmapOrg.getWidth();
+		  //   double height = bitmapOrg.getHeight();
+		  //   double ratio = 400/width;
+		  //   int newheight = (int)(ratio*height);
+		  //   bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 400, newheight, true);
+		  //   System.out.println("———-width" + width);
+		  //   System.out.println("———-height" + height);
+		     bitmapOrg.compress(Bitmap.CompressFormat.PNG, 95, bao);
+		     byte[] ba = bao.toByteArray();
+		     ba1 = Base64.encodeToString(ba, 0);
+		       	return ba1;
+				}
+				else {
+					return null;
+				}
+				
+		 
+		 }
 	  
 }
 

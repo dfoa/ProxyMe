@@ -11,6 +11,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+
+import android.R.color;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import org.apache.http.HttpEntity;
@@ -33,6 +35,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -53,6 +56,7 @@ import android.os.Message;
 import android.os.StrictMode;
 import android.preference.PreferenceActivity.Header;
 import android.provider.ContactsContract;
+import android.transition.Visibility;
 import android.util.Base64;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -71,12 +75,15 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.support.v4.app.FragmentActivity;
-import com.ad.Intromi.R;
+	
 
 
 public class DeviceListActivity extends FragmentActivity{
@@ -102,7 +109,7 @@ public class DeviceListActivity extends FragmentActivity{
 	private String WorkNumber = "";
 	private String emailID ;
 	private String company = "";
-	private String jobTitle = "";
+	private int mFoundDevice;
     ActionBar.Tab tab1, tab2, tab3;
 	Fragment fragmentTab1 = new FragmentTab1();
 	Fragment fragmentTab2 = new FragmentTab2();
@@ -110,16 +117,27 @@ public class DeviceListActivity extends FragmentActivity{
 	int mStackLevel  = -1;
 	private short mRssi =0;
 
+	private ProgressDialog pBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        
+           
        
         // Setup the window
 //       requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
- //       getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+//        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
        setContentView(R.layout.main);
+       
+
+
+     
+
+
+       
+//       pb= (ProgressBar) findViewById(R.id.pbar);
+//       pb.setVisibility(View.GONE);
 /*       
        if (savedInstanceState == null) {
            FragmentManager fragmentManager = getFragmentManager();
@@ -183,7 +201,7 @@ public class DeviceListActivity extends FragmentActivity{
   			
   			
   			startActivity(intent);
-  	             Toast.makeText(getApplicationContext(),"clicked",Toast.LENGTH_SHORT).show();
+  //	             Toast.makeText(getApplicationContext(),"clicked",Toast.LENGTH_SHORT).show();
 /*
  * 
  *     	item_details.setName(name);
@@ -215,6 +233,7 @@ public class DeviceListActivity extends FragmentActivity{
 
         // Register for broadcasts when discovery has finished
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        
         this.registerReceiver(mReceiver, filter);
        
         
@@ -261,6 +280,7 @@ public class DeviceListActivity extends FragmentActivity{
         // Otherwise, setup the chat session
         }
       mBtAdapter.setName("IntroMi");
+      ensureDiscoverable();
     }
     
     @Override
@@ -319,7 +339,7 @@ public class DeviceListActivity extends FragmentActivity{
             	//IntroMi
             	
             	BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
+                System.out.println("This is the name of the device " +device.getName());
                  if (device.getName().equalsIgnoreCase("IntroMi")) {
             	  mRssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
                  
@@ -367,25 +387,32 @@ public class DeviceListActivity extends FragmentActivity{
             		
             	
             	}
-            	
+                }
             	
             	   
-            	
                 }
+                 else {
+                	  if (D) Log.v(TAG,"found blletooth device but dont have IntoMI application"); 
+                		 
+                 }
+                
             // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                setProgressBarIndeterminateVisibility(false);
-                showToast("finish discovery...");
+         //       setProgressBarIndeterminateVisibility(false);
+                //showToast("finish discovery...");
+            	
                 if (D) Log.v(TAG,"finish discovery");
-                
+                if(null!=pBar && pBar.isShowing()){
+              	  pBar.dismiss();
+                }
              
            setTitle("Below cards were found");
                 if (mNewDevicesArrayAdapter.getCount() == 0) {
                     String noDevices = getResources().getText(R.string.none_found).toString();
                     mNewDevicesArrayAdapter.add(noDevices);
                 }
+            
             }
-        }
             
         }
     };
@@ -431,34 +458,51 @@ public class DeviceListActivity extends FragmentActivity{
 
            
                
-                startService(new Intent(this, DiscoveryService.class));
-            	         	
-           
+            //    startService(new Intent(this, DiscoveryService.class));
+            	
+                if (mBtAdapter.isDiscovering()) {
+                    mBtAdapter.cancelDiscovery();
+                    System.out.println("discovery still running, cannot start ...");
+
+                }
+                else
+
+                // Request discover from BluetoothAdapter
+                
+                mBtAdapter.startDiscovery();
+                
+                pBar = new ProgressDialog(DeviceListActivity.this);
+            
+        		pBar.setMessage("Scannig please wait....");
+        		
+        		
+        		pBar.show();        	
+        		 mFoundDevice =1; 
             	 return true;
               
             	}
-            case R.id.discoverable:
-            	 showToast("Discoverable");
+//            case R.id.discoverable:
+//            	 showToast("Discoverable");
                 // Ensure this device is discoverable by others
-                ensureDiscoverable();
-               return true;
+//                ensureDiscoverable();
+//               return true;
                 
-            case R.id.settings:
+//            case R.id.settings:
            	
              //open card details
             	//call Settings intent
-            	   Intent  settings = new Intent(this, Settings.class); 
-                   startActivity(settings);
+//            	   Intent  settings = new Intent(this, Settings.class); 
+//                   startActivity(settings);
                 
-               return true;
+//               return true;
        
                
-               case R.id.future_card:
- 
-               Intent  s = new Intent(this, Cosmo.class); 
-               startActivity(s);
+ //              case R.id.future_card:
+ //
+ //              Intent  s = new Intent(this, Cosmo.class); 
+ //              startActivity(s);
             
-           return true;
+ //          return true;
            
                 case R.id.my_card:
                 //open card details
@@ -640,6 +684,16 @@ public class DeviceListActivity extends FragmentActivity{
     
     private class MyAsyncTask extends AsyncTask<String, Integer, Double>{
     	 
+  
+    	
+    	@Override
+    	protected void onPreExecute(){
+    		super.onPreExecute();
+    		pBar.setMessage("Found Card " + mFoundDevice + "  Loading profile");
+    	
+    		++mFoundDevice;
+    	
+    	}
 		@Override
 		protected Double doInBackground(String... params) {
 			// TODO Auto-generated method stub
@@ -648,7 +702,8 @@ public class DeviceListActivity extends FragmentActivity{
 		}
  
 		protected void onPostExecute(Double result){
-//			pb.setVisibility(View.GONE);
+			
+             super.onPostExecute(result);
 	//		Toast.makeText(getApplicationContext(), "command sent", Toast.LENGTH_LONG).show();
 			
 	//	 System.out.println("This is the card I am going to  bring information for" + card);
@@ -667,11 +722,14 @@ public class DeviceListActivity extends FragmentActivity{
 			   
 			  card = name + "\n" + phone +  "\n" +email + "\n"  + site +"\n" + head_line +"\n" + mission + "\n";
 			  
+			  pBar.setMessage("Scanning please wait....");
 ///////////////////////////////////////////////////
 		        
 			  GetSearchResults(mac,name,phone,email,site,head_line,mission,pic);
 
-
+    
+              
+			  
 
 
 ////////////////////////////
@@ -684,7 +742,8 @@ public class DeviceListActivity extends FragmentActivity{
 		}
 		}
 		protected void onProgressUpdate(Integer... progress){
-//			pb.setProgress(progress[0]);
+			
+	
 		}
  
 		public void postData(String mac) {
@@ -865,13 +924,13 @@ public class DeviceListActivity extends FragmentActivity{
 			Bitmap bitmapOrg = bm;
 	     ByteArrayOutputStream bao = new ByteArrayOutputStream();
 	     //Resize the image
-	  //   double width = bitmapOrg.getWidth();
-	  //   double height = bitmapOrg.getHeight();
-	  //   double ratio = 400/width;
-	  //   int newheight = (int)(ratio*height);
-	  //   bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 400, newheight, true);
-	  //   System.out.println("———-width" + width);
-	  //   System.out.println("———-height" + height);
+	     double width = bitmapOrg.getWidth();
+	     double height = bitmapOrg.getHeight();
+	     double ratio = 400/width;
+	     int newheight = (int)(ratio*height);
+	     bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 400, newheight, true);
+	     System.out.println("———-width" + width);
+	     System.out.println("———-height" + height);
 	     bitmapOrg.compress(Bitmap.CompressFormat.PNG, 95, bao);
 	     byte[] ba = bao.toByteArray();
 	     ba1 = Base64.encodeToString(ba, 0);

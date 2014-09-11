@@ -22,7 +22,8 @@ import com.ad.Intromi.R;
 
 public class CardsListBaseAdapter extends BaseAdapter    {
 private static boolean D = true;	
-
+private Typeface tf;
+private Typeface tf1;
 private Context c;
 
 	
@@ -30,7 +31,11 @@ private Context c;
 
 	
 
-	private Typeface font;
+	
+	
+
+
+     
 	
 	private LayoutInflater l_Inflater;
 
@@ -38,6 +43,10 @@ private Context c;
 		itemDetailsrrayList = results;
 		l_Inflater = LayoutInflater.from(context);
 		this.c = context;
+		  tf = Typeface.createFromAsset(c.getAssets(),
+	             "fonts/Lato-Black.ttf");
+		   tf1 = Typeface.createFromAsset(c.getAssets(),
+	             "fonts/Lato-Regular.ttf");
 	
 	}
 
@@ -58,26 +67,43 @@ private Context c;
 	
 		if (convertView == null) {
 			System.out.println("this is the position " +position);
-			if (position % 2 ==1)
-			convertView = l_Inflater.inflate(R.layout.item_details_view, null);
-			else
-				convertView = l_Inflater.inflate(R.layout.item_details_view_left_pic, null);	
+			System.out.println("This is the result" + position % 2);
+			if (position==0)
+				convertView = l_Inflater.inflate(R.layout.item_details_view, null);
 			
+			else if (position ==1){
+				convertView = l_Inflater.inflate(R.layout.item_details_view_left_pic, null);
+				
+			
+				
+			}
+			else if(position==2)
+				convertView = l_Inflater.inflate(R.layout.item_details_view, null);
+			else if (position==3)
+				convertView = l_Inflater.inflate(R.layout.item_details_view_left_pic, null);
+			else if(position==4)
+				convertView = l_Inflater.inflate(R.layout.item_details_view, null);
+				
+				
 			
 			
 			holder = new ViewHolder();
 			holder.txt_itemName = (TextView) convertView.findViewById(R.id.name);
+			holder.txt_itemName.setTypeface(tf);
 //			holder.txt_itemDescription = (TextView) convertView.findViewById(R.id.itemDescription);
 //			holder.txt_itemPrice = (TextView) convertView.findViewById(R.id.price);
 //		    holder.txt_site = (TextView) convertView.findViewById(R.id.tv1Site);
 		    holder.txt_head_line = (TextView) convertView.findViewById(R.id.tvHeadLine);
+		    holder.txt_head_line.setTypeface(tf1);
 		    holder.txt_mission = (TextView) convertView.findViewById(R.id.tvMission);
+		    holder.txt_mission.setTypeface(tf);
 			holder.itemImage = (ImageView) convertView.findViewById(R.id.photo);
 //			holder.ch_check = (CheckBox) convertView.findViewById(R.id.rssi);
 			
 			
 			  // add listener for email 
-	        holder.ch_check.setOnClickListener(new OnClickListener() {
+/*
+			holder.ch_check.setOnClickListener(new OnClickListener() {
 	 
 	            @Override
 	            public void onClick(View v) {
@@ -93,7 +119,7 @@ private Context c;
 	            }
 	             
 	        });
-
+*/
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();

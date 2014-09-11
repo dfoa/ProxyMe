@@ -3,6 +3,7 @@
     android:id="@+id/ScrollView1"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
+     android:background="@color/White"
     >
 
     <RelativeLayout
@@ -15,7 +16,7 @@
         android:focusableInTouchMode="true" >
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/imgViewPhoto"
             android:layout_width="120dp"
             android:layout_height="150dp"
             android:layout_alignParentLeft="true"
@@ -24,6 +25,7 @@
             android:maxHeight="150dp"
             android:maxWidth="120dp"
             android:scaleType="centerCrop"
+            android:contentDescription="photo"
             android:src="@drawable/kramer" />
 
         <LinearLayout
@@ -33,20 +35,21 @@
             android:layout_marginBottom="8dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_toRightOf="@+id/imageView1"
+            android:layout_toRightOf="@+id/imgViewPhoto"
             android:gravity="top"
             android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/nameCardPreview"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:text="Cosmo K."
+                 android:text="Cosmo K."
+                 android:inputType="textAutoCorrect"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/HeadLineCardPreview"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
@@ -61,7 +64,7 @@
 android:focusableInTouchMode="true"  >
 
                 <ImageView
-                    android:id="@+id/imageView2"
+                    android:id="@+id/imageViewBracketRight"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:maxHeight="20dp"
@@ -71,7 +74,7 @@ android:focusableInTouchMode="true"  >
                     android:src="@drawable/quotes" />
 
                 <TextView
-                    android:id="@+id/textView4"
+                    android:id="@+id/missionPreviewCard"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_marginLeft="8dp"
@@ -83,7 +86,7 @@ android:focusableInTouchMode="true"  >
                     android:textSize="@dimen/activity_horizontal_margin" />
 
                 <ImageView
-                    android:id="@+id/imageView3"
+                    android:id="@+id/leftBrackets"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="bottom"
@@ -96,29 +99,29 @@ android:focusableInTouchMode="true"  >
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayout1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/imageView1"
+            android:layout_below="@+id/imgViewPhoto"
             android:orientation="vertical"
             android:windowSoftInputMode="stateHidden"
             android:descendantFocusability="beforeDescendants"
-android:focusableInTouchMode="true" > >
+            android:focusableInTouchMode="true" > 
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/coose_photo"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="4dp"
                 android:clickable="true"
-                android:text="Choose Photo"
+                android:text="@string/choose_photo"
+                android:contentDescription="@string/choose_photo"
                 android:textColor="@color/Blue"
                 android:textSize="14sp" />
 
             <ImageView
-                android:id="@+id/imageView4"
+                android:id="@+id/LinkedInLogin"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
                 android:paddingBottom="8dp"
@@ -126,68 +129,11 @@ android:focusableInTouchMode="true" > >
                 android:paddingRight="40dp"
                 android:paddingTop="8dp"
                 android:scaleType="fitCenter"
+                android:contentDescription="login_with_linkedin"
                 android:src="@drawable/login_with_linkedin" />
 
             <TextView
-                android:id="@+id/TextView05"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
-                android:layout_weight="1"
-                android:text="Mission:" />
-
-            <EditText
-                android:id="@+id/EditText04"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_weight="1"
-                android:contentDescription="Professional Headline"
-                android:ems="10"
-                android:hint="Couch Surfing in New York" />
-
-            <TextView
-                android:id="@+id/TextView04"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
-                android:text="Mission:" />
-
-            <EditText
-                android:id="@+id/EditText03"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_weight="1"
-                android:contentDescription="Professional Headline"
-                android:ems="10"
-                android:hint="Couch Surfing in New York" />
-
-            <TextView
-                android:id="@+id/TextView03"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
-                android:text="Mission:" />
-
-            <EditText
-                android:id="@+id/EditText02"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_weight="1"
-                android:contentDescription="Professional Headline"
-                android:ems="10"
-                android:hint="Couch Surfing in New York" />
-
-            <TextView
-                android:id="@+id/TextView01"
+                android:id="@+id/tvName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
@@ -195,54 +141,132 @@ android:focusableInTouchMode="true" > >
                 android:text="Full Name:" />
 
             <EditText
-                android:id="@+id/editText1"
-                android:layout_width="match_parent"
+                android:id="@+id/nameEditText"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:hint="Cosmo Kramer"
+                android:layout_weight="1"
+                android:contentDescription="Name"
+                android:ems="10"
                 android:inputType="textPersonName"
-                android:maxEms="30" >
+                android:hint="Kozmo Kramer" >
+
+                
+            </EditText>
+                   <TextView
+                android:id="@+id/tvHeadLine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="16dp"
+                android:text="HeadLine" />
+
+            <EditText
+                android:id="@+id/edHeadLine"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="textAutoComplete"
+                android:hint="CEO@IntroMi" />
+            
+            
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_weight="1"
+                android:text="@string/email" />
+
+            <EditText
+                android:id="@+id/emailEditText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:inputType="textEmailAddress"
+                android:ems="10"
+                android:hint="Cosmo@IntroMi.co" >
+
+         
             </EditText>
 
             <TextView
-                android:id="@+id/TextView1"
+                android:id="@+id/tvPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="16dp"
-                android:text="Professional Headline:" />
+                android:text="@string/phone" />
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/phoneEditText"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
+                android:inputType="phone"
                 android:contentDescription="Professional Headline"
-                android:hint="CEO@Jerry&apos;s Home" />
+                android:ems="10"
+                android:hint="+1(212)-1234567" />
 
             <TextView
-                android:id="@+id/TextView02"
+                android:id="@+id/tvMission"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:text="Mission:" />
 
             <EditText
-                android:id="@+id/EditText01"
+                android:id="@+id/etMission"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:inputType="textAutoComplete"
+                android:lines="2"
+                android:maxEms="30" >
+
+            </EditText>
+
+     <TextView
+                android:id="@+id/tv1Site"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="16dp"
+                android:text="Site:" />
+
+            <EditText
+                android:id="@+id/siteEditText"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
+                android:inputType="text|textWebEditText"
                 android:contentDescription="Professional Headline"
-                android:ems="10"
-                android:hint="Couch Surfing in New York" />
+                android:hint="Linkedin/private/company" />
 
         </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/pbar"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="44dp" />
 
     </RelativeLayout>
 

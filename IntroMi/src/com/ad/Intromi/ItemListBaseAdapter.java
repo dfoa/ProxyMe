@@ -24,18 +24,13 @@ public class ItemListBaseAdapter extends BaseAdapter    {
 private static boolean D = true;	
 
 private Context c;
+private Typeface tf;
+private Typeface tf1;
 	
 	private static ArrayList<ItemDetails> itemDetailsrrayList;
 
 	
-	private Integer[] imgid = {
-		    
-			R.drawable.app_icon,
-			R.drawable.p2,
-			R.drawable.bb5,
-			R.drawable.bb6,
-			R.drawable.d1
-			};
+
 	
 	private Typeface font;
 	
@@ -45,6 +40,10 @@ private Context c;
 		itemDetailsrrayList = results;
 		l_Inflater = LayoutInflater.from(context);
 		this.c = context;
+		  tf = Typeface.createFromAsset(c.getAssets(),
+		             "fonts/Lato-Black.ttf");
+			   tf1 = Typeface.createFromAsset(c.getAssets(),
+		             "fonts/Lato-Regular.ttf");
 	
 	}
 
@@ -65,23 +64,26 @@ private Context c;
 	
 		if (convertView == null) {
 //			System.out.println("this is the position " +position);
-//			if (position % 2 ==1)
-	//		convertView = l_Inflater.inflate(R.layout.item_details_view, null);
-//			else
+		if (position % 2 ==1)
+			convertView = l_Inflater.inflate(R.layout.item_details_view, null);
+		else
 				convertView = l_Inflater.inflate(R.layout.item_details_view_left_pic, null);	
 			
 			
 			
 			holder = new ViewHolder();
 			holder.txt_itemName = (TextView) convertView.findViewById(R.id.name);
+			holder.txt_itemName.setTypeface(tf);
 //			holder.txt_itemDescription = (TextView) convertView.findViewById(R.id.itemDescription);
 //			holder.txt_itemPrice = (TextView) convertView.findViewById(R.id.price);
 //		    holder.txt_site = (TextView) convertView.findViewById(R.id.tv1Site);
 		    holder.txt_head_line = (TextView) convertView.findViewById(R.id.tvHeadLine);
+		    holder.txt_head_line.setTypeface(tf1);
 		    holder.txt_mission = (TextView) convertView.findViewById(R.id.tvMission);
+		    holder.txt_mission.setTypeface(tf);
 			holder.itemImage = (ImageView) convertView.findViewById(R.id.photo);
 //			holder.ch_check = (CheckBox) convertView.findViewById(R.id.star);
-			holder.txt_rssi = (TextView) convertView.findViewById(R.id.rssi);
+	//		holder.txt_rssi = (TextView) convertView.findViewById(R.id.rssi);
 			
 			
 			  // add listener for email 
@@ -113,7 +115,7 @@ private Context c;
 //	    holder.txt_site.setText(itemDetailsrrayList.get(position).getSite());
 	    holder.txt_head_line.setText(itemDetailsrrayList.get(position).getPrfessionalHeadLine());
 	    holder.txt_mission.setText(itemDetailsrrayList.get(position).getmission());
-	    holder.txt_rssi.setText(itemDetailsrrayList.get(position).getmRssi());
+//	    holder.txt_rssi.setText(itemDetailsrrayList.get(position).getmRssi());
 	    
         holder.itemImage.setImageBitmap(itemDetailsrrayList.get(position).getImg());
         

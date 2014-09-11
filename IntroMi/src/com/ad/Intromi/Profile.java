@@ -128,6 +128,7 @@ public void setHomePhoneNum(String homePhoneNum) {
 
 public void setPicture(String picture) {
 	this.picture = picture;
+
 }
 
 

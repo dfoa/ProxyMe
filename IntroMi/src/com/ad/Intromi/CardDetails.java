@@ -14,7 +14,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import com.ad.Intromi.R;
 import com.google.code.linkedinapi.client.LinkedInApiClient;
 import com.google.code.linkedinapi.client.LinkedInApiClientFactory;
 import com.google.code.linkedinapi.client.enumeration.ProfileField;
@@ -63,8 +62,13 @@ import android.os.StrictMode;
 import android.provider.ContactsContract.CommonDataKinds.Photo;
 import android.provider.MediaStore;
 import android.provider.SyncStateContract.Constants;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -93,6 +97,7 @@ public class CardDetails extends Activity {
     private EditText mobile;
     private EditText email;
     private EditText site;
+    private TextView missionPreviewCard;
     private String name_value ;
     private String phone_value;
     private String  email_value;
@@ -101,9 +106,14 @@ public class CardDetails extends Activity {
     private EditText professional_head_line;
     private EditText mission;
     private  Profile p;
+    private  TextView nameCardPreview;
+    private  TextView headLinePreview;
+    private   TextView tvName;
+    private TextView  choosePhoto;
     private  boolean editProfile = false;
     private String mission_value;
     private String head_line_value;
+    
 //Linkedin
     
     private LinkedInOAuthService oAuthService;
@@ -126,28 +136,65 @@ public class CardDetails extends Activity {
         // Set up the window layout
         
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-        setContentView(R.layout.my_card);
+        setContentView(R.layout.edit_card_alex);
      
        
 
         pbar = (ProgressBar) findViewById(R.id.pbar);
         name = (EditText) findViewById(R.id.nameEditText);
+        tvName = (TextView) findViewById(R.id.tvName);
         mobile = (EditText) findViewById(R.id.phoneEditText);
         email = (EditText)findViewById(R.id.emailEditText);
         site= (EditText)findViewById(R.id.siteEditText);
         imageView = (ImageView) findViewById(R.id.imgViewPhoto);
         mission = (EditText)findViewById(R.id.etMission);
         professional_head_line = (EditText)findViewById(R.id.edHeadLine);
-        Button btPickImage = (Button) findViewById(R.id.btImagepPick);
-        Button saveRecords = (Button) findViewById(R.id.saveButton);
-        ImageButton imageButton = (ImageButton)findViewById(R.id.imageView1);
-
+  //      Button btPickImage = (Button) findViewById(R.id.btImagepPick);
+ //      Button saveRecords = (Button) findViewById(R.id.saveButton);
+   //     ImageButton imageButton = (ImageButton)findViewById(R.id.imageView1);
+        nameCardPreview = (TextView) findViewById(R.id.nameCardPreview);
+        headLinePreview = (TextView) findViewById(R.id.HeadLineCardPreview);
+        missionPreviewCard = (TextView) findViewById(R.id.missionPreviewCard);
+        choosePhoto =  (TextView) findViewById(R.id.coose_photo);
+        	
         
-        
-        pb = (ProgressBar)findViewById(R.id.deataSentProgressBar);	
-        pb.setVisibility(View.GONE);
+                pb = (ProgressBar)findViewById(R.id.pbar);	
+       pb.setVisibility(View.INVISIBLE);
      
-
+        //name edittext listener to update card preview
+        
+       
+        name.addTextChangedListener(new TextWatcher(){
+            public void afterTextChanged(Editable s) {
+            
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){
+                nameCardPreview.setText(name.getText().toString());
+            }
+        //update headline  preview card
+        }); 
+        professional_head_line.addTextChangedListener(new TextWatcher(){
+            public void afterTextChanged(Editable s) {
+            
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){
+                headLinePreview.setText(professional_head_line.getText().toString());
+            }
+        }); 
+        mission.addTextChangedListener(new TextWatcher(){
+            public void afterTextChanged(Editable s) {
+            
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){
+                missionPreviewCard.setText(mission.getText().toString());
+            }
+        }); 
+        
+        
+        
         if( Build.VERSION.SDK_INT >= 9){
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -174,14 +221,14 @@ public class CardDetails extends Activity {
    	     
    	     
         }  
-        
+ /*       
         imageButton.setOnClickListener(new OnClickListener()
         {
           public void onClick(View v)
           {
         	  if (D) Log.v(TAG, "Image button linkedin  was pressed");
      
-              /* This code get the values from edittexts  */
+              // This code get the values from edittexts  
               name_value  = name.getText().toString();
               System.out.println("this is the name" + name_value);
               phone_value = mobile.getText().toString();
@@ -211,80 +258,19 @@ public class CardDetails extends Activity {
    
           }
         });
-        
-   	 
+       
+   	 */
 
-        saveRecords.setOnClickListener(new OnClickListener()
-        {
-          public void onClick(View v)
-          {
-        	  System.out.println("button save card was pressed");
-     
-              /* This code get the values from edittexts  */
-              name_value  = name.getText().toString();
-              System.out.println("this is the name" + name_value);
-              phone_value = mobile.getText().toString();
-              email_value = email.getText().toString();
-              site_value  = site.getText().toString();
-              mission_value = mission.getText().toString();
-              head_line_value = professional_head_line.getText().toString();
-             
-              
-           
-           if (D) Log.v(TAG,"Thisis the data " + name_value +phone_value + email_value +site_value + mission_value + head_line_value);
- //          BluetoothAdapter bluetoothDefaultAdapter = BluetoothAdapter.getDefaultAdapter();
-  //         if ((bluetoothDefaultAdapter != null) &&+ (bluetoothDefaultAdapter.isEnabled())){
-          String mac = BluetoothAdapter.getDefaultAdapter().getAddress();
-           if (D) Log.v(TAG,"This is the mac address:" + mac);
- //          }
- //check if card already exist ,if yes  show the information , if no, create new card
-           
-           //check if card exist 
-          
 
-   	    
-   	       
-
-          
-           
-           
-           if (!isNetworkAvailable())
-           {
-           	   Toast.makeText(getApplicationContext(), "No network connection", Toast.LENGTH_SHORT).show();
-          	finish();
-           }
-           else {
-        	   
-        
-         
-        	   pb.setVisibility(View.VISIBLE);
-        	   
-        	
- //       	   new MyAsyncTask().execute(mac,name_value,phone_value,email_value,site_value,img);
-               if (createCard(mac,name_value,phone_value,email_value,site_value,img,head_line_value,mission_value))
-            	   Toast.makeText(getApplicationContext(), "Card details saved sucessfully", Toast.LENGTH_LONG).show();
-               else
-            	   Toast.makeText(getApplicationContext(), "Problem saving card", Toast.LENGTH_LONG).show();  
-        	   //upload  profile to server
-               Profile profile = loadCard();
-       	   new UploadProfileAsyncTask().execute(profile.getMacHw(),profile.getName(),profile.getMobilePhoneNum(),profile.getEmail(),profile.getSite(),profile.getProfessionalHeadLine(),profile.getMission(),profile.getPicture());
-               finish();
-           }
-        	
-   
-          }
-        });
-           
-        
-        btPickImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+     choosePhoto.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
                 pickImage(v);
             }
         });
         
         
-       
+          
   
     
   //   }
@@ -375,7 +361,7 @@ public class CardDetails extends Activity {
            cursor.close();
             
            ImageView imageView = (ImageView) findViewById(R.id.imgViewPhoto);
-           Bitmap b = decodeSampledBitmapFromPath(picturePath,100,100);
+           Bitmap b = decodeSampledBitmapFromPath(picturePath,300,300);
            imageView.setImageBitmap(b);
            img = picturePath;
 
@@ -459,8 +445,8 @@ public class CardDetails extends Activity {
      double width = bitmapOrg.getWidth();
      double height = bitmapOrg.getHeight();
      double ratio = 400/width;
-//     int newheight = (int)(ratio*height);
-//     bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 400, newheight, true);
+     int newheight = (int)(ratio*height);
+     bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 400, newheight, true);
      System.out.println("———-width" + width);
      System.out.println("———-height" + height);
      bitmapOrg.compress(Bitmap.CompressFormat.PNG, 95, bao);
@@ -783,6 +769,114 @@ Application Details
 
 	}
    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	  MenuInflater inflater = getMenuInflater();
+          inflater.inflate(R.menu.mycard_menu, menu);
+   
+          return super.onCreateOptionsMenu(menu);
+    }
+	
+    // handle click events for action bar items
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+ 
+        switch (item.getItemId()) {
+ 
+ 
+            case R.id.saveButton:
+            	 if  (D)  Log.v(TAG, "Save detailes pressed") ;
+            	//check id network connection
+            	if (!isNetworkAvailable())
+                   {
+                   	   Toast.makeText(getApplicationContext(), "No network connection", Toast.LENGTH_SHORT).show();
+                
+    
+                   }
+            	saveDetails();
+           return true;
+           
+   
+                   
+           
+                  
+               
+                
+            default:
+                return super.onOptionsItemSelected(item);          
+                
+           
+        
+              
+      
+        }
+    
+    }
+    private void saveDetails()
+    {
+           //       saveRecords.setOnClickListener(new OnClickListener()
+    //       {
+    //         public void onClick(View v)
+             {
+           	  System.out.println("button save card was pressed");
+        
+                 // This code get the values from edittexts  
+                 name_value  = name.getText().toString();
+                 System.out.println("this is the name" + name_value);
+                 phone_value = mobile.getText().toString();
+                 email_value = email.getText().toString();
+                 site_value  = site.getText().toString();
+                 mission_value = mission.getText().toString();
+                 head_line_value = professional_head_line.getText().toString();
+                
+                 
+              
+              if (D) Log.v(TAG,"Thisis the data " + name_value +phone_value + email_value +site_value + mission_value + head_line_value);
+    //          BluetoothAdapter bluetoothDefaultAdapter = BluetoothAdapter.getDefaultAdapter();
+     //         if ((bluetoothDefaultAdapter != null) &&+ (bluetoothDefaultAdapter.isEnabled())){
+             String mac = BluetoothAdapter.getDefaultAdapter().getAddress();
+              if (D) Log.v(TAG,"This is the mac address:" + mac);
+    //          }
+    //check if card already exist ,if yes  show the information , if no, create new card
+              
+              //check if card exist 
+             
+
+      	    
+      	       
+
+             
+              
+              
+              if (!isNetworkAvailable())
+              {
+              	   Toast.makeText(getApplicationContext(), "No network connection", Toast.LENGTH_SHORT).show();
+             	finish();
+              }
+              else {
+           	   
+           
+            
+//           	   pb.setVisibility(View.VISIBLE);
+           	   
+           	
+    //       	   new MyAsyncTask().execute(mac,name_value,phone_value,email_value,site_value,img);
+                  if (createCard(mac,name_value,phone_value,email_value,site_value,img,head_line_value,mission_value))
+               	   Toast.makeText(getApplicationContext(), "Card details saved sucessfully", Toast.LENGTH_LONG).show();
+                  else
+               	   Toast.makeText(getApplicationContext(), "Problem saving card", Toast.LENGTH_LONG).show();  
+           	   //upload  profile to server
+                  Profile profile = loadCard();
+          	   new UploadProfileAsyncTask().execute(profile.getMacHw(),profile.getName(),profile.getMobilePhoneNum(),profile.getEmail(),profile.getSite(),profile.getProfessionalHeadLine(),profile.getMission(),profile.getPicture());
+                  finish();
+              }
+           	
+      
+             }
+       //    });
+              
+         
+    }
   }
  
 

@@ -66,7 +66,7 @@ public class DiscoveryService extends Service {
     		
     	Log.i(TAG, "Service onStartCommand " + startId);
     	
-       doDiscovery();
+   //    doDiscovery();
 	    
    
     	

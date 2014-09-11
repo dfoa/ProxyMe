@@ -5,6 +5,7 @@
     android:layout_height="385dp"
     android:layout_marginLeft="8dp"
     android:layout_marginTop="8dp"
+    
     android:orientation="vertical" >
 
         <ImageView
@@ -47,8 +48,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
+                android:maxLines="2"
                 android:text="CEO@introMi"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -67,12 +70,14 @@
 
                 <TextView
                     android:id="@+id/tvMission"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="2dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="6dp"
                     android:layout_weight="0.13"
+                    android:maxLines="2"
                     android:text="Looking for a Growth Hacking expert"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="@dimen/activity_horizontal_margin" />
