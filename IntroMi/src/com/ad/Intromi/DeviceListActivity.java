@@ -11,8 +11,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
-
-import android.R.color;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import org.apache.http.HttpEntity;
@@ -26,9 +24,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-
-
-
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
 import android.app.Activity;
@@ -116,6 +111,8 @@ public class DeviceListActivity extends FragmentActivity{
 	Fragment fragmentTab3 = new FragmentTab3();
 	int mStackLevel  = -1;
 	private short mRssi =0;
+	private Intent intent;
+	private boolean mBTena;
 
 	private ProgressDialog pBar;
 
@@ -130,7 +127,7 @@ public class DeviceListActivity extends FragmentActivity{
 //        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
        setContentView(R.layout.main);
        
-
+mBTena = true ;
 
      
 
@@ -188,19 +185,18 @@ public class DeviceListActivity extends FragmentActivity{
   	        public void onItemClick(AdapterView<?> arg0, View arg1, int pos,
   	                long arg3) {
   	      	ItemDetails  item= results.get(pos);
-  			Intent intent = new Intent(DeviceListActivity.this, DetailActivity.class);
+  		    intent = new Intent(DeviceListActivity.this, DetailActivity.class);
   			intent.putExtra("url", item.getName());
   			intent.putExtra("title", item.getPrice());
   			intent.putExtra("desc", item.getItemDescription());
   			intent.putExtra("head_line",item.getPrfessionalHeadLine());
   			intent.putExtra("site",item.getSite());
   			intent.putExtra("mission",item.getmission());
-			intent.putExtra("photo", getPhotoStringFromBitmap(item.getImg()));
-			intent.putExtra("name",item.getName());
 			
-  			
-  			
-  			startActivity(intent);
+			intent.putExtra("name",item.getName());
+			new MyAsyncTask1().execute(item.getImg());
+            
+
   //	             Toast.makeText(getApplicationContext(),"clicked",Toast.LENGTH_SHORT).show();
 /*
  * 
@@ -214,6 +210,11 @@ public class DeviceListActivity extends FragmentActivity{
 
   	        }
   	    });
+     	  
+     	  
+     	  
+     	  
+     	  
         
  //       registerForContextMenu(lv1);
      	lAdapter = new ItemListBaseAdapter(this,results);
@@ -232,6 +233,7 @@ public class DeviceListActivity extends FragmentActivity{
         this.registerReceiver(mReceiver, filter);
 
         // Register for broadcasts when discovery has finished
+ 
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         
         this.registerReceiver(mReceiver, filter);
@@ -240,7 +242,7 @@ public class DeviceListActivity extends FragmentActivity{
         
 
         // Get the local Bluetooth adapter
-        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+ if (mBTena)       mBtAdapter = BluetoothAdapter.getDefaultAdapter();
         
         // Get a set of currently paired devices
  //       Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
@@ -273,16 +275,16 @@ public class DeviceListActivity extends FragmentActivity{
         if(D) Log.e(TAG, "++ ON START ++");
 
         // If BT is not on, request that it be enabled.
-      
+   if (mBTena)  {  
        if (!mBtAdapter .isEnabled()) {
            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         // Otherwise, setup the chat session
         }
-      mBtAdapter.setName("IntroMi");
+ //     mBtAdapter.setName("IntroMi");
       ensureDiscoverable();
     }
-    
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -324,6 +326,7 @@ public class DeviceListActivity extends FragmentActivity{
 */
     // The BroadcastReceiver that listens for discovered devices and
     // changes the title when discovery is finished
+   
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -337,11 +340,11 @@ public class DeviceListActivity extends FragmentActivity{
             	
             	
             	//IntroMi
-            	
+         	
             	BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                System.out.println("This is the name of the device " +device.getName());
-                 if (device.getName().equalsIgnoreCase("IntroMi")) {
-            	  mRssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
+             //   System.out.println("This is the name of the device " +device.getName());
+                // if (device.getName().equalsIgnoreCase("IntroMi")) {
+            	//  mRssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
                  
                 if (D) Log.v(TAG, "rssi:"+ mRssi);
                 // If it's already paired or already listed, skip it, because it's been listed already
@@ -390,7 +393,7 @@ public class DeviceListActivity extends FragmentActivity{
                 }
             	
             	   
-                }
+           //     }
                  else {
                 	  if (D) Log.v(TAG,"found blletooth device but dont have IntoMI application"); 
                 		 
@@ -415,7 +418,9 @@ public class DeviceListActivity extends FragmentActivity{
             }
             
         }
+    
     };
+    
     
 
     ////
@@ -473,7 +478,7 @@ public class DeviceListActivity extends FragmentActivity{
                 
                 pBar = new ProgressDialog(DeviceListActivity.this);
             
-        		pBar.setMessage("Scannig please wait....");
+        		pBar.setMessage("Scanning please wait....");
         		
         		
         		pBar.show();        	
@@ -504,10 +509,7 @@ public class DeviceListActivity extends FragmentActivity{
             
  //          return true;
            
-                case R.id.my_card:
-                //open card details
-                  editCard();
-                  return true;
+
                   
                 case R.id.saved_cards:
                     //open card details
@@ -515,10 +517,13 @@ public class DeviceListActivity extends FragmentActivity{
                       startActivity(g);
                       return true;   
                   
-                  
+                case R.id.my_card:
+                //open card details
+                  editCard();
+                  return true;
                
                 
-            default:
+           default:
                 return super.onOptionsItemSelected(item);          
                 
            
@@ -689,7 +694,7 @@ public class DeviceListActivity extends FragmentActivity{
     	@Override
     	protected void onPreExecute(){
     		super.onPreExecute();
-    		pBar.setMessage("Found Card " + mFoundDevice + "  Loading profile");
+    		//pBar.setMessage("Found Card " + mFoundDevice + "  Loading profile");
     	
     		++mFoundDevice;
     	
@@ -917,7 +922,7 @@ public class DeviceListActivity extends FragmentActivity{
 	  }
  
   public String getPhotoStringFromBitmap(Bitmap bm){
-		 
+		 System.out.println("reach here  inside getPhotoStringFromBitmap");
 		 String ba1 = null;;
 			if (bm!=null)
 			{
@@ -926,17 +931,19 @@ public class DeviceListActivity extends FragmentActivity{
 	     //Resize the image
 	     double width = bitmapOrg.getWidth();
 	     double height = bitmapOrg.getHeight();
-	     double ratio = 400/width;
+	     double ratio = 200/width;
 	     int newheight = (int)(ratio*height);
-	     bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 400, newheight, true);
+	     bitmapOrg = Bitmap.createScaledBitmap(bitmapOrg, 200, newheight, true);
 	     System.out.println("———-width" + width);
 	     System.out.println("———-height" + height);
 	     bitmapOrg.compress(Bitmap.CompressFormat.PNG, 95, bao);
 	     byte[] ba = bao.toByteArray();
 	     ba1 = Base64.encodeToString(ba, 0);
+
 	       	return ba1;
 			}
 			else {
+				 System.out.println("return null");
 				return null;
 			}
 			
@@ -1003,6 +1010,51 @@ public class DeviceListActivity extends FragmentActivity{
 	        return inflater.inflate(R.layout.tab , container, false);
 	    }
 	}
+  
+  private class MyAsyncTask1 extends AsyncTask<Bitmap, Void, String>{
+ 	 
+	  
+  	
+  	@Override
+  	protected void onPreExecute(){
+  		super.onPreExecute();
+  		//pBar.setMessage("Found Card " + mFoundDevice + "  Loading profile");
+  	
+  		
+  	
+  	}
+		@Override
+		protected String  doInBackground(Bitmap... params) {
+			// TODO Auto-generated method stub
+		
+		return   getPhotoStringFromBitmap(params[0]);
+		
+		}
+
+		protected void onPostExecute(String result){
+			
+         //  super.execute(result);
+	//		Toast.makeText(getApplicationContext(), "command sent", Toast.LENGTH_LONG).show();
+			
+	//	 System.out.println("This is the card I am going to  bring information for" + card);
+			
+			intent.putExtra("photo", result);
+			
+			
+			
+			
+  			
+  			
+  			startActivity(intent);
+           
+		}
+		protected void onProgressUpdate(Integer... progress){
+			
+	
+	
+
+	}
+  }
 
 }
     

@@ -19,10 +19,10 @@ public class SavedCards implements Serializable {
   }
 
 
-public void addProfile(Profile profile)
+public ArrayList<Profile>  addProfile(Profile profile)
 {
 	profileArrayList.add(profile);
-	 
+	return profileArrayList;
 }
 
 public void removeProfile(Profile profile)
@@ -55,8 +55,5 @@ public boolean  profileLookup(Profile profile)
 
 
 
-
 }
-
-
 

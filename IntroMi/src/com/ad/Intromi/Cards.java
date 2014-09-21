@@ -1,7 +1,9 @@
 package com.ad.Intromi;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import android.content.ContextWrapper;
@@ -41,7 +43,14 @@ protected Context context;
  }
 	  
   
- public    synchronized void  saveToFile(Profile profile)
+  public    synchronized void  removeProfile (Profile profile)
+  {
+	
+	
+	  
+  }
+  
+ public    synchronized SavedCards  saveToFile(Profile profile)
  {
    	  
 	 File file = context.getFileStreamPath(fileName);
@@ -66,7 +75,36 @@ protected Context context;
 	      ex.printStackTrace();
 	      Toast.makeText(context, "Cant open file and write" , Toast.LENGTH_SHORT).show();
 	    }
+	 return mSaveCards;
+ }
+ public    synchronized void  saveToFileBulk(SavedCards s)
+ {
+   	  
+	 File file = context.getFileStreamPath(fileName);
+	
+	    if(file.exists()) {
+		    	//read the card and show  details
+			   if(D) Log.v(TAG, "+++ Load saved cards");	
+	
+	
+	    
+	
 	 
+	 FileOutputStream fos = null;
+	 ObjectOutputStream out = null;
+	   
+	    try {
+	      fos = context.openFileOutput(fileName,Context.MODE_PRIVATE);
+          out = new ObjectOutputStream(fos);
+	      out.writeObject(s);     
+	      out.close();
+	    } catch (Exception ex) {
+	      ex.printStackTrace();
+	      Toast.makeText(context, "Cant open file and write" , Toast.LENGTH_SHORT).show();
+	    
+	 
+	    }
+	    }
  }
  
 	    
@@ -90,13 +128,15 @@ protected Context context;
 	 		   
 	 		    
 	 //		    System.out.println(p.email + p.name + p.MobilePhoneNum + p.professionalHeadLine);
-	 	
+	 	return(mSaveCards);	
  }
-		return(mSaveCards);	
+	  else return null;
 	  
  }
-	
-}
+  
+	    }
+ 	
+
 
 
 

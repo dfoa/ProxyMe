@@ -361,7 +361,7 @@ public class CardDetails extends Activity {
            cursor.close();
             
            ImageView imageView = (ImageView) findViewById(R.id.imgViewPhoto);
-           Bitmap b = decodeSampledBitmapFromPath(picturePath,300,300);
+           Bitmap b = decodeSampledBitmapFromPath(picturePath,200,200);
            imageView.setImageBitmap(b);
            img = picturePath;
 
