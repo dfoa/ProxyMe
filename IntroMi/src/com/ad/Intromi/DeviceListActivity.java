@@ -11,6 +11,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+
+import android.R.integer;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import org.apache.http.HttpEntity;
@@ -106,15 +108,14 @@ public class DeviceListActivity extends FragmentActivity{
 	private String company = "";
 	private int mFoundDevice;
     ActionBar.Tab tab1, tab2, tab3;
-	Fragment fragmentTab1 = new FragmentTab1();
-	Fragment fragmentTab2 = new FragmentTab2();
-	Fragment fragmentTab3 = new FragmentTab3();
+
 	int mStackLevel  = -1;
 	private short mRssi =0;
 	private Intent intent;
 	private boolean mBTena;
 
 	private ProgressDialog pBar;
+	private HttpResponse response;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,6 +193,7 @@ mBTena = true ;
   			intent.putExtra("head_line",item.getPrfessionalHeadLine());
   			intent.putExtra("site",item.getSite());
   			intent.putExtra("mission",item.getmission());
+  			intent.putExtra("site", item.getSite());
 			
 			intent.putExtra("name",item.getName());
 			new MyAsyncTask1().execute(item.getImg());
@@ -243,7 +245,7 @@ mBTena = true ;
 
         // Get the local Bluetooth adapter
  if (mBTena)       mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-        
+ //if (mBTena)      startDiscovery();       
         // Get a set of currently paired devices
  //       Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
         
@@ -283,6 +285,7 @@ mBTena = true ;
         }
  //     mBtAdapter.setName("IntroMi");
       ensureDiscoverable();
+      
     }
     }
     @Override
@@ -384,7 +387,11 @@ mBTena = true ;
             	holdMacs = holdMacs+device.getAddress()+ "=";	
             	//	 mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             		if (D) Log.v(TAG,"found device and going to look for information Asynctask with " + device.getAddress());
+           	//	for (int key =1 ;key <3 ; key++){
+            			
+            		
             		new MyAsyncTask().execute(device.getAddress());
+           // 		}
             
             		
             		
@@ -473,19 +480,13 @@ mBTena = true ;
                 else
 
                 // Request discover from BluetoothAdapter
+                	startDiscovery();
                 
-                mBtAdapter.startDiscovery();
-                
-                pBar = new ProgressDialog(DeviceListActivity.this);
-            
-        		pBar.setMessage("Scanning please wait....");
-        		
-        		
-        		pBar.show();        	
-        		 mFoundDevice =1; 
-            	 return true;
+              
+            	 
               
             	}
+            	return true;
 //            case R.id.discoverable:
 //            	 showToast("Discoverable");
                 // Ensure this device is discoverable by others
@@ -687,7 +688,7 @@ mBTena = true ;
     }
     
     
-    private class MyAsyncTask extends AsyncTask<String, Integer, Double>{
+    private class MyAsyncTask extends AsyncTask<String, Integer, Integer>{
     	 
   
     	
@@ -700,17 +701,29 @@ mBTena = true ;
     	
     	}
 		@Override
-		protected Double doInBackground(String... params) {
+		protected Integer doInBackground(String... params) {
 			// TODO Auto-generated method stub
-			postData(params[0]);
-			return null;
+			int  i = 1;
+			i = postData(params[0]);
+			
+			return i;
 		}
  
-		protected void onPostExecute(Double result){
+		protected void onPostExecute(Integer result){
 			
              super.onPostExecute(result);
 	//		Toast.makeText(getApplicationContext(), "command sent", Toast.LENGTH_LONG).show();
 			
+             if (result==1) {
+            	 pBar.setMessage("Server is not reachable..");
+                 System.out.println("Server is not reachable");
+                 mBtAdapter.cancelDiscovery();
+                 holdMacs = "a";
+             }
+             
+             
+             
+             
 	//	 System.out.println("This is the card I am going to  bring information for" + card);
 			if (card!=null) {
 			  String arr[] = card.split("&");
@@ -727,7 +740,7 @@ mBTena = true ;
 			   
 			  card = name + "\n" + phone +  "\n" +email + "\n"  + site +"\n" + head_line +"\n" + mission + "\n";
 			  
-			  pBar.setMessage("Scanning please wait....");
+		//	  pBar.setMessage("Scanning please wait....");
 ///////////////////////////////////////////////////
 		        
 			  GetSearchResults(mac,name,phone,email,site,head_line,mission,pic);
@@ -751,12 +764,13 @@ mBTena = true ;
 	
 		}
  
-		public void postData(String mac) {
+		public int postData(String mac) {
 			// Create a new HttpClient and Post Header
 			HttpClient httpclient = new DefaultHttpClient();
 			
-		//	HttpPost httppost = new HttpPost("http://192.168.50.5/cgi-bin/get_card.cgi");
-			HttpPost httppost = new HttpPost("http://dfoa.ssh22.net/cgi-bin/get_card.cgi");
+	HttpPost httppost = new HttpPost("http://192.168.50.5/cgi-bin/get_card.cgi");
+		//	HttpPost httppost = new HttpPost("http://dfoa.ssh22.net/cgi-bin/get_card.cgi");
+			
 //		  httppost.addHeader("Accept-Encoding", "gzip");
  
 			try {
@@ -766,7 +780,9 @@ mBTena = true ;
 				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 				httppost.addHeader("Accept-Encoding", "gzip");
 				// Execute HTTP Post Request
-				HttpResponse response = httpclient.execute(httppost);
+				response = httpclient.execute(httppost);
+				
+				if (response!=null){
 
 				int responseCode = response.getStatusLine().getStatusCode();
 				switch(responseCode)
@@ -784,7 +800,7 @@ mBTena = true ;
 				        if(entity != null)
 				 {
 			     
-				       	card = convertStreamToString(instream);
+				     String   	card = convertStreamToString(instream);
 				//  card = EntityUtils.toString(entity);
 				  
 
@@ -803,14 +819,28 @@ mBTena = true ;
 				   break;
 				      
 				} 
- 
-			} catch (ClientProtocolException e) {
+				}
+				else {
+					System.out.println("This is a mess");
+				}
+        				
+				
+				
+				
+				} catch (ClientProtocolException e) {
 				// TODO Auto-generated catch block
 			} catch (IOException e) {
+			 //   System.out.println("server is not reachable");
+	//		    pBar.cancel();
+			    return 1;
+			    
+			
+				
 				// TODO Auto-generated catch block
 			}
+		return 0;
 		}
- 
+		
 	}
     
   
@@ -861,7 +891,10 @@ mBTena = true ;
     	item_details.setProfessionlaHeadLine(head_line);
     	item_details.setMission(mission);
     	item_details.setmRssi(String.valueOf(mRssi));
+    	
     	results.add(item_details);
+    	
+    	
         
     	lv1.setAdapter(lAdapter);
     	lAdapter.notifyDataSetChanged();
@@ -950,66 +983,14 @@ mBTena = true ;
 	 
 	 }
 
-	
-  public class FragmentTab1 extends Fragment {
-	  public View onCreateView(LayoutInflater inflater, ViewGroup container, 
-	                           Bundle savedInstanceState){
-		View view = inflater.inflate(R.layout.tab, container, false);
-		TextView textview = (TextView) view.findViewById(R.id.tabtextview);
-		textview.setText("tab1");
-		return view;
-	  }
-	}
+
   
-  public class FragmentTab2 extends Fragment {
-	  public View onCreateView(LayoutInflater inflater, ViewGroup container, 
-	                           Bundle savedInstanceState){
-		View view = inflater.inflate(R.layout.tab, container, false);
-		TextView textview = (TextView) view.findViewById(R.id.tabtextview);
-		textview.setText(R.string.email);
-		return view;
-	  }
-	}
+
   
-  public class FragmentTab3 extends Fragment {
-	  public View onCreateView(LayoutInflater inflater, ViewGroup container, 
-	                           Bundle savedInstanceState){
-		View view = inflater.inflate(R.layout.tab, container, false);
-		TextView textview = (TextView) view.findViewById(R.id.tabtextview);
-		textview.setText(R.string.head_line);
-		return view;
-	  }
-	}
+ 
   
-  
-  public class MyTabListener implements ActionBar.TabListener {
-		Fragment fragment;
-		
-		public MyTabListener(Fragment fragment) {
-			this.fragment = fragment;
-		}
-		
-	    public void onTabSelected(Tab tab, FragmentTransaction ft) {
-			ft.replace(R.id.fragment_container, fragment);
-		}
-		
-		public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-			ft.remove(fragment);
-		}
-		
-		public void onTabReselected(Tab tab, FragmentTransaction ft) {
-			// nothing done here
-		}
-	}
-  
-  public class tt extends Fragment {
-	    @Override
-	    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	        Bundle savedInstanceState) {
-	        // Inflate the layout for this fragment
-	        return inflater.inflate(R.layout.tab , container, false);
-	    }
-	}
+
+
   
   private class MyAsyncTask1 extends AsyncTask<Bitmap, Void, String>{
  	 
@@ -1054,6 +1035,19 @@ mBTena = true ;
 	
 
 	}
+  }
+  private void startDiscovery(){
+	  
+	  
+	  mBtAdapter.startDiscovery();
+      
+      pBar = new ProgressDialog(DeviceListActivity.this);
+  
+		pBar.setMessage("Scanning please wait....");
+		
+		
+		pBar.show();        	
+		 mFoundDevice =1; 
   }
 
 }

@@ -7,6 +7,7 @@ import java.io.ObjectInputStream;
 import java.util.jar.Attributes.Name;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -99,7 +100,15 @@ public class MyCards extends Activity {
     		 
     	 
     
-    
+	
+    @Override
+    public void onBackPressed()
+    {
+    	 Intent  g = new Intent(this, SavedCardsList.class); 
+         startActivity(g);
+         super.onBackPressed();  // optional depending on your needs
+    }
+
 
 
 

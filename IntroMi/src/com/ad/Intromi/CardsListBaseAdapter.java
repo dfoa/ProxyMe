@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.provider.SyncStateContract.Constants;
 import android.util.Log;
@@ -132,7 +133,12 @@ private Context c;
 	    holder.txt_head_line.setText(itemDetailsrrayList.get(position).getProfessionalHeadLine());
 	    holder.txt_mission.setText(itemDetailsrrayList.get(position).getMission());
 	    
+	    if (itemDetailsrrayList.get(position).getImg() ==null)
+	    	holder.itemImage.setImageBitmap(BitmapFactory.decodeResource(c.getResources(),R.drawable.profile));
+	    else
         holder.itemImage.setImageBitmap(itemDetailsrrayList.get(position).getImg());
+	    
+//        holder.itemImage.setImageBitmap(itemDetailsrrayList.get(position).getImg());
         
    
 

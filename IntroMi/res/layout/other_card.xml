@@ -88,7 +88,7 @@
         <LinearLayout
             android:id="@+id/mission"
             android:layout_width="match_parent"
-            android:layout_height="190dp"
+            android:layout_height="150dp"
             android:layout_weight="1"
             android:background="@drawable/card_blue_back"
             android:orientation="horizontal" >
@@ -157,17 +157,17 @@
 
             <ImageView
                 android:id="@+id/imageEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="5dp"
                 android:adjustViewBounds="true"
+                android:background="@drawable/email_button_selector"
                 android:clickable="true"
                 android:maxHeight="60dp"
                 android:maxWidth="60dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/mail" />
+                android:scaleType="fitCenter" />
 
             <TextView
                 android:id="@+id/tvEmail"
@@ -197,17 +197,17 @@
 
             <ImageView
                 android:id="@+id/imagePhone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="5dp"
                 android:adjustViewBounds="true"
+                android:background="@drawable/phone_button_selector"
                 android:clickable="true"
                 android:maxHeight="60dp"
                 android:maxWidth="60dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/phone" />
+                android:scaleType="fitCenter" />
 
             <TextView
                 android:id="@+id/tvPhone"
@@ -218,6 +218,47 @@
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
         </LinearLayout>
+        
+        
+        
+
+        <ImageView
+            android:id="@+id/ImageView02"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@drawable/card_blue_back" />
+        <LinearLayout
+            android:id="@+id/phone_line"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:id="@+id/imageSite"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="5dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/link_button_selector"
+                android:clickable="true"
+                android:maxHeight="60dp"
+                android:maxWidth="60dp"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:id="@+id/tv1Site"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="40dp"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        </LinearLayout>
+        
+        
+        
 
         <ImageView
             android:id="@+id/ImageView02"
@@ -257,28 +298,23 @@
                 android:padding="5dp"
                 android:clickable="true"
                 android:scaleType="centerInside"
-                android:src="@drawable/share_blue" />
+             
+                android:background="@drawable/share_button_selector"
+                
+               />
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/btSaveToFavourites"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
                 android:padding="5dp"
+              
                 android:scaleType="centerInside"
                 
                 android:src="@drawable/favorite_blue" />
 
-            <ImageView
-                android:id="@+id/ImageView05"
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:layout_marginBottom="5dp"
-                android:layout_weight="1"
-                android:padding="5dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/shake_mi_blue" />
 
             <ImageView
                 android:id="@+id/ImageView04"
@@ -299,9 +335,12 @@
                 android:layout_weight="1"
                 android:clickable="true"
                 android:layout_marginRight="10dp"
-                android:padding="5dp"
-                
-                android:src="@drawable/add_phonebook" />
+                android:scaleType="centerInside"
+                android:padding="5dp"    
+                android:background="@drawable/add_to_contacts_button_selector" />
+                      
+          
+
 
         </LinearLayout>
 

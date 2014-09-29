@@ -83,7 +83,7 @@ android:focusableInTouchMode="true"  >
                     android:layout_weight="0.13"
                     android:text="Looking for a Growth Hacking expert"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="@dimen/activity_horizontal_margin" />
+                    />
 
                 <ImageView
                     android:id="@+id/leftBrackets"

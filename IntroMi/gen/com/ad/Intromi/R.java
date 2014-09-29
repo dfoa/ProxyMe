@@ -235,53 +235,59 @@ public final class R {
     public static final class dimen {
         public static final int Maargins_left=0x7f060000;
         /**  Default screen margins, per the Android Design guidelines. 
-
-         Example customization of dimensions originally defined in res/values/dimens.xml
-         (such as screen margins) for screens with more than 820dp of available width. This
-         would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively).
-    
          */
         public static final int activity_horizontal_margin=0x7f060001;
         public static final int activity_vertical_margin=0x7f060002;
     }
     public static final class drawable {
         public static final int add_phonebook=0x7f020000;
-        public static final int alex_photo=0x7f020001;
-        public static final int app_icon=0x7f020002;
-        public static final int bb1=0x7f020003;
-        public static final int bb2=0x7f020004;
-        public static final int bb4=0x7f020005;
-        public static final int bb5=0x7f020006;
-        public static final int bb6=0x7f020007;
-        public static final int card_blue_back=0x7f020008;
-        public static final int d1=0x7f020009;
-        public static final int favorite_blue=0x7f02000a;
-        public static final int favorite_blue_full=0x7f02000b;
-        public static final int ic_action_star=0x7f02000c;
-        public static final int imgright=0x7f02000d;
-        public static final int kramer=0x7f02000e;
-        public static final int linkedin_blue=0x7f02000f;
-        public static final int list_bg=0x7f020010;
-        public static final int login_with_linkedin=0x7f020011;
-        public static final int login_with_linkedin_=0x7f020012;
-        public static final int mail=0x7f020013;
-        public static final int no_image=0x7f020014;
-        public static final int p1=0x7f020015;
-        public static final int p2=0x7f020016;
-        public static final int phone=0x7f020017;
-        public static final int profile=0x7f020018;
-        public static final int pvnbf=0x7f020019;
-        public static final int quotes=0x7f02001a;
-        public static final int separator=0x7f02001b;
-        public static final int shake_mi_blue=0x7f02001c;
-        public static final int share_blue=0x7f02001d;
+        public static final int add_phonebook_press=0x7f020001;
+        public static final int add_to_contacts_button_selector=0x7f020002;
+        public static final int alex_photo=0x7f020003;
+        public static final int app_icon=0x7f020004;
+        public static final int bb1=0x7f020005;
+        public static final int bb2=0x7f020006;
+        public static final int bb4=0x7f020007;
+        public static final int bb5=0x7f020008;
+        public static final int bb6=0x7f020009;
+        public static final int card_blue_back=0x7f02000a;
+        public static final int d1=0x7f02000b;
+        public static final int email_button_selector=0x7f02000c;
+        public static final int favorite_blue=0x7f02000d;
+        public static final int favorite_blue_full=0x7f02000e;
+        public static final int ic_action_star=0x7f02000f;
+        public static final int imgright=0x7f020010;
+        public static final int kramer=0x7f020011;
+        public static final int link=0x7f020012;
+        public static final int link_button_selector=0x7f020013;
+        public static final int link_press=0x7f020014;
+        public static final int linkedin_blue=0x7f020015;
+        public static final int linkedin_blue_press=0x7f020016;
+        public static final int list_bg=0x7f020017;
+        public static final int login_with_linkedin=0x7f020018;
+        public static final int login_with_linkedin_=0x7f020019;
+        public static final int mail=0x7f02001a;
+        public static final int mail_press=0x7f02001b;
+        public static final int no_image=0x7f02001c;
+        public static final int p1=0x7f02001d;
+        public static final int p2=0x7f02001e;
+        public static final int phone=0x7f02001f;
+        public static final int phone_button_selector=0x7f020020;
+        public static final int phone_press=0x7f020021;
+        public static final int profile=0x7f020022;
+        public static final int pvnbf=0x7f020023;
+        public static final int quotes=0x7f020024;
+        public static final int separator=0x7f020025;
+        public static final int shake_mi_blue=0x7f020026;
+        public static final int share_blue=0x7f020027;
+        public static final int share_blue_press=0x7f020028;
+        public static final int share_button_selector=0x7f020029;
     }
     public static final class id {
         public static final int HeadLineCardPreview=0x7f0a000c;
         public static final int ImageView02=0x7f0a0041;
         public static final int ImageView04=0x7f0a0047;
-        public static final int ImageView05=0x7f0a0046;
-        public static final int ImageView08=0x7f0a0042;
+        public static final int ImageView08=0x7f0a0043;
         public static final int LinearLayout1=0x7f0a0034;
         public static final int LinearLayout2=0x7f0a002d;
         public static final int LinkedInLogin=0x7f0a0011;
@@ -293,7 +299,7 @@ public final class R {
         public static final int TextView03=0x7f0a0029;
         public static final int action_settings=0x7f0a0050;
         public static final int btImagepPick=0x7f0a0025;
-        public static final int btSaveToFavourites=0x7f0a0045;
+        public static final int btSaveToFavourites=0x7f0a0046;
         public static final int card_preview=0x7f0a0036;
         public static final int coose_photo=0x7f0a0010;
         public static final int deataSentProgressBar=0x7f0a002b;
@@ -302,12 +308,13 @@ public final class R {
         public static final int emailEditText=0x7f0a0016;
         public static final int emailImage=0x7f0a003e;
         public static final int etMission=0x7f0a001a;
-        public static final int footer=0x7f0a0043;
+        public static final int footer=0x7f0a0044;
         public static final int fragment_container=0x7f0a0001;
         public static final int headLinePreview=0x7f0a0037;
         public static final int image=0x7f0a0049;
         public static final int imageEmail=0x7f0a003d;
         public static final int imagePhone=0x7f0a0040;
+        public static final int imageSite=0x7f0a0042;
         public static final int imageView1=0x7f0a002c;
         public static final int imageViewBracketLeft=0x7f0a0021;
         public static final int imageViewBracketRight=0x7f0a000d;
@@ -315,7 +322,7 @@ public final class R {
         public static final int imageViewPhotoPresent=0x7f0a0002;
         public static final int imageVinitPage=0x7f0a001e;
         public static final int imgViewPhoto=0x7f0a000a;
-        public static final int imgViewShare=0x7f0a0044;
+        public static final int imgViewShare=0x7f0a0045;
         public static final int leftBrackets=0x7f0a000f;
         public static final int listV_main=0x7f0a0024;
         public static final int listViewSavedCards=0x7f0a0000;

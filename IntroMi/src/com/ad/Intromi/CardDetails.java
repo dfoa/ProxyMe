@@ -44,8 +44,11 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -62,10 +65,12 @@ import android.os.StrictMode;
 import android.provider.ContactsContract.CommonDataKinds.Photo;
 import android.provider.MediaStore;
 import android.provider.SyncStateContract.Constants;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -113,7 +118,7 @@ public class CardDetails extends Activity {
     private  boolean editProfile = false;
     private String mission_value;
     private String head_line_value;
-    
+    private HttpResponse response;
 //Linkedin
     
     private LinkedInOAuthService oAuthService;
@@ -122,14 +127,15 @@ public class CardDetails extends Activity {
     private LinkedInApiClient client;
 	private DisplayImageOptions options;
 	private ImageLoader imageLoader;
-
+	private boolean saveWasPressed = false;
 	private ProgressBar pbar;
 
 
     
    
     
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(D) Log.e(TAG, "+++ ON CREATE card details+++ ");
@@ -200,8 +206,32 @@ public class CardDetails extends Activity {
         StrictMode.setThreadPolicy(policy);
         }
  
- 	   
-   	  
+
+        
+        Uri sentURI = Uri.parse("content://sms/inbox");
+        
+        // List required columns
+        String[] reqCols = new String[] { "_id", "address", "body" };
+
+        // Get Content Resolver object, which will deal with Content Provider
+        ContentResolver cr = getContentResolver();
+
+        // Fetch Sent SMS Message from Built-in Content Provider
+        Cursor c = cr.query(sentURI, reqCols, null, null, null);
+        if(c.moveToFirst()) {
+            for(int i=0; i < c.getCount(); i++) {
+                
+               System.out.println("aaaa" +c.getString(c.getColumnIndexOrThrow("body")).toString());
+               System.out.println("bbbbb"+ c.getString(c.getColumnIndexOrThrow("address")).toString());
+             
+           //     smsList.add(sms);
+                 
+                c.moveToNext();
+            }
+        }
+        c.close();
+ 
+        
       
        
   //check if card already exist , just load the details 
@@ -631,9 +661,10 @@ public String getPhotoStringFromBitmap(Bitmap bm){
 				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 				// Execute HTTP Post Request
-				HttpResponse response = httpclient.execute(httppost);
+				 response = httpclient.execute(httppost);
 				
-	
+	            
+	            	
 					
 			p.setCompany("ww");	
 				
@@ -786,6 +817,7 @@ Application Details
  
             case R.id.saveButton:
             	 if  (D)  Log.v(TAG, "Save detailes pressed") ;
+                 saveWasPressed = true;           	 
             	//check id network connection
             	if (!isNetworkAvailable())
                    {
@@ -861,14 +893,21 @@ Application Details
            	   
            	
     //       	   new MyAsyncTask().execute(mac,name_value,phone_value,email_value,site_value,img);
-                  if (createCard(mac,name_value,phone_value,email_value,site_value,img,head_line_value,mission_value))
-               	   Toast.makeText(getApplicationContext(), "Card details saved sucessfully", Toast.LENGTH_LONG).show();
-                  else
-               	   Toast.makeText(getApplicationContext(), "Problem saving card", Toast.LENGTH_LONG).show();  
+                  if ( createCard(mac,name_value,phone_value,email_value,site_value,img,head_line_value,mission_value))
+               	      
+                  {  
+               	    	  
+  //              	  Toast.makeText(getApplicationContext(), "Card details saved sucessfully on local phone", Toast.LENGTH_LONG).show();
+  //                else
+  //             	   Toast.makeText(getApplicationContext(), "Problem saving card", Toast.LENGTH_LONG).show();  
            	   //upload  profile to server
                   Profile profile = loadCard();
           	   new UploadProfileAsyncTask().execute(profile.getMacHw(),profile.getName(),profile.getMobilePhoneNum(),profile.getEmail(),profile.getSite(),profile.getProfessionalHeadLine(),profile.getMission(),profile.getPicture());
-                  finish();
+   //       	 if (response==null) {
+   //    	    	 Toast.makeText(getApplicationContext(), "Server is not reachable, try to save again", Toast.LENGTH_LONG).show();
+       	      }  
+          	   
+          	   finish();
               }
            	
       
@@ -877,8 +916,62 @@ Application Details
               
          
     }
+    
+    
+    @Override
+    public void onBackPressed()
+    {
+ //   	super.onBackPressed();  // optional depending on your needs
+    	 
+    	if (!saveWasPressed){
+    
+    		
+    		
+    		
+    		//means that the user  pressed back button but didnt  save information.
+    		//open dialog box to tell him to save the information.
+    		
+    	 }
+    		 
+         
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // TODO Auto-generated method stub
+
+        switch(keyCode)
+        {
+        case KeyEvent.KEYCODE_BACK:
+            AlertDialog.Builder ab = new AlertDialog.Builder(CardDetails.this);
+            ab.setMessage("Card was not saved").setPositiveButton("Save", dialogClickListener)
+            .setNegativeButton("Exit", dialogClickListener).show();
+            break;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which){
+            case DialogInterface.BUTTON_POSITIVE:
+                //Save button clicked -- save the card 
+                saveDetails();
+                break;
+                
+            case DialogInterface.BUTTON_NEGATIVE:
+                //exit was pressed so dont overide back button
+            	finish();
+                break;
+            }
+        }
+    };
+    
+    
+    
   }
- 
+
 
  
 

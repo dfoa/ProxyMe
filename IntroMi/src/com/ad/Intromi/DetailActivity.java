@@ -4,12 +4,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import android.R.color;
 import android.app.Activity;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -20,6 +23,7 @@ import android.provider.SyncStateContract.Constants;
 import android.util.Base64;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -41,7 +45,7 @@ public class DetailActivity extends Activity {
 	private TextView tvMobilePhone , tvemail,tvSite,tvMission,tvHeadline,tvName;
 	
 	String test;
-	private ImageView imgView,mImgViewShare;
+	private ImageView imgView,mImgViewShare,mImgSite;
 	private ImageView imagePhone;
 	private ImageView imageEmail ;
 	private ImageView btSaveToFavourites;
@@ -51,29 +55,27 @@ public class DetailActivity extends Activity {
     private String email;
     private String mission;
     private String head_line;
-    private String photo;
+    private String photo,mSite;
     private SavedCards mSavedCards ;
+    
 
-    private ImageView image;
-    private Drawable d;
+
     private ImageView mIvPhonebook;
     
     private static int mBlue = 1;
     private static int mBlueFull = 2;
  //   private String MobileNumber;
-    private boolean mLoaded = true;
+  
 
     private ArrayList<ContentProviderOperation> ops;
     private Cards cards;
     boolean flag;
     private int ind ;
-    String DisplayName = "XYZ";
-    String MobileNumber = "123456";
-    String HomeNumber = "1111";
-    String WorkNumber = "2222";
-    String emailID = "email@nomail.com";
-    String company = "bad";
-    String jobTitle = "abcd";
+
+    String HomeNumber = "";
+    String WorkNumber = "";
+    String company = "";
+    String jobTitle = "";
 	
 	
 	Bitmap bm;
@@ -90,11 +92,13 @@ public class DetailActivity extends Activity {
 		tvHeadline = (TextView) findViewById(R.id.tvHeadLine);
 		tvMission = (TextView) findViewById(R.id.tvMission);
 		tvName = (TextView) findViewById(R.id.tvName);
+		 tvSite = (TextView) findViewById(R.id.tv1Site);
+		 
 		imgLeftBrackets  = (ImageView)findViewById(R.id.leftBrackets);
 		imgRightBrackets = (ImageView)findViewById(R.id.rightBrackets);
 		 mIvPhonebook      = (ImageView)findViewById(R.id.imageViewPhoneBook);
 		 mImgViewShare = (ImageView) findViewById(R.id.imgViewShare);
-          
+        
 
 	    Typeface tf = Typeface.createFromAsset(getAssets(),
                 "fonts/Lato-Black.ttf");
@@ -113,16 +117,20 @@ public class DetailActivity extends Activity {
 		imgView = (ImageView) findViewById(R.id.photo);
 		imagePhone = (ImageView) findViewById(R.id.imagePhone);
 		imageEmail= (ImageView) findViewById(R.id.imageEmail);
-		btSaveToFavourites = (ImageButton)findViewById(R.id.btSaveToFavourites);
-
+		btSaveToFavourites = (ImageView)findViewById(R.id.btSaveToFavourites);
+		mImgSite =  (ImageView)findViewById(R.id.imageSite);
+      
 		
 		Bundle b = getIntent().getExtras();
 
 		 email = b.getString("title");
 		final String mobilePhone = b.getString("desc");
+	
 		photo = b.getString("photo");
+		
 		head_line = b.getString("head_line");
 	    mission = b.getString("mission");
+	    mSite = b.getString("site");
 		name = b.getString("name");
 		tvName.setText(name);
 		tvMobilePhone.setText(mobilePhone);
@@ -130,10 +138,13 @@ public class DetailActivity extends Activity {
 	    if (head_line!=null)
 	    tvHeadline.setText(head_line);
 	    tvMission.setText(mission);
-	    new MyAsyncTask().execute(photo);
+	    tvSite.setText(mSite);
+	    if (photo !=null)
+	            new MyAsyncTask().execute(photo);
 	    pbar.setVisibility(View.INVISIBLE);
 	    this.c = getApplicationContext();
 	    flag = true;
+	   
 	    
 	     cards = new Cards(c);
          //load list from file;
@@ -173,10 +184,42 @@ public class DetailActivity extends Activity {
           
 //		String url = b.getString("url");
 //		loadImageFromURL(url);
+          
+
+        /*
+          
+          mImgViewShare.setImageDrawable(getBaseContext().getResources().getDrawable(R.id.imgViewShare));
+
+        //set the click listener
+        mImgViewShare.setOnClickListener(new OnClickListener() {
+
+            public void onClick(View button) {
+                //Set the button's appearance
+                
+            	button.setSelected(!button.isSelected());
+
+                if (button.isSelected()) {
+                    //Handle selected state change
+                	
+                	 System.out.println("button selected");
+                } else {
+                	 System.out.println("button  no selected");
+                    //Handle de-select state change
+                }
+
+            }
+
+        });
+          
+          */
+          
 	    btSaveToFavourites.setOnClickListener(new OnClickListener()
 	     {
+	    	 
 	       public void onClick(View v)
 	       {
+	    	  
+	    	   
 	//    	   btSaveToFavourites.setImageResource((int)R.drawable.favorite_blue_full);
 	     	  if (D) Log.v(TAG, "Image button  btSaveToFavorits  was pressed");
 	     	  System.out.println("v.getID  "  + v.getId());
@@ -226,7 +269,9 @@ public class DetailActivity extends Activity {
       flag =	 true;
 	 
        System.out.println("This is the flag: " + flag);
-	   
+	   Intent returnIntent = new Intent();
+   	
+	   setResult(RESULT_OK,returnIntent);
 	   
  }
 
@@ -259,7 +304,10 @@ public class DetailActivity extends Activity {
 	       
                
 	   
-
+	    	   Intent returnIntent = new Intent();
+	    	
+	    	   setResult(RESULT_OK,returnIntent);
+	    	 
 	         //   finish();
 	        
      }
@@ -270,23 +318,69 @@ public class DetailActivity extends Activity {
 	       
 	     });
 		 
+	    
+	    mImgSite.setOnClickListener(new OnClickListener()
+	     {
+	       public void onClick(View v)
+	       {
+	    	
+	    	
+	    	   
+	     	  if (D) Log.v(TAG, "pressed site link");
+	     	
+	     	 String strUrl = mSite;
+	
+	     	 if (strUrl != null){
+	     		 
+	     	 
+	     	 
+	     	if (!strUrl.startsWith("http://") && !strUrl.startsWith("https://")){
+	     	    strUrl.replace(" ", ""); 
+	     		strUrl= "http://"+strUrl;
+	     	     
+	     	 }
+	     	
+	     	Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(strUrl));
+	     	startActivity(browserIntent);
+	     
+	     	 
+
+	       }
+	       }
+	     }); 
+	    
+	    
+	    
 	    mImgViewShare.setOnClickListener(new OnClickListener()
 	     {
 	       public void onClick(View v)
 	       {
+	    	
+	    	
+	    	   
 	     	  if (D) Log.v(TAG, "Shared Icon was pressed");
 	     	 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
 	     	sharingIntent.setType("text/plain");
-	     	String shareBody = "Shared by IntroMi";
+	     	String shareBody = "\nShared by IntroMi";
 
 	     	sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Contact of" +name);
 	     	sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, name + mobilePhone +email + shareBody);
 	     	startActivity(Intent.createChooser(sharingIntent, "Share via"));
-	     	
+	     	 
 
 	       }
-	     });     
+	      
+	     }); 
 	    
+
+			
+
+			
+		 
+	    	
+	
+			
+	
 	    
 		 imagePhone.setOnClickListener(new OnClickListener()
 	     {
@@ -340,7 +434,7 @@ public class DetailActivity extends Activity {
 	             );
 
 	             //------------------------------------------------------ Names
-	             if(DisplayName != null)
+	             if(name != null)
 	             {           
 	                 ops.add(ContentProviderOperation.newInsert(
 	                     ContactsContract.Data.CONTENT_URI)              
@@ -349,19 +443,19 @@ public class DetailActivity extends Activity {
 	                         ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
 	                     .withValue(
 	                         ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,     
-	                         DisplayName).build()
+	                         name).build()
 	                 );
 	             } 
 
 	             //------------------------------------------------------ Mobile Number                      
-	             if(MobileNumber != null)
+	             if(mobilePhone != null)
 	             {
 	                 ops.add(ContentProviderOperation.
 	                     newInsert(ContactsContract.Data.CONTENT_URI)
 	                     .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
 	                     .withValue(ContactsContract.Data.MIMETYPE,
 	                     ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-	                     .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, MobileNumber)
+	                     .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, mobilePhone)
 	                     .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, 
 	                     ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
 	                     .build()
@@ -395,13 +489,13 @@ public class DetailActivity extends Activity {
 	                                 }
 
 	                                 //------------------------------------------------------ Email
-	                                 if(emailID != null)
+	                                 if(email != null)
 	                                 {
 	                                      ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
 	                                                 .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
 	                                                 .withValue(ContactsContract.Data.MIMETYPE,
 	                                                         ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
-	                                                 .withValue(ContactsContract.CommonDataKinds.Email.DATA, emailID)
+	                                                 .withValue(ContactsContract.CommonDataKinds.Email.DATA, email)
 	                                                 .withValue(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_WORK)
 	                                                 .build());
 	                                 }
@@ -543,13 +637,13 @@ public class DetailActivity extends Activity {
 	   	 
 	   	 
 	    }
-	    @Override
-	    public void onBackPressed()
-	    {
-	    	 Intent  g = new Intent(this, SavedCardsList.class); 
-             startActivity(g);
-	         super.onBackPressed();  // optional depending on your needs
-	    }
+	    
+	    
+	    
+	    
+
+	    
+	    
 }
 	 
 	 

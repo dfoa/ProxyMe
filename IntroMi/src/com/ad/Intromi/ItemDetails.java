@@ -25,10 +25,12 @@ import android.content.ReceiverCallNotAllowedException;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.DropBoxManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Base64;
@@ -36,7 +38,22 @@ import android.widget.ImageView;
 
 public class ItemDetails {
 	
+
+	public void setContext( Context context) {
+		
 	
+	 
+	this.context = context;
+	
+	}
+	
+	public Context getContext() {
+		
+		
+		 
+	 return context;
+	
+	}
 	public String getPrfessionalHeadLine() {
 		return professionlHeadLine;
 	}
@@ -92,7 +109,7 @@ public class ItemDetails {
 	
 	public void setImg(String img) {
 
-    if (img !=null){
+    if (!img.equalsIgnoreCase("\n \n")){
 	
 		
 	
@@ -112,6 +129,12 @@ public class ItemDetails {
 		//im.setImageBitmap(decodedByte);
 		bm = decodedByte;
     }
+    else  
+        bm = null;
+	 
+
+    
+    
 	}
 		
 	
@@ -131,6 +154,7 @@ public class ItemDetails {
 	private String mission;
     private String professionlHeadLine;
     private String mRssi; 
+    private Context context;
 
 	
 	 

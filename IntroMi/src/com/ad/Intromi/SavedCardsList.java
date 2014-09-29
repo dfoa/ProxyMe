@@ -28,7 +28,7 @@ public class SavedCardsList extends Activity {
 
 	    private ActionBar actionBar;
 	    private static final String TAG = "IntroMi/SavedCardsList";
-
+        private static final int RELOAD_LIST = 1;
 		private static final boolean D = true;
 
 		private ListView listViewSavedCards;
@@ -112,10 +112,12 @@ public class SavedCardsList extends Activity {
 			intent.putExtra("mission",p.getMission());
 			intent.putExtra("photo", getPhotoStringFromBitmap(p.getImg()));
 			intent.putExtra("name",p.getName());
+			intent.putExtra("site", p.getSite());
 			
 			
 			
-			startActivity(intent);
+//			startActivity(intent);
+			startActivityForResult(intent, RELOAD_LIST);
 	           
 /*
 * 
@@ -261,9 +263,8 @@ if (mSaveCards!=null)
 
 
  for (int i =0  ;i<mSaveCards.profileArrayList.size();i++){
-      if (D) Log.v(TAG,"this is the cards i have" + mSaveCards.profileArrayList.get(i).getName()); 	  
-// 	 mSaveCards.profileArrayList.get(i).setName("dddddddd");
-// 	 mSaveCards.profileArrayList.get(i).set("wqewew");
+      if (D) Log.v(TAG,"this is the cards i have" + mSaveCards.profileArrayList.get(i).getName()); 	  ;
+      if (mSaveCards.profileArrayList.get(i).getPicture()!= null)
       mSaveCards.profileArrayList.get(i).setImg(mSaveCards.profileArrayList.get(i).getPicture()); 
 results.add(mSaveCards.profileArrayList.get(i));
 
@@ -289,11 +290,37 @@ public  void onResume()
 public  void onStop()
 {
 	super.onStop();
-    finish();
+ //   finish();
 	
 	System.out.println("++onStop  card list activity");
 	
 }
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    // Check which request we're responding to
+    if (requestCode == RELOAD_LIST) {
+        // Make sure the request was successful
+        if (resultCode == RESULT_OK) {
+        	 System.out.println("Okay going to reload list ");
+            // The user picked a contact.
+            // The Intent's data Uri identifies which contact was selected.
+   
+		
+	
+	
+            // Do something with the contact here (bigger example below)
+
+        	results.clear();
+        	
+        	
+        	 new LoadSavedcardsAsyncTask().execute();
+        	 listAdapter.notifyDataSetChanged();
+        }
+    }
+}
+
+
 
 
 }

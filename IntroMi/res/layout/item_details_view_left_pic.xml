@@ -19,7 +19,7 @@
             android:maxHeight="150dp"
             android:maxWidth="120dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/kramer" />
+            android:src="@drawable/profile" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -80,7 +80,7 @@
                     android:maxLines="2"
                     android:text="Looking for a Growth Hacking expert"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="@dimen/activity_horizontal_margin" />
+                     />
 
                 <ImageView
                     android:id="@+id/imageViewBracketRight"
