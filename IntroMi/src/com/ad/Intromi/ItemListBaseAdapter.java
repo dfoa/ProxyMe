@@ -81,7 +81,7 @@ private Typeface tf1;
 		    holder.txt_head_line = (TextView) convertView.findViewById(R.id.tvHeadLine);
 		    holder.txt_head_line.setTypeface(tf1);
 		    holder.txt_mission = (TextView) convertView.findViewById(R.id.tvMission);
-		    holder.txt_mission.setTypeface(tf);
+		    holder.txt_mission.setTypeface(tf1);
 			holder.itemImage = (ImageView) convertView.findViewById(R.id.photo);
 //			holder.ch_check = (CheckBox) convertView.findViewById(R.id.star);
 	//		holder.txt_rssi = (TextView) convertView.findViewById(R.id.rssi);

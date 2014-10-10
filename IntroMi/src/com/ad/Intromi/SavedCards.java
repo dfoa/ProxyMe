@@ -53,6 +53,23 @@ public boolean  profileLookup(Profile profile)
 
 }
 
+public void    push (Profile profile)
+{
+   
+  for (int i = 0 ; i <profileArrayList.size()-1 ; i++)
+  {
+	  
+   Profile temp = new Profile();
+   temp = profileArrayList.get(i);
+	 profileArrayList.add(i+1,temp);
+	
+  }
+  profileArrayList.add(0,profile);
+ 
+}
+
+
+
 
 
 }

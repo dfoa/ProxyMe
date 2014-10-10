@@ -49,7 +49,6 @@ public class DetailActivity extends Activity {
 	private ImageView imagePhone;
 	private ImageView imageEmail ;
 	private ImageView btSaveToFavourites;
-	private ImageView imgLeftBrackets ,	imgRightBrackets;
 	private  Context c;
     private  String name;
     private String email;
@@ -57,6 +56,7 @@ public class DetailActivity extends Activity {
     private String head_line;
     private String photo,mSite;
     private SavedCards mSavedCards ;
+    private  String  fileName;
     
 
 
@@ -94,8 +94,8 @@ public class DetailActivity extends Activity {
 		tvName = (TextView) findViewById(R.id.tvName);
 		 tvSite = (TextView) findViewById(R.id.tv1Site);
 		 
-		imgLeftBrackets  = (ImageView)findViewById(R.id.leftBrackets);
-		imgRightBrackets = (ImageView)findViewById(R.id.rightBrackets);
+//		imgLeftBrackets  = (ImageView)findViewById(R.id.leftBrackets);
+//		imgRightBrackets = (ImageView)findViewById(R.id.rightBrackets);
 		 mIvPhonebook      = (ImageView)findViewById(R.id.imageViewPhoneBook);
 		 mImgViewShare = (ImageView) findViewById(R.id.imgViewShare);
         
@@ -122,7 +122,7 @@ public class DetailActivity extends Activity {
       
 		
 		Bundle b = getIntent().getExtras();
-
+         fileName = b.getString("file_name");
 		 email = b.getString("title");
 		final String mobilePhone = b.getString("desc");
 	
@@ -132,7 +132,8 @@ public class DetailActivity extends Activity {
 	    mission = b.getString("mission");
 	    mSite = b.getString("site");
 		name = b.getString("name");
-		tvName.setText(name);
+		
+		tvName.setText(name.toUpperCase());
 		tvMobilePhone.setText(mobilePhone);
 	    tvemail.setText(email);
 	    if (head_line!=null)
@@ -146,7 +147,7 @@ public class DetailActivity extends Activity {
 	    flag = true;
 	   
 	    
-	     cards = new Cards(c);
+	     cards = new Cards(c,fileName);
          //load list from file;
           mSavedCards = cards.loadCards();
           if (mSavedCards !=null) {
@@ -169,49 +170,20 @@ public class DetailActivity extends Activity {
          btSaveToFavourites.setId(mBlue);
          btSaveToFavourites.refreshDrawableState();
      }
-       //	  Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT).show();
+     
        	  
      
       
         }
          else {
-        	  System.out.println("mcard is null");
+        	 
          	 btSaveToFavourites.setImageResource((int)R.drawable.favorite_blue);
              btSaveToFavourites.setId(mBlue);
              btSaveToFavourites.refreshDrawableState();
           }
 		
           
-//		String url = b.getString("url");
-//		loadImageFromURL(url);
-          
 
-        /*
-          
-          mImgViewShare.setImageDrawable(getBaseContext().getResources().getDrawable(R.id.imgViewShare));
-
-        //set the click listener
-        mImgViewShare.setOnClickListener(new OnClickListener() {
-
-            public void onClick(View button) {
-                //Set the button's appearance
-                
-            	button.setSelected(!button.isSelected());
-
-                if (button.isSelected()) {
-                    //Handle selected state change
-                	
-                	 System.out.println("button selected");
-                } else {
-                	 System.out.println("button  no selected");
-                    //Handle de-select state change
-                }
-
-            }
-
-        });
-          
-          */
           
 	    btSaveToFavourites.setOnClickListener(new OnClickListener()
 	     {
@@ -226,13 +198,7 @@ public class DetailActivity extends Activity {
 	        	 
 	    
 	        
-	//        	   System.out.println(("this is the ID of blue" +(int)R.drawable.favorite_blue));
-//		   System.out.println(("this is the ID of blue full " +(int)R.drawable.favorite_blue_full));
-//	        	   System.out.println("btsavegetid  "  + btSaveToFavourites.getId());
- 
-	    //      Cards cards = new Cards(c);
-	         //load list from file;
-	  //        mSavedCards = cards.loadCards();
+
 
   if ((v.getId() == mBlueFull)) {
 //need to remove contact
@@ -257,7 +223,7 @@ public class DetailActivity extends Activity {
 	 
 
 	 
-      try {
+      try { 
 		flushFile();
 	} catch (FileNotFoundException e) {
 		// TODO Auto-generated catch block
@@ -268,10 +234,10 @@ public class DetailActivity extends Activity {
      
       flag =	 true;
 	 
-       System.out.println("This is the flag: " + flag);
+     
 	   Intent returnIntent = new Intent();
    	
-	   setResult(RESULT_OK,returnIntent);
+        setResult(RESULT_OK,returnIntent);
 	   
  }
 
@@ -285,8 +251,7 @@ public class DetailActivity extends Activity {
 	    	flag = false;
 	    	  System.out.println("This is the flag: " + flag);
 	        	  
-//	        	 System.out.println("from memory" +  mSavedCards.profileArrayList.get(0).getMobilePhoneNum());
-//	        	 System.out.println("real" +mobilePhone);
+
 	        	
 	          Profile p = new Profile();
 	             p.setName(name);
@@ -297,16 +262,16 @@ public class DetailActivity extends Activity {
 	             p.setMobilePhoneNum(mobilePhone);
 	             
 	             
-	           mSavedCards = cards.saveToFile(p);
+	           mSavedCards = cards.saveToFile(p,false);
 	    	   btSaveToFavourites.setImageResource((int)R.drawable.favorite_blue_full);
 	    	   btSaveToFavourites.refreshDrawableState();
 	    	   btSaveToFavourites.setId(mBlueFull);
 	       
                
 	   
-	    	   Intent returnIntent = new Intent();
+	    	//   Intent returnIntent = new Intent();
 	    	
-	    	   setResult(RESULT_OK,returnIntent);
+	   // 	   setResult(RESULT_OK,returnIntent);
 	    	 
 	         //   finish();
 	        
@@ -422,7 +387,8 @@ public class DetailActivity extends Activity {
 	     {
 	       public void onClick(View v)
 	       {
-	     	  if (D) Log.v(TAG, "saveToContact  pressed no need to send intent to default contacts application");
+	    	  
+	    	   if (D) Log.v(TAG, "saveToContact  pressed no need to send intent to default contacts application");
 	     	 ArrayList<ContentProviderOperation> ops = 
 	                 new ArrayList<ContentProviderOperation>();
 
@@ -524,10 +490,13 @@ public class DetailActivity extends Activity {
 	                                     e.printStackTrace();
 	                                   //  Toast.makeText(myContext, "Exception: " + e.getMessage(), Toast.LENGTH_SHORT).show();
 	                                 }
-
+	            
+	                                 Toast.makeText(getApplicationContext(), "Contact has been saved successfully", Toast.LENGTH_SHORT).show();
 	         }
-	       
+	    
+	
 	     });
+		
 	}
 	
 	

@@ -35,12 +35,12 @@ public class SavedCardsList extends Activity {
 	
 	    private ArrayList<Profile> results;
 	    private SavedCards mSaveCards; 
-	  
-	    private CardsListBaseAdapter listAdapter;
+	    private  String fileName = "cards.bin";   
+	    private CardsListBaseAdapter listAdapterFav;
 	    private Cards cards;
 	    private ProgressDialog mProgress;
 	    private ProgressDialog pBar;
-	    
+	    private boolean firstTime = true;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
     
@@ -53,51 +53,17 @@ public class SavedCardsList extends Activity {
 		  results = new ArrayList<Profile>();
 	    	listViewSavedCards = (ListView) findViewById(R.id.listViewSavedCards); 
 	    	
-		listAdapter = new CardsListBaseAdapter(this,results);
+		listAdapterFav = new CardsListBaseAdapter(getBaseContext(),results);
 	
 		
 	
 		 mSaveCards = new SavedCards();
-		 cards = new Cards(getBaseContext());
+		 cards = new Cards(getBaseContext(),fileName);
 	  	 
 			//mSaveCards = 
 					new LoadSavedcardsAsyncTask().execute();
 		
-	/*		
-		if (mSaveCards!=null)
-		{
-//		 System.out.println("tttt" +cards.mSaveCards.profileArrayList.get(3).getName());
-		 
-		 
-		
 	
-			
-
-		
-
-
-//    	ItemDetails item_details = new ItemDetails();
-//    	item_details.setName("name");
-//    	item_details.setItemDescription("ii");
-//    	item_details.setPrice("e");
-//    	item_details.setSite("u");
-//    	item_details.setImg("");
-//    	item_details.setProfessionlaHeadLine("he");
-//    	item_details.setMission("mission");
-    	
-    	
-    	 for (int i =0  ;i<mSaveCards.profileArrayList.size();i++){
-	          if (D) Log.v(TAG,"this is the cards i have" + mSaveCards.profileArrayList.get(i).getName()); 	  
-	// 	 mSaveCards.profileArrayList.get(i).setName("dddddddd");
-	// 	 mSaveCards.profileArrayList.get(i).set("wqewew");
-	          mSaveCards.profileArrayList.get(i).setImg(mSaveCards.profileArrayList.get(i).getPicture()); 
-    	results.add(mSaveCards.profileArrayList.get(i));
-        
-  	listViewSavedCards.setAdapter(listAdapter);
-    	listAdapter.notifyDataSetChanged();
-    	 }
-		}
-*/		
    	  listViewSavedCards.setOnItemClickListener(new OnItemClickListener() {
 
 	        public void onItemClick(AdapterView<?> arg0, View arg1, int pos,
@@ -113,21 +79,14 @@ public class SavedCardsList extends Activity {
 			intent.putExtra("photo", getPhotoStringFromBitmap(p.getImg()));
 			intent.putExtra("name",p.getName());
 			intent.putExtra("site", p.getSite());
+			intent.putExtra("file_name",fileName);
 			
 			
 			
-//			startActivity(intent);
-			startActivityForResult(intent, RELOAD_LIST);
+	startActivity(intent);
+	//		startActivityForResult(intent, RELOAD_LIST);
 	           
-/*
-* 
-*     	item_details.setName(name);
-  	item_details.setItemDescription(phone);
-  	item_details.setPrice(email);
-  	item_details.setSite(site);
-  	item_details.setImg(img);
-  	results.add(item_details);
-*/
+
 
 	        }
 	    });
@@ -149,9 +108,9 @@ public class SavedCardsList extends Activity {
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
+//		if (id == R.id.action_settings) {
+//			return true;
+//		}
 		return super.onOptionsItemSelected(item);
     }
 	
@@ -242,24 +201,7 @@ private  void ReturnresultsFromAsync(SavedCards mSaveCards ){
 	
 if (mSaveCards!=null)
 {
-// System.out.println("tttt" +cards.mSaveCards.profileArrayList.get(3).getName());
- 
- 
 
-
-	
-
-
-
-
-//ItemDetails item_details = new ItemDetails();
-//item_details.setName("name");
-//item_details.setItemDescription("ii");
-//item_details.setPrice("e");
-//item_details.setSite("u");
-//item_details.setImg("");
-//item_details.setProfessionlaHeadLine("he");
-//item_details.setMission("mission");
 
 
  for (int i =0  ;i<mSaveCards.profileArrayList.size();i++){
@@ -268,23 +210,57 @@ if (mSaveCards!=null)
       mSaveCards.profileArrayList.get(i).setImg(mSaveCards.profileArrayList.get(i).getPicture()); 
 results.add(mSaveCards.profileArrayList.get(i));
 
-listViewSavedCards.setAdapter(listAdapter);
-listAdapter.notifyDataSetChanged();
+
+
+listViewSavedCards.setAdapter(listAdapterFav);
+
+listAdapterFav.notifyDataSetChanged();
+
  }
 }
+else System.out.println("This card return null"+ fileName);
 }
 
 @Override
 public  void onResume()
 {
-	super.onResume();
+	
+	 
+		  
+	  
 
-	System.out.println("++onresume  card list activity");
+System.out.println("++onresume  saveCardList");
+ System.out.println ("FirstTime" + firstTime);
+if (!firstTime) {
+
+	results.clear();
+	
+	
+	 new LoadSavedcardsAsyncTask().execute();
+//	 
+	
+  
+	System.out.println("++onResume  DeviceLis	tActivity");
+	
+	
+	  }
+
+else 	  firstTime = false;
+	 
+	  super.onResume();
+}
+
+
+
+
+	
+	
+	
 	
 
 
 
-}
+
 
 @Override
 public  void onStop()
@@ -296,6 +272,7 @@ public  void onStop()
 	
 }
 
+/*
 @Override
 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     // Check which request we're responding to
@@ -315,13 +292,13 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         	
         	
         	 new LoadSavedcardsAsyncTask().execute();
-        	 listAdapter.notifyDataSetChanged();
+        	 listAdapterFav.notifyDataSetChanged();
         }
     }
 }
 
 
-
+*/	
 
 }
 

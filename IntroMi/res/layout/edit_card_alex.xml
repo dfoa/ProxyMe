@@ -22,11 +22,12 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:adjustViewBounds="false"
+            android:clickable="true"
+            android:contentDescription="photo"
             android:maxHeight="150dp"
             android:maxWidth="120dp"
             android:scaleType="centerCrop"
-            android:contentDescription="photo"
-            android:src="@drawable/kramer" />
+            android:src="@drawable/profile" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -65,12 +66,8 @@ android:focusableInTouchMode="true"  >
 
                 <ImageView
                     android:id="@+id/imageViewBracketRight"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:maxHeight="20dp"
-                    android:maxWidth="20dp"
-                    android:minHeight="15dp"
-                    android:minWidth="15dp"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:src="@drawable/quotes" />
 
                 <TextView
@@ -87,7 +84,7 @@ android:focusableInTouchMode="true"  >
 
                 <ImageView
                     android:id="@+id/leftBrackets"
-                    android:layout_width="25dp"
+                    android:layout_width="16dp"
                     android:layout_height="25dp"
                     android:layout_gravity="bottom"
                     android:minHeight="15dp"
@@ -106,19 +103,7 @@ android:focusableInTouchMode="true"  >
             android:orientation="vertical"
             android:windowSoftInputMode="stateHidden"
             android:descendantFocusability="beforeDescendants"
-            android:focusableInTouchMode="true" > 
-
-            <TextView
-                android:id="@+id/coose_photo"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="4dp"
-                android:clickable="true"
-                android:text="@string/choose_photo"
-                android:contentDescription="@string/choose_photo"
-                android:textColor="@color/Blue"
-                android:textSize="14sp" />
+            android:focusableInTouchMode="true" >
 
             <ImageView
                 android:id="@+id/LinkedInLogin"
@@ -129,6 +114,7 @@ android:focusableInTouchMode="true"  >
                 android:paddingRight="40dp"
                 android:paddingTop="8dp"
                 android:scaleType="fitCenter"
+                android:clickable="true"
                 android:contentDescription="login_with_linkedin"
                 android:src="@drawable/login_with_linkedin" />
 
@@ -150,7 +136,7 @@ android:focusableInTouchMode="true"  >
                 android:contentDescription="Name"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:hint="Kozmo Kramer" >
+                android:hint="John Smith" >
 
                 
             </EditText>
@@ -160,7 +146,8 @@ android:focusableInTouchMode="true"  >
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="16dp"
-                android:text="HeadLine" />
+                 android:hint="CEO@Amazon" 
+                android:text="Company and title" />
 
             <EditText
                 android:id="@+id/edHeadLine"
@@ -192,10 +179,10 @@ android:focusableInTouchMode="true"  >
                 android:layout_weight="1"
                 android:inputType="textEmailAddress"
                 android:ems="10"
-                android:hint="Cosmo@IntroMi.co" >
+                android:hint="Cosmo@IntroMi.co" />
 
          
-            </EditText>
+           
 
             <TextView
                 android:id="@+id/tvPhone"
@@ -232,10 +219,11 @@ android:focusableInTouchMode="true"  >
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:inputType="textAutoComplete"
+                android:hint="Looking to invest in innovative ideas." 
                 android:lines="2"
-                android:maxEms="30" >
+                android:maxEms="30" />
 
-            </EditText>
+        
 
      <TextView
                 android:id="@+id/tv1Site"

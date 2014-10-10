@@ -109,7 +109,7 @@ public class ItemDetails {
 	
 	public void setImg(String img) {
 
-    if (!img.equalsIgnoreCase("\n \n")){
+    if (img !=null){
 	
 		
 	

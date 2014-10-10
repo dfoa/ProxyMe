@@ -1,18 +1,31 @@
 
 
+
 package com.ad.Intromi;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-import android.R.integer;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import org.apache.http.HttpEntity;
@@ -27,12 +40,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import android.app.ActionBar;
-import android.app.ActionBar.Tab;
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
+import android.app.TabActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -40,7 +51,9 @@ import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
@@ -48,42 +61,33 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.os.Looper;
 import android.os.StrictMode;
-import android.preference.PreferenceActivity.Header;
-import android.provider.ContactsContract;
-import android.transition.Visibility;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
+import android.sax.TextElementListener;
 import android.support.v4.app.FragmentActivity;
 	
 
 
-public class DeviceListActivity extends FragmentActivity{
+public class DeviceListActivity extends Activity{
+	
+	private  static boolean isBTRunning;
+	private static int DELAYBT = 300000;
     // Debugging
     private static final String TAG = "DeviceListActivity";
     private static final boolean D = true;
@@ -93,9 +97,9 @@ public class DeviceListActivity extends FragmentActivity{
     private static final int REQUEST_ENABLE_BT = 3;
     // Member fields
     private BluetoothAdapter mBtAdapter;
-    private ArrayAdapter<String> mPairedDevicesArrayAdapter;
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
     private ArrayList<ItemDetails> results;
+   
     private ItemListBaseAdapter lAdapter;
     private String card;
     private String holdMacs="macacdcdcdcdcdcdcdc";
@@ -107,16 +111,20 @@ public class DeviceListActivity extends FragmentActivity{
 	private String emailID ;
 	private String company = "";
 	private int mFoundDevice;
-    ActionBar.Tab tab1, tab2, tab3;
+
 
 	int mStackLevel  = -1;
 	private short mRssi =0;
 	private Intent intent;
 	private boolean mBTena;
-
-	private ProgressDialog pBar;
+	private LinearLayout layout ;
+	private ProgressBar pBar;
 	private HttpResponse response;
-
+    private boolean firstTime = true;
+	private BluetoothDevice device;
+	private EditText inputSearch;
+	private String fileName = "cards.bin";
+	private String histoyFileName = "history.bin"; 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,13 +136,16 @@ public class DeviceListActivity extends FragmentActivity{
 //        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
        setContentView(R.layout.main);
        
+       
+       
 mBTena = true ;
 
-     
+
 
 
        
-//       pb= (ProgressBar) findViewById(R.id.pbar);
+       pBar = (ProgressBar) findViewById(R.id.progressBarScan);
+       pBar.setProgress(50);	
 //       pb.setVisibility(View.GONE);
 /*       
        if (savedInstanceState == null) {
@@ -146,9 +157,23 @@ mBTena = true ;
            fragmentTransaction.commit();
        }
   
-         */
-       setUpActionBar();  
-    	   
+         
+ layout = (LinearLayout) findViewById(R.id.linearLayout1);
+
+ layout.setOnClickListener(new OnClickListener() {
+	 
+	 
+	
+	
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		
+		 editCard();
+	}
+});
+*/
+//setUpActionBar();  	   
     
        
        
@@ -177,6 +202,8 @@ mBTena = true ;
 
         // Initialize array adapters. One for already paired devices and
         // one for newly discovered devices
+ //    inputSearch = (EditText)findViewById(R.id.autoCompleteTextViewSearch)
+        ;
         results = new ArrayList<ItemDetails>();
      	lv1 = (ListView) findViewById(R.id.listV_main); 
      	
@@ -185,6 +212,13 @@ mBTena = true ;
 
   	        public void onItemClick(AdapterView<?> arg0, View arg1, int pos,
   	                long arg3) {
+  	        	
+  	        	if (pos == 0)
+  	        	{
+  	        		 intent = new Intent(DeviceListActivity.this, CardDetails.class);
+  	        	startActivity(intent);
+  	        }
+  	        	else {
   	      	ItemDetails  item= results.get(pos);
   		    intent = new Intent(DeviceListActivity.this, DetailActivity.class);
   			intent.putExtra("url", item.getName());
@@ -194,41 +228,55 @@ mBTena = true ;
   			intent.putExtra("site",item.getSite());
   			intent.putExtra("mission",item.getmission());
   			intent.putExtra("site", item.getSite());
+  			intent.putExtra("file_name", fileName);
 			
 			intent.putExtra("name",item.getName());
 			new MyAsyncTask1().execute(item.getImg());
-            
+  	        	}
 
-  //	             Toast.makeText(getApplicationContext(),"clicked",Toast.LENGTH_SHORT).show();
-/*
- * 
- *     	item_details.setName(name);
-    	item_details.setItemDescription(phone);
-    	item_details.setPrice(email);
-    	item_details.setSite(site);
-    	item_details.setImg(img);
-    	results.add(item_details);
- */
+ 
 
   	        }
   	    });
      	  
-     	  
-     	  
+   /*  	 	
+     	 inputSearch.addTextChangedListener(new TextWatcher() {
+     			
+     			@Override
+     			public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+     				// When user changed the Text
+     				System.out.println("Text was chnaged");	
+     				setSearchResult(cs.toString());
+         			
+     			}
+     			
+     			@Override
+     			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+     					int arg3) {
+     				// TODO Auto-generated method stub
+     				
+     				
+     			}
+     			
+     			@Override
+     			public void afterTextChanged(Editable arg0) {
+     				// TODO Auto-generated method stub	
+     			
+     			}
+     		});
+     		
+     */	  
      	  
      	  
         
  //       registerForContextMenu(lv1);
      	lAdapter = new ItemListBaseAdapter(this,results);
-	   
-        mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
+     	
+//        mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
         mNewDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
-  
-      
-        // Find and set up the ListView for newly discovered devices
- //       ListView newDevicesListView = (ListView) findViewById(R.id.new_devices);
- //       newDevicesListView.setAdapter(mNewDevicesArrayAdapter);
-//        newDevicesListView.setOnItemClickListener(mDeviceClickListener);
+        
+        
+
 
         // Register for broadcasts when a device is discovered
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -240,36 +288,112 @@ mBTena = true ;
         
         this.registerReceiver(mReceiver, filter);
        
-        
+       //put my profile at the head of the list  
+       //this function already knows how to insert values ans update adapter.
+           
+    //check if user has a card
+       //startDiscovery(); 
+        //check if card already exist , just load the details 
+        System.out.println("checking if file exist");
+    	final String filename = "card.bin";
+        File file = getBaseContext().getFileStreamPath(filename);
+        if(file.exists()) {
+   	    	//read the card and show  details
+   	     if(D) Log.e(TAG, "+++ Load self card");
+   	      
+   
+      
+   	     
+   	     
+   	 
+   	  System.out.println("loading card");
+   	    Profile profile = new Profile() ;
+   	    profile = loadCard();
+   	    
+   	    
+   	    
+   	  GetSearchResults(profile.getMacHw() ,profile.getName(),profile.getMobilePhoneNum(),profile.getEmail(),profile.getSite(),profile.getProfessionalHeadLine() ,profile.getMission(),profile.getPicture() );
+   	    
+   	    
+   	     
+   	     
+        }
+       
+        else  {
+        	System.out.println("Self profile does not exist");
+        	 GetSearchResults("ss" ,"New user ?" ,"ssd","sdsd","sdsds","Click here" ,"To Complete your profile", null);
+        }
         
 
         // Get the local Bluetooth adapter
  if (mBTena)       mBtAdapter = BluetoothAdapter.getDefaultAdapter();
- //if (mBTena)      startDiscovery();       
-        // Get a set of currently paired devices
- //       Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
-        
-  
 
 
-        
-        
-        
-        // If there are paired devices, add each one to the ArrayAdapter
-//        if (pairedDevices.size() > 0) {
-//            findViewById(R.id.title_paired_devices).setVisibility(View.VISIBLE);
-//            for (BluetoothDevice device : pairedDevices) {
-//                mPairedDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-//              System.out.println("These are paired devices\n" + device.getName() + "\n" + device.getAddress());
-        }
-//        } else {
-      //      String noDevices = getResources().getText(R.string.none_paired).toString();
-       //     mPairedDevicesArrayAdapter.add(noDevices);
-//             System.out.println("No paired devices");
-  
- //       }
+ if (mBTena){
+	 
+	
+	
+	 new Thread(new Runnable() { 
+         public void run(){
+         
+             {
+                System.out.println("Into thread");
+               isBTRunning = true;
+               Looper.prepare(); 
+               BluetoothAdapter mBluetoothAdapter =BluetoothAdapter.getDefaultAdapter();
+             
+               try { 
+                   Log.d(TAG, "BT Scanning started");
+
+                   while(isBTRunning)
+                   { 
+                
+                   if (!mBluetoothAdapter.isEnabled())
+                   {
+                           mBluetoothAdapter.enable();  
+                           
+                                
+                   }
+                   Log.d(TAG,"Register..."); 
+      
+                   showToast("Start discovery");
+                   Log.d(TAG,"Start discovery");
+                   
+                // mBluetoothAdapter.startDiscovery();
+                  startDiscovery();
+                   Log.d(TAG,"sleep for " + DELAYBT + " seconds");
+                   
+                   Thread.sleep(DELAYBT);
+                   
+                   Log.d(TAG,"Unregister..."); 
+//                     unregisterReceiver(mReceiver);
+                }
+                   Looper.loop();
+               }
+               catch (InterruptedException e) {
+                   Log.d(TAG, "BT Scanning stopped");
+                       Looper.myLooper().quit();
+               }
+
+             }     
+
+         }
     
-//    }
+ }).start();
+	 
+	
+	 
+	 /////
+ }
+	 
+	
+	  
+     
+        
+        
+ 
+        }
+
 
     @Override
     public void onStart() {
@@ -279,12 +403,14 @@ mBTena = true ;
         // If BT is not on, request that it be enabled.
    if (mBTena)  {  
        if (!mBtAdapter .isEnabled()) {
-           Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-           startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+//           Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//           startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+           mBtAdapter.enable();
         // Otherwise, setup the chat session
         }
  //     mBtAdapter.setName("IntroMi");
       ensureDiscoverable();
+     // startDiscovery();
       
     }
     }
@@ -293,10 +419,11 @@ mBTena = true ;
         super.onDestroy();
 
         // Make sure we're not doing discovery anymore
-//        if (mBtAdapter != null) {
-//            mBtAdapter.cancelDiscovery();
-//            Thread.interrupted();
-//        }
+        if (mBtAdapter != null) {
+            mBtAdapter.cancelDiscovery();
+            Thread.interrupted();
+        }
+        
 
         // Unregister broadcast listeners
         this.unregisterReceiver(mReceiver);
@@ -306,27 +433,7 @@ mBTena = true ;
      * Start device discover with the BluetoothAdapter
      */
    
-/*
-    // The on-click listener for all devices in the ListViews
-    private OnItemClickListener mDeviceClickListener = new OnItemClickListener() {
-        public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
-            // Cancel discovery because it's costly and we're about to connect
-            mBtAdapter.cancelDiscovery();
 
-            // Get the device MAC address, which is the last 17 chars in the View
-            String info = ((TextView) v).getText().toString();
-            String address = info.substring(info.length() - 17);
-
-            // Create the result Intent and include the MAC address
-            Intent intent = new Intent();
-            intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
-
-            // Set result and finish this Activity
-            setResult(Activity.RESULT_OK, intent);
-            finish();
-        }
-    };
-*/
     // The BroadcastReceiver that listens for discovered devices and
     // changes the title when discovery is finished
    
@@ -335,6 +442,7 @@ mBTena = true ;
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
              int pos ;
+             System.out.println("In broadcast reciev");
              found = false;
             // When discovery finds a device
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
@@ -344,7 +452,7 @@ mBTena = true ;
             	
             	//IntroMi
          	
-            	BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            	 device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
              //   System.out.println("This is the name of the device " +device.getName());
                 // if (device.getName().equalsIgnoreCase("IntroMi")) {
             	//  mRssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
@@ -387,11 +495,52 @@ mBTena = true ;
             	holdMacs = holdMacs+device.getAddress()+ "=";	
             	//	 mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
             		if (D) Log.v(TAG,"found device and going to look for information Asynctask with " + device.getAddress());
-           	//	for (int key =1 ;key <3 ; key++){
-            			
-            		
+           //Save this card to history file
+            	
             		new MyAsyncTask().execute(device.getAddress());
-           // 		}
+ /*           		 new Thread(new Runnable() { 
+            	         public void run(){
+            	         
+            	             {
+            	            	 int count =0;
+            	                System.out.println("Into thread");
+            	              
+            	               Looper.prepare(); 
+            	               
+            	             
+            	               try { 
+            	                   Log.d(TAG, "BT Scanning started");
+
+            	                   while(true &&count<20)
+            	                   { 
+            	                	  ++count; 
+            	                 		new MyAsyncTask().execute(device.getAddress());
+            	                   Log.d(TAG,"Register..."); 
+            	      
+            	       
+            	              
+            	                   Log.d(TAG,"sleep for " + DELAYBT + " seconds");
+            	                   
+            	                   Thread.sleep(2000);
+            	                   
+            	                   Log.d(TAG,"Unregister..."); 
+
+            	                   }
+            	            //       Looper.loop();
+            	               }
+            	               catch (InterruptedException e) {
+            	                   Log.d(TAG, "BT Scanning stopped");
+            	                       Looper.myLooper().quit();
+            	               }
+
+            	             }  
+
+            	         }
+            	    
+            	 }).start();	
+            		
+      */
+          
             
             		
             		
@@ -412,9 +561,11 @@ mBTena = true ;
                 //showToast("finish discovery...");
             	
                 if (D) Log.v(TAG,"finish discovery");
-                if(null!=pBar && pBar.isShowing()){
-              	  pBar.dismiss();
-                }
+                pBar.setVisibility(View.GONE);       
+        //        if(null!=pBar && pBar.isShowing()){
+                
+ //             	  pBar.dismiss();
+ //               }
              
            setTitle("Below cards were found");
                 if (mNewDevicesArrayAdapter.getCount() == 0) {
@@ -583,18 +734,11 @@ mBTena = true ;
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION,0);
             startActivity(discoverableIntent);
+          
         }
     }
     
-    private void cardActions() {
-        if(D) Log.d(TAG, "card actions");
-        
-//       Intent  intent_card = new Intent(this, CardDetails.class);
-        Intent  intent_card = new Intent(this, MyCards.class); 
-        startActivity(intent_card);
-     
-        
-    }
+
     
    private void  editCard() {
 	 
@@ -715,7 +859,7 @@ mBTena = true ;
 	//		Toast.makeText(getApplicationContext(), "command sent", Toast.LENGTH_LONG).show();
 			
              if (result==1) {
-            	 pBar.setMessage("Server is not reachable..");
+        //    	 pBar.setMessage("Server is not reachable..");
                  System.out.println("Server is not reachable");
                  mBtAdapter.cancelDiscovery();
                  holdMacs = "a";
@@ -726,23 +870,36 @@ mBTena = true ;
              
 	//	 System.out.println("This is the card I am going to  bring information for" + card);
 			if (card!=null) {
+				
+			 Profile p = new Profile();
 			  String arr[] = card.split("&");
+			  
 			
 			  String mac =      arr[0].toString().replace("mac=" , ""        );
-			  String name =     arr[1].toString().replace("name=" , " "      );
-			  String phone =    arr[2].toString().replace("phone=" , " "     );
-			  String email =    arr[3].toString().replace("email=" , " "     );
-			  String site =     arr[4].toString().replace ("site=" , " "     );
-			  String head_line =arr[5].toString().replace ("head_line=" , " ");
-			  String mission =  arr[6].toString().replace ("mission=" , " "  );
-			  String pic =      arr[7].toString().replace ("pic=" , " "      );
+			  String name =     arr[1].toString().replace("name=" , ""      );
+			  String phone =    arr[2].toString().replace("phone=" , ""     );
+			  String email =    arr[3].toString().replace("email=" , ""     );
+			  String site =     arr[4].toString().replace ("site=" , ""     );
+			  String head_line =arr[5].toString().replace ("head_line=" , "");
+			  String mission =  arr[6].toString().replace ("mission=" , ""  );
+			  String pic =      arr[7].toString().replace ("pic=" , ""      );
 			  
-			   
+			  p.setMacHw(arr[0].toString().replace("mac=" , ""        ));
+			  p.setName(arr[1].toString().replace("name=" , ""        ));
+			  p.setMobilePhoneNum(arr[2].toString().replace("phone=" , ""     ));
+			  p.setEmail(arr[3].toString().replace("email=" , ""     ));
+			  p.setSite(arr[4].toString().replace ("site=" , ""     ));
+			  p.setProfessionalHeadLine(arr[5].toString().replace ("head_line=" , ""));
+			  p.setMission(arr[6].toString().replace ("mission=" , ""  ));
+			  p.setPicture(arr[7].toString().replace ("pic=" , ""      ));
+			  
 			  card = name + "\n" + phone +  "\n" +email + "\n"  + site +"\n" + head_line +"\n" + mission + "\n";
-			  
+	         
+			  SaveToHistory(p);
 		//	  pBar.setMessage("Scanning please wait....");
 ///////////////////////////////////////////////////
 		        
+			  System.out.println("This is the mission:"+mission);
 			  GetSearchResults(mac,name,phone,email,site,head_line,mission,pic);
 
     
@@ -768,8 +925,8 @@ mBTena = true ;
 			// Create a new HttpClient and Post Header
 			HttpClient httpclient = new DefaultHttpClient();
 			
-	HttpPost httppost = new HttpPost("http://192.168.50.5/cgi-bin/get_card.cgi");
-		//	HttpPost httppost = new HttpPost("http://dfoa.ssh22.net/cgi-bin/get_card.cgi");
+	//HttpPost httppost = new HttpPost("http://192.168.50.5/cgi-bin/get_card.cgi");
+			HttpPost httppost = new HttpPost("http://dfoa.ssh22.net/cgi-bin/get_card.cgi");
 			
 //		  httppost.addHeader("Accept-Encoding", "gzip");
  
@@ -780,9 +937,11 @@ mBTena = true ;
 				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 				httppost.addHeader("Accept-Encoding", "gzip");
 				// Execute HTTP Post Request
+				System.out.println("Print httppost");
 				response = httpclient.execute(httppost);
 				
 				if (response!=null){
+				 System.out.println("not Null");
 
 				int responseCode = response.getStatusLine().getStatusCode();
 				switch(responseCode)
@@ -800,7 +959,7 @@ mBTena = true ;
 				        if(entity != null)
 				 {
 			     
-				     String   	card = convertStreamToString(instream);
+				       	card = convertStreamToString(instream);
 				//  card = EntityUtils.toString(entity);
 				  
 
@@ -853,22 +1012,7 @@ mBTena = true ;
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
             
- /*         
-            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-            
-            tab1 = actionBar.newTab().setText("1");
-            tab2 = actionBar.newTab().setText("2");
-            tab3 = actionBar.newTab().setText("3");
-            
-            tab1.setTabListener(new MyTabListener(fragmentTab1));
-            tab2.setTabListener(new MyTabListener(fragmentTab2));
-            tab3.setTabListener(new MyTabListener(fragmentTab3));
-            
-            actionBar.addTab(tab1);
-            actionBar.addTab(tab2);
-            actionBar.addTab(tab3);
-        
-   */
+
         }
         }
     
@@ -876,12 +1020,15 @@ mBTena = true ;
     private void GetSearchResults(String mac,String name,String phone,String email,String site,String head_line, String mission , String pic ){
       
     	//update global variables
+    	
     	DisplayName = name;
     	String img = pic;
     	String macHw = mac.toString();
     	String url  = "http://dfoa.ssh22.net/photo/photo/" + macHw + ".png";
     	emailID = email;
     	MobileNumber = phone;
+    
+    	
     	ItemDetails item_details = new ItemDetails();
     	item_details.setName(name);
     	item_details.setItemDescription(phone);
@@ -889,6 +1036,7 @@ mBTena = true ;
     	item_details.setSite(site);
     	item_details.setImg(img);
     	item_details.setProfessionlaHeadLine(head_line);
+    	
     	item_details.setMission(mission);
     	item_details.setmRssi(String.valueOf(mRssi));
     	
@@ -898,7 +1046,7 @@ mBTena = true ;
         
     	lv1.setAdapter(lAdapter);
     	lAdapter.notifyDataSetChanged();
-        
+       
     	
 	//     ArrayList<ItemDetails> image_details = GetSearchResults();
 	        
@@ -923,14 +1071,7 @@ mBTena = true ;
     */
     
 
- 
-  private void   saveToContacts ()
-  {
-	  SavetoContacts contact = new SavetoContacts();
-	  contact.DisplayName = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-	 
-	  contact.create(getApplicationContext());
-  }
+
   
  
    
@@ -1040,16 +1181,149 @@ mBTena = true ;
 	  
 	  
 	  mBtAdapter.startDiscovery();
-      
-      pBar = new ProgressDialog(DeviceListActivity.this);
+        
+	   pBar.setVisibility(View.VISIBLE);
+//      pBar = new ProgressDialog(DeviceListActivity.this);
   
-		pBar.setMessage("Scanning please wait....");
+//		pBar.setMessage("Scanning please wait....");
 		
 		
-		pBar.show();        	
+//		pBar.show();        	
 		 mFoundDevice =1; 
   }
 
-}
+  private  Profile  loadCard()
+  {
+  	final String filename = "card.bin";
+  	 Profile  p = new Profile(); 
+       FileInputStream fis = null;
+  	 ObjectInputStream in = null; 
+  		    try {
+  		      fis = openFileInput(filename);
+  		      in = new ObjectInputStream(fis);
+  		      p = (Profile) in.readObject();
+  		      in.close();
+  		    } catch (Exception ex) {
+  		      ex.printStackTrace();
+  		      Toast.makeText(this, "cant open file to read" , Toast.LENGTH_SHORT).show();
+  		    }
+
+  		     
+  //		     decode p.picture from BASE_64 to bitmap 
+              
+  		    //Bitmap b = decodeSampledBitmapFromPath(p.picture,100,100);
+  		    if ( p.getPicture() != null) {
+    		
+  		      Bitmap b = setImg(p.getPicture());
+  		 //    imageView.setImageBitmap(b);
+  	//	    img = p.picture;
+  	//	     WebView.setImageBitmap(setImg(p.picture));
+  		    }
+  		   
+  		    
+  		    System.out.println(p.getEmail() + p.getEmail() + p.getMobilePhoneNum() + p.getProfessionalHeadLine());
+             return(p);		  
+    }
+  
+  public Bitmap setImg(String img) {
+		//decode from base_64 to real PNG format
+           Bitmap bm;
+				
+				byte[] decodedString = Base64.decode(img, Base64.DEFAULT);
+				Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length); 
+			//	im.setImageBitmap(decodedByte);
+				bm = decodedByte;
+				return bm;
+				
+			    
+			    	
+		
+	}
+  
+
+public   void setSearchResult(String str) {
+  CardsListBaseAdapter    mAdapter = new CardsListBaseAdapter(this, null);
+   ArrayList<ItemDetails> results1 = new ArrayList<ItemDetails>();
+//   ItemDetails temp = new ItemDetails();
+     for (ItemDetails temp  : results) {
+    	  System.out.println("This is temp: " + temp.toString());
+         if (temp.getPrfessionalHeadLine().contains(str)){
+        System.out.println("match-- this is head line :" +temp.getPrfessionalHeadLine() + "and String is :" + str );
+     
+       
+       results1.add(temp);
+ //    lAdapter.notifyDataSetChanged();
+  
+      
     
+        
+         
+  //  
+  }
+  
+
+	
+   
+
+  
+  }
+    
+ //    results = results1;
+  
+  //   lAdapter.notifyDataSetChanged();
+}   
+
+
+private void SaveToHistory (Profile p){
+	
+    Context c = getApplicationContext();
+    SavedCards mHistoryCards = new SavedCards();
+    boolean flag = true;
+    boolean  reachedMaxProfiles = false;
+    int maxProfiles = 50; 		
+     Cards cards = new Cards(c,histoyFileName);
+     //load list from file;
+       mHistoryCards = cards.loadCards();
+      if (mHistoryCards !=null) {
+    	 
+    	  if (mHistoryCards.profileArrayList.size() == maxProfiles-1)    	
+    	  reachedMaxProfiles = true;
+    	  {
+    		  
+    		  if (D)  Log.v(TAG,"History file reached 50  profiles, need to rotate");
+    		   
+    	  }
+    		 
+	 for (int ind =0 ;ind <mHistoryCards.profileArrayList.size() && flag;ind++) {
+		 System.out.println("This is the mac i am looking" + p.getMacHw() + "and this is mac in the file "+ mHistoryCards.profileArrayList.get(ind).getMacHw() );
+    if    (mHistoryCards.profileArrayList.get(ind).getMacHw().contentEquals(p.getMacHw())){
+//That means that this card already exist in history card so we can ignore, 
+    	
+    if (D)  Log.v(TAG,"The card with Mac address" + p.getMacHw() + "already exist in history fileis " );
+   	  flag=false;
+    	 
+    	 
+     //  mHistoryCards.profileArrayList.add(p);
+     //  cards.saveToFileBulk(mHistoryCards);
+   
+   	  
+ 
+  
+    }
+    
+  
+	 }
+	 
+	  
+	  if (flag  && reachedMaxProfiles)   mHistoryCards = cards.saveToFile(p,true);
+
+
+	      
+		 
+	
+
+}
+      else    	 mHistoryCards = cards.saveToFile(p,false);
+}
+}
 

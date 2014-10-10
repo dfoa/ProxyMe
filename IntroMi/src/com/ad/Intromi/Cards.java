@@ -16,18 +16,22 @@ import android.widget.Toast;
 public class Cards {
 
 private static  String  TAG ="IntroMi/Cards";	
-private static String fileName = "cards.bin";
+private  String fileName;
 private static boolean D = true; 
 public SavedCards mSaveCards ;
-
 protected Context context;
-  public Cards(Context c) {
+
+
+			
+
+  public Cards(Context c,String fileName) {
 	  mSaveCards  =  new SavedCards();
 	  this.context = c;
-			// TODO Auto-generated constructor stub   
+			// TODO Auto-generated constructor stub
+	  this.fileName = fileName;
+	  
   }
 
- 
     
   public boolean chekIfFileExist()
   {
@@ -50,7 +54,7 @@ protected Context context;
 	  
   }
   
- public    synchronized SavedCards  saveToFile(Profile profile)
+ public    synchronized SavedCards  saveToFile(Profile profile,boolean push)
  {
    	  
 	 File file = context.getFileStreamPath(fileName);
@@ -61,7 +65,11 @@ protected Context context;
 	
 	 mSaveCards = loadCards();
 	    }
-	 mSaveCards.addProfile(profile);
+	 if (push) 
+		 mSaveCards.push(profile);
+	 else
+	    mSaveCards.addProfile(profile);
+	 
 	 
 	 FileOutputStream fos = null;
 	 ObjectOutputStream out = null;
@@ -115,7 +123,7 @@ protected Context context;
 	  
 	  FileInputStream fis = null;
 	 	 ObjectInputStream in = null; 
-
+        System.out.println("loading cards from file:"+ fileName);
 	 	 try {
 	 		      fis = context.openFileInput(fileName);
 	 		      in = new ObjectInputStream(fis);

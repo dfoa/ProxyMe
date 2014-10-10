@@ -26,6 +26,7 @@ private static boolean D = true;
 private Typeface tf;
 private Typeface tf1;
 private Context c;
+private static  String TAG = "CardListBaseAdapter";
 
 	
 	private static ArrayList<Profile> itemDetailsrrayList;
@@ -67,24 +68,22 @@ private Context c;
 		ViewHolder holder;
 	
 		if (convertView == null) {
-			System.out.println("this is the position " +position);
-			System.out.println("This is the result" + position % 2);
-			if (position==0)
+		  if (D)
+		  {
+			  Log.v(TAG,"this is the position " +position);
+			  Log.v(TAG, "This is the result" + position % 2);
+		
+	}
+	if (position==0)
 				convertView = l_Inflater.inflate(R.layout.item_details_view, null);
 			
-			else if (position ==1){
+			else  {
 				convertView = l_Inflater.inflate(R.layout.item_details_view_left_pic, null);
 				
 			
 				
 			}
-			else if(position==2)
-				convertView = l_Inflater.inflate(R.layout.item_details_view, null);
-			else if (position==3)
-				convertView = l_Inflater.inflate(R.layout.item_details_view_left_pic, null);
-			else if(position==4)
-				convertView = l_Inflater.inflate(R.layout.item_details_view, null);
-				
+	
 				
 			
 			
@@ -97,7 +96,7 @@ private Context c;
 		    holder.txt_head_line = (TextView) convertView.findViewById(R.id.tvHeadLine);
 		    holder.txt_head_line.setTypeface(tf1);
 		    holder.txt_mission = (TextView) convertView.findViewById(R.id.tvMission);
-		    holder.txt_mission.setTypeface(tf);
+		    holder.txt_mission.setTypeface(tf1);
 			holder.itemImage = (ImageView) convertView.findViewById(R.id.photo);
 //			holder.ch_check = (CheckBox) convertView.findViewById(R.id.rssi);
 			

@@ -107,14 +107,14 @@ public class CardDetails extends Activity {
     private String phone_value;
     private String  email_value;
     private String site_value; 
-    private ImageView imageView;
+    private ImageView imageView,choosePhoto,linkedIn;
     private EditText professional_head_line;
     private EditText mission;
     private  Profile p;
     private  TextView nameCardPreview;
     private  TextView headLinePreview;
     private   TextView tvName;
-    private TextView  choosePhoto;
+  
     private  boolean editProfile = false;
     private String mission_value;
     private String head_line_value;
@@ -130,7 +130,8 @@ public class CardDetails extends Activity {
 	private boolean saveWasPressed = false;
 	private ProgressBar pbar;
 
-
+	//Fonts style
+	private Typeface tf,tf1;
     
    
     
@@ -161,14 +162,17 @@ public class CardDetails extends Activity {
         nameCardPreview = (TextView) findViewById(R.id.nameCardPreview);
         headLinePreview = (TextView) findViewById(R.id.HeadLineCardPreview);
         missionPreviewCard = (TextView) findViewById(R.id.missionPreviewCard);
-        choosePhoto =  (TextView) findViewById(R.id.coose_photo);
-        	
+        choosePhoto =  (ImageView) findViewById(R.id.imgViewPhoto);
+        linkedIn = (ImageView)findViewById(R.id.LinkedInLogin) ;
         
                 pb = (ProgressBar)findViewById(R.id.pbar);	
        pb.setVisibility(View.INVISIBLE);
      
         //name edittext listener to update card preview
-        
+ 	  tf = Typeface.createFromAsset(getApplicationContext().getAssets(),
+	             "fonts/Lato-Black.ttf");
+		   tf1 = Typeface.createFromAsset(getApplicationContext().getAssets(),
+	             "fonts/Lato-Regular.ttf");
        
         name.addTextChangedListener(new TextWatcher(){
             public void afterTextChanged(Editable s) {
@@ -176,6 +180,9 @@ public class CardDetails extends Activity {
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
             public void onTextChanged(CharSequence s, int start, int before, int count){
+            	
+            	
+                nameCardPreview.setTypeface(tf);
                 nameCardPreview.setText(name.getText().toString());
             }
         //update headline  preview card
@@ -186,7 +193,8 @@ public class CardDetails extends Activity {
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
             public void onTextChanged(CharSequence s, int start, int before, int count){
-                headLinePreview.setText(professional_head_line.getText().toString());
+                headLinePreview.setTypeface(tf1);
+            	headLinePreview.setText(professional_head_line.getText().toString());
             }
         }); 
         mission.addTextChangedListener(new TextWatcher(){
@@ -195,7 +203,10 @@ public class CardDetails extends Activity {
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
             public void onTextChanged(CharSequence s, int start, int before, int count){
-                missionPreviewCard.setText(mission.getText().toString());
+                
+            	missionPreviewCard.setTypeface(tf1);
+            	missionPreviewCard.setText(mission.getText().toString());
+                
             }
         }); 
         
@@ -208,28 +219,7 @@ public class CardDetails extends Activity {
  
 
         
-        Uri sentURI = Uri.parse("content://sms/inbox");
-        
-        // List required columns
-        String[] reqCols = new String[] { "_id", "address", "body" };
-
-        // Get Content Resolver object, which will deal with Content Provider
-        ContentResolver cr = getContentResolver();
-
-        // Fetch Sent SMS Message from Built-in Content Provider
-        Cursor c = cr.query(sentURI, reqCols, null, null, null);
-        if(c.moveToFirst()) {
-            for(int i=0; i < c.getCount(); i++) {
-                
-               System.out.println("aaaa" +c.getString(c.getColumnIndexOrThrow("body")).toString());
-               System.out.println("bbbbb"+ c.getString(c.getColumnIndexOrThrow("address")).toString());
-             
-           //     smsList.add(sms);
-                 
-                c.moveToNext();
-            }
-        }
-        c.close();
+       
  
         
       
@@ -292,6 +282,19 @@ public class CardDetails extends Activity {
    	 */
 
 
+        linkedIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            
+            	Toast.makeText(getApplicationContext(), "Will be available soon", Toast.LENGTH_LONG).show();
+    			
+    		
+              }
+          });
+        
+      
+        
+        
      choosePhoto.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
@@ -336,9 +339,7 @@ public class CardDetails extends Activity {
 		if 	(createCard(params[0],params[1],params[2],params[3],params[4],params[5])){
 	
 			System.out.println("card was created");
-//			Toast.makeText(getApplicationContext(), "card details saved sucessfully", Toast.LENGTH_LONG).show();
-			
-		}
+//			
 			
 			return null;
 		}
@@ -722,7 +723,7 @@ Application Details
      }	  
  
  
- 
+ /*
  @Override
  protected void onNewIntent(Intent intent) {
          super.onNewIntent(intent);
@@ -762,7 +763,7 @@ Application Details
          
 
        }
-
+*/
  
  @Override
  public void onDestroy() {
@@ -883,7 +884,7 @@ Application Details
               if (!isNetworkAvailable())
               {
               	   Toast.makeText(getApplicationContext(), "No network connection", Toast.LENGTH_SHORT).show();
-             	finish();
+            // 	finish();
               }
               else {
            	   
@@ -907,7 +908,7 @@ Application Details
    //    	    	 Toast.makeText(getApplicationContext(), "Server is not reachable, try to save again", Toast.LENGTH_LONG).show();
        	      }  
           	   
-          	   finish();
+          	   //finish();
               }
            	
       

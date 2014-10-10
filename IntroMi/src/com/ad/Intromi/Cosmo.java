@@ -20,22 +20,25 @@ import com.ad.Intromi.R;
 	    protected void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
 	        setContentView(R.layout.edit_card_alex);
-/*	        Typeface tf = Typeface.createFromAsset(getAssets(),
-	                "fonts/Lato-Black.ttf");
+			 Typeface  tf = Typeface.createFromAsset(getApplicationContext().getAssets(),
+			             "fonts/Lato-Black.ttf");
+				Typeface   tf1 = Typeface.createFromAsset(getApplicationContext().getAssets(),
+			             "fonts/Lato-Regular.ttf");
+	        
+	        
 	        TextView tv01 = (TextView) findViewById(R.id.nameCardPreview);
 	        tv01.setTypeface(tf);
 	        TextView tv04 = (TextView) findViewById(R.id.missionPreviewCard);
-	        tv04.setTypeface(tf);
-	        TextView tv1 = (TextView) findViewById(R.id.TextView1);
-	        tv1.setTypeface(tf);
+	        tv04.setTypeface(tf1);
+	
 	        
 	        TextView tv2 = (TextView) findViewById(R.id.tvHeadLine);
-	        tv2.setTypeface(tf);
+	        tv2.setTypeface(tf1);
 	        TextView tv3 = (TextView) findViewById(R.id.tvName);
-	        tv3.setTypeface(tf);
+	        tv3.setTypeface(tf1);
 	        
 	
-	*/        
+	      
 	
 	}
 	}
