@@ -100,7 +100,10 @@ public class MainActivity extends Activity {
 		        (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
 		mBluetoothAdapter = bluetoothManager.getAdapter();
  		
-/*Request bluetooth request - This should be implement in main activty	
+		Register register = Register.getInstance(); 
+		register.withInfo(mBluetoothAdapter.getAddress(), "test1");
+
+		/*Request bluetooth request - This should be implement in main activty	
  * 
  * 	
 
@@ -111,7 +114,7 @@ public class MainActivity extends Activity {
 		
  */			
 
-	     startService();
+	    // startService();
 
 	}
 

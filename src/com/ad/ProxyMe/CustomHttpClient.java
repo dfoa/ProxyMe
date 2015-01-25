@@ -1,6 +1,5 @@
+
 package com.ad.ProxyMe;
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,9 +13,13 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HTTP;
+import org.json.JSONStringer;
  
 public class CustomHttpClient {
     /** The time it takes for our client to timeout */
@@ -34,7 +37,9 @@ public class CustomHttpClient {
         if (mHttpClient == null) {
             mHttpClient = new DefaultHttpClient();
             final HttpParams params = mHttpClient.getParams();
+         
             HttpConnectionParams.setConnectionTimeout(params, HTTP_TIMEOUT);
+           
             HttpConnectionParams.setSoTimeout(params, HTTP_TIMEOUT);
             ConnManagerParams.setTimeout(params, HTTP_TIMEOUT);
         }
@@ -81,6 +86,41 @@ public class CustomHttpClient {
         }
     }
  
+    
+    public static String executeHttpPost(String url, JSONStringer postParameters) throws Exception {
+        BufferedReader in = null;
+        try {
+            HttpClient client = getHttpClient();
+            HttpPost request = new HttpPost(url);
+            String s = "found_nearby=";            
+            StringEntity entity = new StringEntity(s+ postParameters.toString());       
+            request.setHeader("Accept", "application/json");
+            request.setHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.setEntity(entity);
+            HttpResponse response = client.execute(request);
+            in = new BufferedReader(new InputStreamReader(response.getEntity().getContent())); 
+            StringBuffer sb = new StringBuffer("");
+            String line = "";
+            String NL = System.getProperty("line.separator");
+            while ((line = in.readLine()) != null) {
+                sb.append(line + NL);
+            }
+            in.close();
+ 
+            String result = sb.toString();
+            System.out.println("Tis is the result" + result);
+            return result;
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    
     /**
      * Performs an HTTP GET request to the specified url.
      *

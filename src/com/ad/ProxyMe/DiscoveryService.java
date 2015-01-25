@@ -3,6 +3,9 @@ package com.ad.ProxyMe;
 
 
 import java.util.ArrayList;
+
+import org.json.JSONException;
+import org.json.JSONStringer;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -38,9 +41,12 @@ public class DiscoveryService extends Service {
 	private BluetoothAdapter mBtAdapter ;
 	/** get remote bluetooth properties */
 	private  BluetoothDevice mDevice;
+	/** self mac ID  */
+	private String mSelfMac;	 
 	/** Yes/No device in array list  */
 	private boolean mFound = false ;
 	/** Called when the service is being created. */
+	
 	@Override
 	public void onCreate() {
 
@@ -59,6 +65,7 @@ public class DiscoveryService extends Service {
 		if (D) Log.d(TAG,"++ServiceonCreate++");
 
 		mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+		mSelfMac = mBtAdapter.getAddress();
 		mArrayOfMacs = new ArrayList<String>();
 
 		/*Thread for handling Bluetooth verion 2 scanning cycles
@@ -92,6 +99,7 @@ public class DiscoveryService extends Service {
 								if (D)  Log.d(TAG, "BT Scanning started"); 
                       
 								mBtAdapter.startDiscovery();
+						
 								Log.d(TAG,"sleep for " + DELAYBT + " seconds");
 
 										Thread.sleep(DELAYBT);
@@ -177,7 +185,7 @@ public class DiscoveryService extends Service {
 				//				           System.out.println("This is the length of the name :\n" +  mDevice.getName().length()
 				//            showToast("Device name is\n " + device.getName() +"length:\n" + device.getName().length());
 
-				if (mDevice.getBondState() != BluetoothDevice.BOND_BONDED  ) {
+			
 
 
 					//check if array first is first used
@@ -185,7 +193,7 @@ public class DiscoveryService extends Service {
 						//					//add mac address to the list
 						mArrayOfMacs.add(mDevice.getAddress());
 					else 
-						if (mArrayOfMacs.contains(mDevice.getAddress()))
+						if (mArrayOfMacs.equals(mDevice.getAddress()))
 							mFound = true;
 
 					{
@@ -201,14 +209,40 @@ public class DiscoveryService extends Service {
 						if (D) Log.v(TAG,"Going to update server with device " + mDevice.getAddress());
                         
 						//					new MyAsyncTask().execute(device.getAddress());
-
+						/*
+						 * update the server with
+						 * selfmac:found mac:found time
+						 */
+						
+					
+						
+						new Thread(new MyRunnable(mSelfMac,mDevice.getAddress())) {
+							
+//							long time = System.currentTimeMillis();
+//							String foundMac = mDevice.getAddress();
+//							public void run() {
+//
+//
+//								System.out.println("In runnable");
+//								String URL_STRING="http://192.168.50.5/cgi-bin/json.cgi";
+//
+//								try {
+//									CustomHttpClient.executeHttpPost(URL_STRING,buildJson(mSelfMac, foundMac, time));
+//								} catch (Exception e) {
+//									// TODO Auto-generated catch block
+//									e.printStackTrace();
+//								}
+//
+//
+//							}
+						}.start();
 					}
-				}
+						
+						
+					
+				
+					
 
-				else {
-					if (D) Log.v(TAG,"found blletooth device but dont have IntoMI application"); 
-
-				}
 				
 				// When discovery is finished, change the Activity title
 			} else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
@@ -219,6 +253,71 @@ public class DiscoveryService extends Service {
 		}
 
 	};
+	
+	
+	private JSONStringer buildJson(String selfMac,String foundMac,long time){
+		
+	  JSONStringer 	mJSONStringer = new JSONStringer();
+		try {
+			mJSONStringer.object();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try {
+			mJSONStringer.key("self_mac");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			mJSONStringer.value(selfMac);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			mJSONStringer.key("found_mac");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			mJSONStringer.value(foundMac);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			mJSONStringer.key("time");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			mJSONStringer.value(time);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try {
+			mJSONStringer.endObject();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return mJSONStringer;
+		
+		
+		
+		
+	}
+	
 }
 
 

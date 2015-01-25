@@ -2,50 +2,48 @@ package com.ad.ProxyMe;
 
 public class Item {
 
- private Long time;
- private int Rssi;	
- private String Mac;
+	private Long mTime;
+	private int mRssi;	
+	private String mMac;
 
-public void setTime(long time)  
-	
-{
-	
-	this.time =  time;
-}
+	public void setTime(long time)  
 
-public void setMac(String Mac)
-{
-	this.Mac = Mac;
-}
+	{
 
-public String getMac()
-{
-	return Mac;
-}
+		this.mTime =  time;
+	}
 
+	public void setMac(String mac)
+	{
+		this.mMac = mac;
+	}
 
-
-public  long  getTime()  
-{
-	
-	return  time;
-}
+	public String getMac()
+	{
+		return this.mMac;
+	}
 
 
-     
-public void setRssi(int Rssi)
+	public  long  getTime()  
+	{
 
-{
-  this.Rssi = Rssi;	
- 
-}
+		return  this.mTime;
+	}
 
-public int getRssi()
 
-{
-   return Rssi;	
- 
-}
+	public void setRssi(int rssi)
+
+	{
+		this.mRssi = rssi;	
+
+	}
+
+	public int getRssi()
+
+	{
+		return this.mRssi;	
+
+	}
 
 
 }
