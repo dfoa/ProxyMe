@@ -4,11 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
  
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -21,6 +23,8 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.json.JSONStringer;
+
+import android.system.ErrnoException;
  
 public class CustomHttpClient {
     /** The time it takes for our client to timeout */
@@ -87,25 +91,59 @@ public class CustomHttpClient {
     }
  
     
-    public static String executeHttpPost(String url, JSONStringer postParameters) throws Exception {
+    public static String executeHttpPost(String url, JSONStringer postParameters)  {
         BufferedReader in = null;
+        StringEntity entity = null;
+        HttpResponse response = null;;
         try {
             HttpClient client = getHttpClient();
             HttpPost request = new HttpPost(url);
             String s = "found_nearby=";            
-            StringEntity entity = new StringEntity(s+ postParameters.toString());       
+            
+			try {
+				entity = new StringEntity(s+ postParameters.toString());
+			} catch (UnsupportedEncodingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}       
             request.setHeader("Accept", "application/json");
             request.setHeader("Content-Type", "application/x-www-form-urlencoded");
             request.setEntity(entity);
-            HttpResponse response = client.execute(request);
-            in = new BufferedReader(new InputStreamReader(response.getEntity().getContent())); 
+			try {
+				response = client.execute(request);
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            try {
+				in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			} catch (IllegalStateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
             StringBuffer sb = new StringBuffer("");
             String line = "";
             String NL = System.getProperty("line.separator");
-            while ((line = in.readLine()) != null) {
-                sb.append(line + NL);
-            }
-            in.close();
+            try {
+				while ((line = in.readLine()) != null) {
+				    sb.append(line + NL);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            try {
+				in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
  
             String result = sb.toString();
             System.out.println("Tis is the result" + result);

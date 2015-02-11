@@ -99,31 +99,31 @@ public class MainActivity extends Activity {
 
 
     /** Defines callbacks for service binding, passed to bindService() */
-//    private ServiceConnection mConnection = new ServiceConnection() {
-//
-//        @Override
-//        public void onServiceConnected(ComponentName className,
-//                IBinder service) {
-//            // We've bound to LocalService, cast the IBinder and get LocalService instance
-//        	System.out.println("Service is connected");
-//            LocalBinder binder = (LocalBinder) service;
-//            mService = binder.getService();
-//            
-//            new Thread(new Runnable() { 
-//                public void run(){        
-//                System.out.println("In thread");
-//                for(;;) {
-//            	int a = mService.getRandomNumber();
-//        		System.out.println("get response from service " + a);
-//        		try {
-//					Thread.sleep(3000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//                }
-//                }
-//            }).start();
+////    private ServiceConnection mConnection = new ServiceConnection() {
+////
+////        @Override
+////        public void onServiceConnected(ComponentName className,
+////                IBinder service) {
+////            // We've bound to LocalService, cast the IBinder and get LocalService instance
+////        	System.out.println("Service is connected");
+////            LocalBinder binder = (LocalBinder) service;
+////            mService = binder.getService();
+////            
+////            new Thread(new Runnable() { 
+////                public void run(){        
+////                System.out.println("In thread");
+////                for(;;) {
+////            	int a = mService.getRandomNumber();
+////        		System.out.println("get response from service " + a);
+////        		try {
+////					Thread.sleep(3000);
+////				} catch (InterruptedException e) {
+////					// TODO Auto-generated catch block
+////					e.printStackTrace();
+////				}
+////                }
+////                }
+////            }).start();
 //
 //            
 //
@@ -139,13 +139,13 @@ public class MainActivity extends Activity {
 //            mBound = false;
 //        }
 //    };
-
+//
 	
 	
 	  @Override
 	    protected void onStart() {
 	        super.onStart();
-//	        m.start();
+	     //   m.start();
 	        // Bind to LocalService
 //	        Intent intent = new Intent(this, DiscoveryService.class);
 //	        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -154,12 +154,12 @@ public class MainActivity extends Activity {
 	    @Override
 	    protected void onStop() {
 	        super.onStop();
-	        stopService();
-//	        m.stop();
-	        // Unbind from the service
-//	        if (mBound) {
+	        //stopService();
+	        m.stop();
+	        // Unbind from the servce
+	        //if (mBound) {
 //	            unbindService(mConnection);
-//	            mBound = false;
+	  //          mBound = false;
 //	        }
 	    }
 	    
@@ -169,14 +169,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 	
-		
-		// Initializes Bluetooth adapter.
-		final BluetoothManager bluetoothManager =
-		        (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-		mBluetoothAdapter = bluetoothManager.getAdapter();
- 		
-		
-		 
+ 	 
 	//
 //		Register register = Register.getInstance(); 
 //		register.withInfo(mBluetoothAdapter.getAddress(), "test1");
@@ -191,11 +184,11 @@ public class MainActivity extends Activity {
 		}
 		
  */			
-	    startService();
+//	    startService();
 
 		
-//	m = new ServiceManager(getApplicationContext());
-//	 m.start();
+	m = new ServiceManager(getApplicationContext());
+	 m.start();
 		
 	}
 
@@ -214,7 +207,7 @@ public class MainActivity extends Activity {
 
 
 	// Method to start the service
-	public void startService() {
+/*	public void startService() {
 		
          ServiceArgument  parameters  =  new ServiceArgument("Fiix","http://192.168.50.5", "80");
  		 Intent  intent = new Intent(getApplicationContext(),DiscoveryService.class);
@@ -224,7 +217,7 @@ public class MainActivity extends Activity {
 	 
 		
 	}
-
+*/
 	// Method to stop the service
 	public void stopService() {
 		stopService(new Intent(getBaseContext(), DiscoveryService.class));
