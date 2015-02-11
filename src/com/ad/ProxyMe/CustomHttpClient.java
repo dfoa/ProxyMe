@@ -3,6 +3,7 @@ package com.ad.ProxyMe;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
  
@@ -23,8 +24,7 @@ import org.json.JSONStringer;
  
 public class CustomHttpClient {
     /** The time it takes for our client to timeout */
-    public static final int HTTP_TIMEOUT = 30 * 1000; // milliseconds
- 
+    public static final int HTTP_TIMEOUT = 30 * 1000; // milliseconds    
     /** Single instance of our HttpClient */
     private static HttpClient mHttpClient;
  
@@ -157,4 +157,9 @@ public class CustomHttpClient {
             }
         }
     }
-}
+  	
+    	
+    }
+       
+    
+

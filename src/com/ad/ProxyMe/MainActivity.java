@@ -14,6 +14,9 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+
+import com.ad.ProxyMe.DiscoveryService.LocalBinder;
+
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
@@ -36,15 +39,19 @@ import android.bluetooth.le.ScanCallback;
 */
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
@@ -86,22 +93,93 @@ public class MainActivity extends Activity {
 	private String mFinished;
 	public   BluetoothDevice  	 device ;   
 	private static CustomHttpClient mCustomHttpClient;
+    DiscoveryService mService;
+    boolean mBound = false;
+    private ServiceManager m;
 
 
+    /** Defines callbacks for service binding, passed to bindService() */
+//    private ServiceConnection mConnection = new ServiceConnection() {
+//
+//        @Override
+//        public void onServiceConnected(ComponentName className,
+//                IBinder service) {
+//            // We've bound to LocalService, cast the IBinder and get LocalService instance
+//        	System.out.println("Service is connected");
+//            LocalBinder binder = (LocalBinder) service;
+//            mService = binder.getService();
+//            
+//            new Thread(new Runnable() { 
+//                public void run(){        
+//                System.out.println("In thread");
+//                for(;;) {
+//            	int a = mService.getRandomNumber();
+//        		System.out.println("get response from service " + a);
+//        		try {
+//					Thread.sleep(3000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//                }
+//                }
+//            }).start();
+//
+//            
+//
+//    		
+//    		
+//            mBound = true;
+//            
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName arg0) {
+//        	System.out.println("Service is disconnected");
+//            mBound = false;
+//        }
+//    };
+
+	
+	
+	  @Override
+	    protected void onStart() {
+	        super.onStart();
+//	        m.start();
+	        // Bind to LocalService
+//	        Intent intent = new Intent(this, DiscoveryService.class);
+//	        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+	    }
+
+	    @Override
+	    protected void onStop() {
+	        super.onStop();
+	        stopService();
+//	        m.stop();
+	        // Unbind from the service
+//	        if (mBound) {
+//	            unbindService(mConnection);
+//	            mBound = false;
+//	        }
+	    }
+	    
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+	
 		
 		// Initializes Bluetooth adapter.
 		final BluetoothManager bluetoothManager =
 		        (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
 		mBluetoothAdapter = bluetoothManager.getAdapter();
  		
-		Register register = Register.getInstance(); 
-		register.withInfo(mBluetoothAdapter.getAddress(), "test1");
+		
+		 
+	//
+//		Register register = Register.getInstance(); 
+//		register.withInfo(mBluetoothAdapter.getAddress(), "test1");
 
 		/*Request bluetooth request - This should be implement in main activty	
  * 
@@ -113,9 +191,12 @@ public class MainActivity extends Activity {
 		}
 		
  */			
+	    startService();
 
-	    // startService();
-
+		
+//	m = new ServiceManager(getApplicationContext());
+//	 m.start();
+		
 	}
 
 	
@@ -134,7 +215,14 @@ public class MainActivity extends Activity {
 
 	// Method to start the service
 	public void startService() {
-		startService(new Intent(getBaseContext(), DiscoveryService.class));
+		
+         ServiceArgument  parameters  =  new ServiceArgument("Fiix","http://192.168.50.5", "80");
+ 		 Intent  intent = new Intent(getApplicationContext(),DiscoveryService.class);
+ 		 intent.putExtra("args",parameters);
+		 startService(intent);
+		  
+	 
+		
 	}
 
 	// Method to stop the service
