@@ -5,19 +5,22 @@ package com.ad.ProxyMe;
  * <manifest ... >
  * <uses-permission android:name="android.permission.BLUETOOTH" />
  *</manifest>
+ *Internet
+ *
  */
  
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Random;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
 import org.json.JSONStringer;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -62,18 +65,15 @@ public class DiscoveryService extends Service {
 	/** Yes/No device in array list  */
 	private boolean mFound = false ;
 	/** Send action to runnable  */
-	private static int FIND_NEARBY = 1;
 	//* Hold parsable object from main activity to Service */ 
 	private ServiceArgument serviceArgument;
 
 	/**Object that parameters from  the call activity  */
 
 	private final IBinder mBinder = new LocalBinder();
-	private String URL_STRING="http://31.168.241.149/cgi-bin/json.cgi";
-	private  Utils utils = new Utils() ;
+	private String URL_STRING="http://1.1.1.1/cgi-bin/json.cgi";
 	/** Called when the service is being created. */
 	// Random number generator
-	private final Random mGenerator = new Random();
 	private  Thread thread;
 
 	@Override
@@ -120,7 +120,6 @@ public class DiscoveryService extends Service {
 				//               BluetoothAdapter mBluetoothAdapter =BluetoothAdapter.getDefaultAdapter();
 
 				try { 
-					 printToLog("BT Scanning started");
 
 					while(isBTRunning)
 					{ 
@@ -129,15 +128,9 @@ public class DiscoveryService extends Service {
 						{
 							mBtAdapter.enable();  
 
-
 						}
-						  printToLog("Register..."); 
+						  printToLog("Register..."); ;
 
-
-						  printToLog("Start discovery");
-
-
-						// mBluetoothAdapter.startDiscovery();
 
 						mBtAdapter.startDiscovery();
 						
@@ -181,6 +174,12 @@ public class DiscoveryService extends Service {
 		filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
 
 		this.registerReceiver(mReceiver, filter);
+		
+		filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+
+		this.registerReceiver(mReceiver, filter);
+	       
+		
      
 	}
 
@@ -194,29 +193,23 @@ public class DiscoveryService extends Service {
 
 	/** A client is binding to the service with bindService() */
 	@Override
-	public IBinder onBind(Intent intent) {
+	public IBinder onBind(Intent intent) throws SecurityException {
 		System.out.println("-----In onBind command");
-		return mBinder;
-	}
-
-
-
-
-	/** The service is starting, due to a call to startService() */
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-
-        System.out.println("In onstart command");
-		 
-		
-
-
 		Bundle data = new Bundle();
 		data = intent.getExtras();
 		serviceArgument = data.getParcelable("args");
 		StringBuilder stringBuilder = new StringBuilder();
 		printToLog(stringBuilder.append("This is the bundle" +  serviceArgument.getCompanyId()).toString());
-		
+		return mBinder;
+	}
+
+
+	/** The service is starting, due to a call to startService() */
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) throws SecurityException{
+
+        System.out.println("In onstart command");
+        
 //		printToLog(stringBuilder.append("This is what i got from intent" +  "and this is the start ID " + startId + "and flag " + flags ).toString());
 //		System.out.println("this is what i got from intent "  + "and this is the start ID " + startId + "and flag " + flags );
 //		System.out.println("Thread state is "  + Thread.currentThread().getState().toString());
@@ -339,6 +332,10 @@ public class DiscoveryService extends Service {
 				if (D) Log.d(TAG, "Finished scan devices");
 				isBTRunning =true;
 			}
+			else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)){
+				if (D) printToLog("Discovery has started .....");
+			
+			}
 
 		}
 
@@ -361,22 +358,20 @@ public class DiscoveryService extends Service {
 		@Override
 		protected  String doInBackground(String...string) {
 
-			dd("dd");
 			String s = null;
 			System.out.println("This is s1 " + string[0]);
 			System.out.println("This is s2 "+ string[1]);
 
 
 
-
-			try {
-				executeHttpPost(URL_STRING, utils.buildJson(string[0],string[1],System.currentTimeMillis()));
-
-
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+                try {				
+			   	executeHttpPost(URL_STRING, Utils.buildJson(string[0],string[1],System.currentTimeMillis()));
+                }catch (Throwable e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+			  
+			
 
 			return s;
 		}
@@ -394,33 +389,83 @@ public class DiscoveryService extends Service {
 		System.out.println("ONLY A TEST");
 
 	}
-	public String executeHttpPost(String url, JSONStringer postParameters) throws Exception {
+	public String executeHttpPost(String url, JSONStringer postParameters)   {
 		//   public String executeHttpPost(String url) throws Exception {
 
 		BufferedReader in = null;
+		StringEntity entity = null;
+		HttpResponse response = null;
+		HttpPost request;
 		try {
-
 			HttpClient client = new DefaultHttpClient();
-			HttpPost request = new HttpPost(url);
-			String s = "found_nearby=";            
-			StringEntity entity = new StringEntity(s+ postParameters.toString());                   
+			request = new HttpPost(url);
+			String s = "found_nearby=";            	
+			try {
+				entity = new StringEntity(s+ postParameters.toString());
+			} catch (UnsupportedEncodingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}                   
 			request.setHeader("Accept", "application/json");
 			request.setHeader("Content-Type", "application/x-www-form-urlencoded");
 			request.setEntity(entity);
-			 try {
-				
-			} catch (Exception e) {
-				// TODO: handle exception
+
+			try {
+				response = client.execute(request);
+			} catch (ClientProtocolException e) {
+				Log.e("OTHER EXCEPTIONS", e.toString());
 			}
-			HttpResponse response = client.execute(request);
-			in = new BufferedReader(new InputStreamReader(response.getEntity().getContent())); 
+			catch (IOException e) {
+				e.printStackTrace();
+				BroadcastErrors(Errors.ERR_NETWORK_IS_DOWN);
+			}
+			int responseCode = response.getStatusLine().getStatusCode();
+			switch(responseCode)
+			{
+			case 200:
+
+				HttpEntity h = response.getEntity();
+				if(h != null)
+				{
+                 BroadcastErrors(Errors.ERR_INTROMI_SERVER_IS_UNREACHABLE);
+				}
+				break;
+
+			case 500:
+				  BroadcastErrors(Errors.ERR_INTROMI_SERVER_IS_UNREACHABLE);
+
+				break;
+
+
+			default:
+				  BroadcastErrors(Errors.ERR_INTROMI_SERVER_IS_UNREACHABLE);
+			} 
+			try {
+				in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			} catch (IllegalStateException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} 
 			StringBuffer sb = new StringBuffer("");
 			String line = "";
 			String NL = System.getProperty("line.separator");
-			while ((line = in.readLine()) != null) {
-				sb.append(line + NL);
+			try {
+				while ((line = in.readLine()) != null) {
+					sb.append(line + NL);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			in.close();
+			try {
+				in.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			String result = sb.toString();
 			return result;
@@ -442,43 +487,15 @@ public class DiscoveryService extends Service {
 	 */
 	public void  BroadcastErrors(int e) {
 
-		Intent intent = new Intent("com.ad.proxymi.ERRORS");	
+		Intent intent = new Intent("com.ad.proxymi.ACTION_ERRORS");	
 		intent.putExtra("Error", e);
+		System.out.println("This is the error i am going to send " + e);
 		LocalBroadcastManager.getInstance(getApplicationContext());
 		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-
-		/*
-	    Implement this on the reciever side
-
-	         LocalBroadcastManager.getInstance(this).registerReceiver(
-
-            mMessageReceiver, new IntentFilter("speedExceeded"));
-}
-
-private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-
-    @Override
-
-    public void onReceive(Context context, Intent intent) {
-
-        String action = intent.getAction();
-
-        Double currentSpeed = intent.getDoubleExtra("currentSpeed", 20);
-
-        Double currentLatitude = intent.getDoubleExtra("latitude", 0);
-
-        Double currentLongitude = intent.getDoubleExtra("longitude", 0);
-
-        //  ... react to local broadcast message
-
-    }
-
-};
-
-		 */
 	}
-
-
+	
+	
+	
 /**
  * Set log Enable/Disable
  * @return void

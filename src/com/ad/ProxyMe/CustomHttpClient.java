@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
- 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -94,7 +93,7 @@ public class CustomHttpClient {
     public static String executeHttpPost(String url, JSONStringer postParameters)  {
         BufferedReader in = null;
         StringEntity entity = null;
-        HttpResponse response = null;;
+        HttpResponse response = null;
         try {
             HttpClient client = getHttpClient();
             HttpPost request = new HttpPost(url);
@@ -109,14 +108,17 @@ public class CustomHttpClient {
             request.setHeader("Accept", "application/json");
             request.setHeader("Content-Type", "application/x-www-form-urlencoded");
             request.setEntity(entity);
+           
 			try {
 				response = client.execute(request);
 			} catch (ClientProtocolException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				System.out.println("in io exception");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				System.out.println("in io exception");
 			}
             try {
 				in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
@@ -125,6 +127,7 @@ public class CustomHttpClient {
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
+				System.out.println("in io exception");
 				e.printStackTrace();
 			} 
             StringBuffer sb = new StringBuffer("");
