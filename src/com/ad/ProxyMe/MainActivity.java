@@ -33,24 +33,28 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		//   m.start();
-		// Bind to LocalService
-		//	        Intent intent = new Intent(this, DiscoveryService.class);
-		//	        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+		
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		//stopService();
-		m.stop();
-		// Unbind from the servce
-		//if (mBound) {
-		//	            unbindService(mConnection);
-		//          mBound = false;
-		//	        }
+  
+//To stop the service when application is stopped		
+//		m.stop();
+		
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+  
+		
+		
+//To stop the service when application is destroyed.		
+//		m.stop();
+		
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,25 +62,15 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		 mContext = getApplicationContext();
-		//
-		//		Register register = Register.getInstance(); 
-		//		register.withInfo(mBluetoothAdapter.getAddress(), "test1");
-
-		/*Request bluetooth request - This should be implement in main activty	
-		 * 
-		 * 	
-
-		if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-		    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-		    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-		}
-
-		 */			
-		//	    startService();
+		
 
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("com.ad.proxymi.ACTION_ERRORS"));
-		m = ServiceManager.getInstance(getApplicationContext());
-		m.start();
+//		m = ServiceManager.getInstance(getApplicationContext());
+//		m.start();
+	    String uniqueId = "FIIX_UniqueID";
+		 Register r = Register.getInstance();
+		 System.out.println("Going to register the user ");
+	     r.doRegistration(getApplicationContext(), uniqueId);
 	}
 
 	@Override
@@ -138,5 +132,5 @@ public class MainActivity extends Activity {
 	    }
 
 
-
+	 
 }

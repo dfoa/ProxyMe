@@ -71,7 +71,7 @@ public class DiscoveryService extends Service {
 	/**Object that parameters from  the call activity  */
 
 	private final IBinder mBinder = new LocalBinder();
-	private String URL_STRING="http://1.1.1.1/cgi-bin/json.cgi";
+	private String URL_STRING="http://intromi.biz/exec/user_lookup";
 	/** Called when the service is being created. */
 	// Random number generator
 	private  Thread thread;
@@ -208,11 +208,7 @@ public class DiscoveryService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) throws SecurityException{
 
-        System.out.println("In onstart command");
-        
-//		printToLog(stringBuilder.append("This is what i got from intent" +  "and this is the start ID " + startId + "and flag " + flags ).toString());
-//		System.out.println("this is what i got from intent "  + "and this is the start ID " + startId + "and flag " + flags );
-//		System.out.println("Thread state is "  + Thread.currentThread().getState().toString());
+        if (D) Log.v(TAG,"In onstart command");
 
 		return START_REDELIVER_INTENT;
 	}
@@ -236,17 +232,9 @@ public class DiscoveryService extends Service {
 	public void onDestroy() {
 
 		super.onDestroy();
-	
-		System.out.println("Service has been destroyed.");
-		mBtAdapter.cancelDiscovery();
-		System.out.println("Thread state is "  + thread.getState().toString());
-		thread.interrupt();
-		System.out.println("Thread state is "  + thread.getState().toString());
 
-		String a = thread.getName();
-		System.out.println("thread name " + a);
-		//		thread.interrupt();
-		//	System.out.println("Thread state is "  + Thread.currentThread().getState().toString());
+		mBtAdapter.cancelDiscovery();
+		thread.interrupt();
 		if (D)Log.d(TAG,"Unregister receiver..."); 
 		unregisterReceiver(mReceiver);
 		stopSelf();
@@ -321,10 +309,8 @@ public class DiscoveryService extends Service {
 					new QueryIdentityFromServer().execute(mSelfMac,mDevice.getAddress());
 
 				}
-
-
+				
 				mFound = false;
-
 
 				// When discovery is finished, change the Activity title
 			} else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
@@ -493,9 +479,7 @@ public class DiscoveryService extends Service {
 		LocalBroadcastManager.getInstance(getApplicationContext());
 		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 	}
-	
-	
-	
+
 /**
  * Set log Enable/Disable
  * @return void

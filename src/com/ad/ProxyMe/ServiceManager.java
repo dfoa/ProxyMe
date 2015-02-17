@@ -34,9 +34,8 @@ public class ServiceManager {
 
 	}
 
-	public  void  start (){	
+	public  void  start(){	
 
-		System.out.println("going to start the service");
 		ServiceArgument  parameters  =  new ServiceArgument("Fiix","http://192.168.50.5", "80");
 		Intent intent = new Intent(context, DiscoveryService.class);
 		intent.putExtra("args",parameters);
@@ -60,39 +59,17 @@ public class ServiceManager {
 		public void onServiceConnected(ComponentName className,
 				IBinder service) {
 
-
 			System.out.println("Service is connected");
 
 			// We've bound to LocalService, cast the IBinder and get LocalService instance
 			LocalBinder binder = (LocalBinder) service;
 			mService = binder.getService();
-			
-
-			/*           
-            new Thread(new Runnable() { 
-              public void run(){        
-              System.out.println("In thread");
-              for(;;) {
-          	int a = mService.getRandomNumber();
-      		System.out.println("get response from service " + a);
-      		try {
-
-					Thread.sleep(3000);
-
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-              }
-              }
-          }).start();
-			 */
 			mBound = true;
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
-			System.out.println("Service is disconnected");
+//			if (D) Log.v("Service is disconnected");
 			mBound = false;
 		}
 	};
